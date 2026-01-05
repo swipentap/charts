@@ -4,12 +4,13 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'swipentap/**'
-      - '.github/workflows/release.yml'
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+  pages: write
+  id-token: write
 
 jobs:
   release:
