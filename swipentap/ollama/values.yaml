@@ -1,0 +1,73 @@
+namespace:
+  name: ollama
+  create: true
+
+ollama:
+  image:
+    repository: ollama/ollama
+    tag: latest
+    pullPolicy: IfNotPresent
+  
+  replicaCount: 1
+  
+  service:
+    type: NodePort
+    port: 11434
+    nodePort: 31134
+  
+  env:
+    OLLAMA_HOST: "0.0.0.0:11434"
+  
+  resources:
+    requests:
+      memory: "6Gi"
+      cpu: "2"
+    limits:
+      memory: "8Gi"
+      cpu: "16"
+  
+  models:
+    - name: "deepseek-r1:8b"
+      autoPull: true
+  
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    existingClaim: ""  # Set to "ollama-data" to use existing PVC
+
+webui:
+  enabled: true
+  image:
+    repository: ghcr.io/open-webui/open-webui
+    tag: main
+    pullPolicy: IfNotPresent
+  
+  replicaCount: 1
+  
+  service:
+    type: NodePort
+    port: 8080
+    nodePort: 31135
+  
+  env:
+    OLLAMA_BASE_URL: ""  # If empty, will use service name: http://{{ include "ollama.fullname" . }}:11434
+  
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+  
+  persistence:
+    enabled: false
+    size: 5Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    existingClaim: ""
+
+labels:
+  app: ollama

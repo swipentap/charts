@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ollama.fullname" . }}
+  namespace: {{ include "ollama.namespace" . }}
+  labels:
+    {{- include "ollama.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.ollama.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "ollama.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ollama.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: ollama
+        image: "{{ .Values.ollama.image.repository }}:{{ .Values.ollama.image.tag }}"
+        imagePullPolicy: {{ .Values.ollama.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.ollama.service.port }}
+          name: http
+        env:
+        {{- range $key, $value := .Values.ollama.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        volumeMounts:
+        - name: ollama-data
+          mountPath: /root/.ollama
+        resources:
+          {{- toYaml .Values.ollama.resources | nindent 10 }}
+        {{- if .Values.ollama.models }}
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - |
+                sleep 10
+                {{- range .Values.ollama.models }}
+                {{- if .autoPull }}
+                if ! ollama list | grep -q "{{ .name }}"; then
+                  ollama pull {{ .name }} || true
+                fi
+                {{- end }}
+                {{- end }}
+        {{- end }}
+      volumes:
+      - name: ollama-data
+      {{- if .Values.ollama.persistence.enabled }}
+      {{- if .Values.ollama.persistence.existingClaim }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.ollama.persistence.existingClaim }}
+      {{- else }}
+        persistentVolumeClaim:
+          claimName: {{ include "ollama.fullname" . }}-data
+      {{- end }}
+      {{- else }}
+        emptyDir: {}
+      {{- end }}

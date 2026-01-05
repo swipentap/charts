@@ -1,0 +1,23 @@
+{{- if and .Values.webui.enabled .Values.webui.persistence.enabled (not .Values.webui.persistence.existingClaim) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "ollama.fullname" . }}-webui-data
+  namespace: {{ include "ollama.namespace" . }}
+  labels:
+    {{- include "ollama.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webui
+spec:
+  accessModes:
+    - {{ .Values.webui.persistence.accessMode }}
+  {{- if .Values.webui.persistence.storageClass }}
+  {{- if (eq "-" .Values.webui.persistence.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: {{ .Values.webui.persistence.storageClass }}
+  {{- end }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.webui.persistence.size }}
+{{- end }}
