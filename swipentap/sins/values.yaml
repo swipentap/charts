@@ -36,8 +36,8 @@ postgresql:
 
 sins:
   image:
-    repository: swipentap/sins
-    tag: "1.0.32"
+    repository: judyandiealvarez/sins
+    tag: "latest"
     pullPolicy: IfNotPresent
   
   replicaCount: 1
@@ -67,8 +67,8 @@ sins:
 webui:
   enabled: true
   image:
-    repository: swipentap/sins
-    tag: "1.0.32"
+    repository: judyandiealvarez/sins
+    tag: "latest"
     pullPolicy: IfNotPresent
   
   replicaCount: 1
