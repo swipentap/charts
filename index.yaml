@@ -3,7 +3,7 @@ entries:
   ollama:
   - apiVersion: v2
     appVersion: latest
-    created: "2026-01-05T17:41:34.23513+02:00"
+    created: "2026-01-05T20:41:35.614683+02:00"
     description: A Helm chart for Ollama LLM server
     digest: 22688c9bac4c0fa396cc1d0c6e0690e5a1cf576f0c7f0899657dadf52e5f67a2
     name: ollama
@@ -13,11 +13,11 @@ entries:
     version: 0.1.0
   sins:
   - apiVersion: v2
-    appVersion: 1.0.32
-    created: "2026-01-05T18:09:11.986461808Z"
+    appVersion: latest
+    created: "2026-01-05T20:41:35.615094+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
-    digest: a94d2fbda0a58a8aff075dabdebb3376feca79bea5535344a233bf215e78fd8e
+    digest: 90dcb4c5d5206830df0d86c41e03ac3fc58c1f2b3430ae5b1c28d062b9f48db8
     home: https://github.com/swipentap/SiNS
     keywords:
     - dns
@@ -27,6 +27,6 @@ entries:
     name: sins
     type: application
     urls:
-    - https://github.com/swipentap/charts/releases/download/sins-0.1.0/sins-0.1.0.tgz
+    - https://swipentap.github.io/charts/sins-0.1.0.tgz
     version: 0.1.0
-generated: "2026-01-05T18:09:11.986474081Z"
+generated: "2026-01-05T20:41:35.613422+02:00"
