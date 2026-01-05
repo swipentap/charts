@@ -11,4 +11,22 @@ entries:
     urls:
     - https://swipentap.github.io/charts/ollama-0.1.0.tgz
     version: 0.1.0
-generated: "2026-01-05T17:41:34.231617+02:00"
+  sins:
+  - apiVersion: v2
+    appVersion: 1.0.32
+    created: "2026-01-05T18:09:11.986461808Z"
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: a94d2fbda0a58a8aff075dabdebb3376feca79bea5535344a233bf215e78fd8e
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/sins-0.1.0/sins-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-01-05T18:09:11.986474081Z"
