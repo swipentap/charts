@@ -1,0 +1,23 @@
+{{- if .Values.webui.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sins.fullname" . }}-webui
+  namespace: {{ include "sins.namespace" . }}
+  labels:
+    {{- include "sins.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webui
+spec:
+  type: {{ .Values.webui.service.type }}
+  ports:
+  - port: {{ .Values.webui.service.port }}
+    targetPort: {{ .Values.webui.service.port }}
+    protocol: TCP
+    name: http
+    {{- if eq .Values.webui.service.type "NodePort" }}
+    nodePort: {{ .Values.webui.service.nodePort }}
+    {{- end }}
+  selector:
+    {{- include "sins.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: webui
+{{- end }}

@@ -48,6 +48,7 @@ Useful Helm Client Commands:
 ## Available Charts
 
 * **ollama** - Ollama LLM server with optional WebUI
+* **sins** - SiNS (Simple Name Server) - DNS server with web management interface
 
 ## License
 
