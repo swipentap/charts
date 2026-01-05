@@ -4,15 +4,31 @@ A Helm chart for deploying Ollama LLM server on Kubernetes.
 
 ## Installation
 
+### From Helm Repository
+
+```bash
+# Add the repository
+helm repo add swipentap https://swipentap.github.io/charts
+helm repo update
+
+# Install with default values
+helm install my-release swipentap/ollama
+
+# Install with custom values
+helm install my-release swipentap/ollama -f custom-values.yaml
+
+# Install to use existing PVC (if you already have ollama-data PVC)
+helm install my-release swipentap/ollama --set ollama.persistence.existingClaim=ollama-data
+```
+
+### From Local Chart
+
 ```bash
 # Install with default values
 helm install my-release ./swipentap/ollama
 
 # Install with custom values
 helm install my-release ./swipentap/ollama -f custom-values.yaml
-
-# Install to use existing PVC (if you already have ollama-data PVC)
-helm install my-release ./swipentap/ollama --set ollama.persistence.existingClaim=ollama-data
 ```
 
 ## Configuration
@@ -46,6 +62,11 @@ After installation, access:
 ## Upgrading
 
 ```bash
+# If installed from repository
+helm repo update
+helm upgrade my-release swipentap/ollama
+
+# If installed from local chart
 helm upgrade my-release ./swipentap/ollama
 ```
 

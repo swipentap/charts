@@ -1,0 +1,7 @@
+# Chart Releaser Configuration
+owner: swipentap
+git-repo: charts
+charts-repo: https://swipentap.github.io/charts
+package-path: .cr-release-packages
+index-path: .cr-index
+release-name-template: '{{ .Name }}-{{ .Version }}'

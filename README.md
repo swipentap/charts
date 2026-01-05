@@ -5,7 +5,9 @@ Popular applications ready to launch on Kubernetes using Helm.
 ## TL;DR
 
 ```bash
-helm install my-release ./swipentap/<chart>
+helm repo add swipentap https://swipentap.github.io/charts
+helm repo update
+helm install my-release swipentap/<chart>
 ```
 
 ## Before you begin
@@ -23,12 +25,23 @@ To install Helm, refer to the [Helm install guide](https://helm.sh/docs/intro/in
 
 ### Using Helm
 
-Once you have installed the Helm client, you can deploy a Helm Chart into a Kubernetes cluster.
+Once you have installed the Helm client, add this repository:
+
+```bash
+helm repo add swipentap https://swipentap.github.io/charts
+helm repo update
+```
+
+You can then search for available charts:
+
+```bash
+helm search repo swipentap
+```
 
 Useful Helm Client Commands:
 
-* Install a chart: `helm install my-release ./swipentap/<chart>`
-* Upgrade your application: `helm upgrade my-release ./swipentap/<chart>`
+* Install a chart: `helm install my-release swipentap/<chart>`
+* Upgrade your application: `helm upgrade my-release swipentap/<chart>`
 * List installed releases: `helm list`
 * Uninstall a release: `helm uninstall my-release`
 
