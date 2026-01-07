@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - 'sins-*'
-      - 'ollama-*'
-      - 'certa-*'
 
 permissions:
   contents: write
@@ -28,34 +24,7 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Install Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: '3.13.0'
-
-      - name: Install chart-releaser CLI
-        run: |
-          curl -LO "https://github.com/helm/chart-releaser/releases/download/v1.6.0/chart-releaser_1.6.0_linux_amd64.tar.gz"
-          tar -xzf chart-releaser_1.6.0_linux_amd64.tar.gz
-          sudo mv cr /usr/local/bin/
-          chmod +x /usr/local/bin/cr
-
-      - name: Package and upload sins-1.0.70 if tag exists
-        run: |
-          if git rev-parse --verify sins-1.0.70 >/dev/null 2>&1; then
-            echo "Tag sins-1.0.70 exists, packaging and uploading..."
-            git checkout sins-1.0.70 -- swipentap/sins/
-            cd swipentap/sins
-            helm package . --version 1.0.70
-            cd ../..
-            mkdir -p .cr-release-packages
-            mv swipentap/sins/sins-1.0.70.tgz .cr-release-packages/
-            cr upload --config cr.yaml --skip-existing false
-            cr index --config cr.yaml
-            git checkout main
-          fi
-
-      - name: Run chart-releaser for all charts
+      - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
           charts_dir: swipentap
@@ -64,11 +33,3 @@ jobs:
           make_latest: true
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update chart index
-        if: success()
-        run: |
-          if [ -f .cr-index/index.yaml ]; then
-            git add .cr-index/index.yaml
-            git diff --staged --quiet || (git commit -m "Update chart index" && git push)
-          fi
