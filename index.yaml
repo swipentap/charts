@@ -3,7 +3,7 @@ entries:
   certa:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-01-07T19:07:48.487845+02:00"
+    created: '2026-01-07T19:07:48.487845+02:00'
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: 31b2406cb83cc1d2ad814f5e1fc087e45d1674be99c1390201e0c77155152271
@@ -22,7 +22,7 @@ entries:
   ollama:
   - apiVersion: v2
     appVersion: latest
-    created: "2026-01-07T19:07:48.488089+02:00"
+    created: '2026-01-07T19:07:48.488089+02:00'
     description: A Helm chart for Ollama LLM server
     digest: 22688c9bac4c0fa396cc1d0c6e0690e5a1cf576f0c7f0899657dadf52e5f67a2
     name: ollama
@@ -33,10 +33,10 @@ entries:
   sins:
   - apiVersion: v2
     appVersion: 1.0.70
-    created: "2026-01-07T19:07:48.490279+02:00"
+    created: '2026-01-07T19:07:48.490279+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
-    digest: e4fa13a2b4282e6ab8c0dcc6b6241f16c5760128697e4e2423760c322d160f50
+    digest: 6031bd4e08f8ce272f6fbbc7dae6923b1a07d8eeee8f57a6c37624ff1e558a5f
     home: https://github.com/swipentap/SiNS
     keywords:
     - dns
@@ -46,11 +46,11 @@ entries:
     name: sins
     type: application
     urls:
-    - https://swipentap.github.io/charts/sins-1.0.70.tgz
+    - https://github.com/swipentap/charts/releases/download/sins-1.0.70/sins-1.0.70.tgz
     version: 1.0.70
   - apiVersion: v2
     appVersion: 1.0.32
-    created: "2026-01-07T19:07:48.488616+02:00"
+    created: '2026-01-07T19:07:48.488616+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 13e0519c38d8a39d71be4581d80bd42274663f8367c361bb8f2c41362f37c96e
@@ -67,7 +67,7 @@ entries:
     version: 1.0.32
   - apiVersion: v2
     appVersion: 1.0.31
-    created: "2026-01-07T19:07:48.488355+02:00"
+    created: '2026-01-07T19:07:48.488355+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 545e02d061edcaaa6b0809e4f710f8cebfd1bc6ea0fa3b3f112ec0a7e140d2cd
@@ -82,4 +82,4 @@ entries:
     urls:
     - https://swipentap.github.io/charts/sins-1.0.31.tgz
     version: 1.0.31
-generated: "2026-01-07T19:07:48.48687+02:00"
+generated: '2026-01-07T19:07:48.48687+02:00'
