@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -25,12 +24,7 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Install Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: '3.13.0'
-
-      - name: Install chart-releaser
+      - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
           charts_dir: swipentap
@@ -39,28 +33,3 @@ jobs:
           make_latest: true
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Force re-package sins-1.0.70 if tag exists
-        run: |
-          if git rev-parse --verify sins-1.0.70 >/dev/null 2>&1; then
-            echo "Tag sins-1.0.70 exists, force re-packaging..."
-            git checkout sins-1.0.70 -- swipentap/sins/
-            cd swipentap/sins
-            helm package . --version 1.0.70
-            mkdir -p ../../.cr-release-packages
-            mv sins-1.0.70.tgz ../../.cr-release-packages/ || true
-            cd ../..
-            export PATH="$HOME/go/bin:$PATH"
-            which cr || echo "cr not in PATH, using chart-releaser-action output"
-            cr upload --config cr.yaml --skip-existing false || echo "Upload failed, continuing..."
-            cr index --config cr.yaml || echo "Index failed, continuing..."
-            git checkout main
-          fi
-
-      - name: Update chart index
-        if: success()
-        run: |
-          if [ -f .cr-index/index.yaml ]; then
-            git add .cr-index/index.yaml
-            git diff --staged --quiet || (git commit -m "Update chart index" && git push)
-          fi
