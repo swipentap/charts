@@ -53,7 +53,7 @@ Key configuration options in `values.yaml`:
 ### SiNS DNS Server
 
 - `sins.image.repository` - Docker image repository (default: `judyandiealvarez/sins`)
-- `sins.image.tag` - Docker image tag (default: `1.0.32`)
+- `sins.image.tag` - Docker image tag (default: `1.0.70`)
 - `sins.service.type` - Service type (default: `LoadBalancer`)
 - `sins.service.port` - DNS port (default: `53`)
 - `sins.resources` - CPU and memory requests/limits
