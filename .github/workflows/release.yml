@@ -30,7 +30,14 @@ jobs:
         with:
           version: '3.13.0'
 
-      - name: Install chart-releaser
+      - name: Install chart-releaser CLI
+        run: |
+          curl -LO "https://github.com/helm/chart-releaser/releases/download/v1.6.0/chart-releaser_1.6.0_linux_amd64.tar.gz"
+          tar -xzf chart-releaser_1.6.0_linux_amd64.tar.gz
+          sudo mv cr /usr/local/bin/
+          chmod +x /usr/local/bin/cr
+
+      - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
           charts_dir: swipentap
@@ -48,12 +55,10 @@ jobs:
             cd swipentap/sins
             helm package . --version 1.0.70
             mkdir -p ../../.cr-release-packages
-            mv sins-1.0.70.tgz ../../.cr-release-packages/ || true
+            mv sins-1.0.70.tgz ../../.cr-release-packages/
             cd ../..
-            export PATH="$HOME/go/bin:$PATH"
-            which cr || echo "cr not in PATH, using chart-releaser-action output"
-            cr upload --config cr.yaml --skip-existing false || echo "Upload failed, continuing..."
-            cr index --config cr.yaml || echo "Index failed, continuing..."
+            cr upload --config cr.yaml --skip-existing false
+            cr index --config cr.yaml
             git checkout main
           fi
 
