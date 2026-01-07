@@ -2,8 +2,8 @@ apiVersion: v2
 name: sins
 description: A Helm chart for SiNS (Simple Name Server) - DNS server with web management interface
 type: application
-version: 0.1.3
-appVersion: "1.0.32"
+version: 1.0.70
+appVersion: "1.0.70"
 keywords:
   - dns
   - nameserver
