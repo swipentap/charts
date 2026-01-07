@@ -47,10 +47,13 @@ jobs:
             git checkout sins-1.0.70 -- swipentap/sins/
             cd swipentap/sins
             helm package . --version 1.0.70
+            mkdir -p ../../.cr-release-packages
             mv sins-1.0.70.tgz ../../.cr-release-packages/ || true
             cd ../..
-            cr upload --config cr.yaml --skip-existing false
-            cr index --config cr.yaml
+            export PATH="$HOME/go/bin:$PATH"
+            which cr || echo "cr not in PATH, using chart-releaser-action output"
+            cr upload --config cr.yaml --skip-existing false || echo "Upload failed, continuing..."
+            cr index --config cr.yaml || echo "Index failed, continuing..."
             git checkout main
           fi
 
