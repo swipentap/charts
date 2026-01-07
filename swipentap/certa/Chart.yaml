@@ -1,0 +1,13 @@
+apiVersion: v2
+name: certa
+description: A Helm chart for CertA (Simple Certificate Authority) - Certificate Authority for local use
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - certificate
+  - ca
+  - certificate-authority
+  - postgresql
+  - aspnetcore
+home: https://github.com/swipentap/CertA

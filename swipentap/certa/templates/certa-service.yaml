@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "certa.fullname" . }}
+  namespace: {{ include "certa.namespace" . }}
+  labels:
+    {{- include "certa.labels" . | nindent 4 }}
+    app.kubernetes.io/component: certa
+spec:
+  type: {{ .Values.certa.service.type }}
+  ports:
+  - port: {{ .Values.certa.service.port }}
+    targetPort: {{ .Values.certa.service.port }}
+    protocol: TCP
+    name: http
+    {{- if eq .Values.certa.service.type "NodePort" }}
+    nodePort: {{ .Values.certa.service.nodePort }}
+    {{- end }}
+  selector:
+    {{- include "certa.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: certa

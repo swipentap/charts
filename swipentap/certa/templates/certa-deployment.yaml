@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "certa.fullname" . }}
+  namespace: {{ include "certa.namespace" . }}
+  labels:
+    {{- include "certa.labels" . | nindent 4 }}
+    app.kubernetes.io/component: certa
+spec:
+  replicas: {{ .Values.certa.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "certa.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: certa
+  template:
+    metadata:
+      labels:
+        {{- include "certa.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: certa
+    spec:
+      containers:
+      - name: certa
+        image: "{{ .Values.certa.image.repository }}:{{ .Values.certa.image.tag }}"
+        imagePullPolicy: {{ .Values.certa.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.certa.service.port }}
+          name: http
+        env:
+        - name: ConnectionStrings__DefaultConnection
+          value: {{ include "certa.postgresql.connectionString" . | quote }}
+        {{- range $key, $value := .Values.certa.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.certa.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.certa.service.port }}
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.certa.service.port }}
+          initialDelaySeconds: 10
+          periodSeconds: 5

@@ -49,6 +49,7 @@ Useful Helm Client Commands:
 
 * **ollama** - Ollama LLM server with optional WebUI
 * **sins** - SiNS (Simple Name Server) - DNS server with web management interface
+* **certa** - CertA (Simple Certificate Authority) - Certificate Authority for local use
 
 ## License
 
