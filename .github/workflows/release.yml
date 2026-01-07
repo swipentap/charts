@@ -4,7 +4,10 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
+    tags:
+      - 'sins-*'
+      - 'ollama-*'
+      - 'certa-*'
 
 permissions:
   contents: write
@@ -37,10 +40,10 @@ jobs:
           sudo mv cr /usr/local/bin/
           chmod +x /usr/local/bin/cr
 
-      - name: Force re-package and upload sins-1.0.70
+      - name: Package and upload sins-1.0.70 if tag exists
         run: |
           if git rev-parse --verify sins-1.0.70 >/dev/null 2>&1; then
-            echo "Tag sins-1.0.70 exists, force re-packaging..."
+            echo "Tag sins-1.0.70 exists, packaging and uploading..."
             git checkout sins-1.0.70 -- swipentap/sins/
             cd swipentap/sins
             helm package . --version 1.0.70
@@ -52,7 +55,7 @@ jobs:
             git checkout main
           fi
 
-      - name: Run chart-releaser for other charts
+      - name: Run chart-releaser for all charts
         uses: helm/chart-releaser-action@v1.6.0
         with:
           charts_dir: swipentap
