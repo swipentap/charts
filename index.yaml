@@ -13,6 +13,23 @@ entries:
     version: 0.1.0
   sins:
   - apiVersion: v2
+    appVersion: 1.0.71
+    created: "2026-01-07T10:07:16.288063272Z"
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: 7c9af8a683693a79bf5a9efcbd09be0996b35583a141082f5d6a3a4d76340826
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/sins-0.1.2/sins-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
     appVersion: latest
     created: "2026-01-07T10:00:11.618170819Z"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
@@ -46,4 +63,4 @@ entries:
     urls:
     - https://swipentap.github.io/charts/sins-0.1.0.tgz
     version: 0.1.0
-generated: "2026-01-07T10:00:11.618219236Z"
+generated: "2026-01-07T10:07:16.288075565Z"
