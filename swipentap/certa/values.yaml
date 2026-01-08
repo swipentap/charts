@@ -45,7 +45,7 @@ certa:
   service:
     type: NodePort
     port: 8080
-    nodePort: 30080
+    nodePort: 30082
   
   env:
     ASPNETCORE_ENVIRONMENT: Production
