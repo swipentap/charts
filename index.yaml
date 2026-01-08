@@ -53,7 +53,7 @@ entries:
     created: "2026-01-08T15:37:38.281517+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
-    digest: 13e0519c38d8a39d71be4581d80bd42274663f8367c361bb8f2c41362f37c96e
+    digest: 66c31f88c874c1a0178a96ce3bcf23f93d8447bb4076c76fbf1f07ab44153a23
     home: https://github.com/swipentap/SiNS
     keywords:
     - dns
