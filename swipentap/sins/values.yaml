@@ -44,8 +44,16 @@ sins:
   
   service:
     type: LoadBalancer
-    port: 53
-    protocol: UDP
+    ports:
+      dnsUdp:
+        port: 5353
+        targetPort: 53
+      dnsTcp:
+        port: 5353
+        targetPort: 53
+      http:
+        port: 8080
+        targetPort: 80
   
   env:
     ASPNETCORE_URLS: "http://0.0.0.0:80"

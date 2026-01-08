@@ -9,16 +9,16 @@ metadata:
 spec:
   type: {{ .Values.sins.service.type }}
   ports:
-  - port: 53
-    targetPort: 53
+  - port: {{ .Values.sins.service.ports.dnsUdp.port }}
+    targetPort: {{ .Values.sins.service.ports.dnsUdp.targetPort }}
     protocol: UDP
     name: dns-udp
-  - port: 53
-    targetPort: 53
+  - port: {{ .Values.sins.service.ports.dnsTcp.port }}
+    targetPort: {{ .Values.sins.service.ports.dnsTcp.targetPort }}
     protocol: TCP
     name: dns-tcp
-  - port: 80
-    targetPort: 80
+  - port: {{ .Values.sins.service.ports.http.port }}
+    targetPort: {{ .Values.sins.service.ports.http.targetPort }}
     protocol: TCP
     name: http
   selector:
