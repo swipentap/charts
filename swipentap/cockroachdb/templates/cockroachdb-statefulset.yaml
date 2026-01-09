@@ -38,7 +38,7 @@ spec:
             if [ -n "$JOIN_LIST" ]; then
               JOIN_LIST="$JOIN_LIST,"
             fi
-            JOIN_LIST="$JOIN_LIST{{ include "cockroachdb.fullname" . }}-$i.{{ include "cockroachdb.fullname" . }}:{{ .Values.cockroachdb.service.sqlPort }}"
+            JOIN_LIST="${JOIN_LIST}{{ include "cockroachdb.fullname" . }}-${i}.{{ include "cockroachdb.fullname" . }}:{{ .Values.cockroachdb.service.sqlPort }}"
           done
           /cockroach/cockroach start \
             --insecure \
