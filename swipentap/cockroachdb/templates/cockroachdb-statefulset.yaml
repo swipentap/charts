@@ -38,13 +38,9 @@ spec:
           if [ $POD_INDEX -eq 0 ]; then
             JOIN_LIST="{{ include "cockroachdb.fullname" . }}-0.{{ include "cockroachdb.fullname" . }}.{{ include "cockroachdb.namespace" . }}.svc.cluster.local:{{ .Values.cockroachdb.service.sqlPort }}"
           else
-            # For subsequent nodes, join to all other nodes (excluding self)
+            # For subsequent nodes, only join to nodes with lower index (already running)
             JOIN_LIST=""
-            for i in $(seq 0 $(({{ .Values.cockroachdb.replicaCount }} - 1))); do
-              # Skip self in join list
-              if [ $i -eq $POD_INDEX ]; then
-                continue
-              fi
+            for i in $(seq 0 $((POD_INDEX - 1))); do
               if [ -n "$JOIN_LIST" ]; then
                 JOIN_LIST="$JOIN_LIST,"
               fi
