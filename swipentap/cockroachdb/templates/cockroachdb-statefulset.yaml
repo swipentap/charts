@@ -76,16 +76,20 @@ spec:
           mountPath: /cockroach/cockroach-data
         livenessProbe:
           httpGet:
-            path: /health?ready=1
+            path: /health
             port: {{ .Values.cockroachdb.service.httpPort }}
-          initialDelaySeconds: 30
-          periodSeconds: 10
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
         readinessProbe:
           httpGet:
             path: /health?ready=1
             port: {{ .Values.cockroachdb.service.httpPort }}
-          initialDelaySeconds: 10
-          periodSeconds: 5
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
   {{- if .Values.cockroachdb.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
