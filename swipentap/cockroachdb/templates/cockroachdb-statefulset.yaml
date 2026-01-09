@@ -38,7 +38,7 @@ spec:
           JOIN_LIST=""
           for i in $(seq 0 $(({{ .Values.cockroachdb.replicaCount }} - 1))); do
             # Skip self in join list
-            if [ "$i" -eq "$POD_INDEX" ]; then
+            if [ $i -eq $POD_INDEX ]; then
               continue
             fi
             if [ -n "$JOIN_LIST" ]; then
