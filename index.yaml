@@ -3,7 +3,7 @@ entries:
   certa:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: '2026-01-09T10:23:57.715592+02:00'
+    created: '2026-01-09T10:26:36.195719+02:00'
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: f42de4823c75bf6c7240b5c853616df9d8549b51b2854ae70fbc6be238e2aa15
@@ -21,7 +21,7 @@ entries:
     version: 1.0.0
   - apiVersion: v2
     appVersion: 1.0.0
-    created: '2026-01-09T10:23:57.718152+02:00'
+    created: '2026-01-09T10:26:36.198228+02:00'
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: f42de4823c75bf6c7240b5c853616df9d8549b51b2854ae70fbc6be238e2aa15
@@ -40,9 +40,9 @@ entries:
   cockroachdb:
   - apiVersion: v2
     appVersion: v23.2.0
-    created: '2026-01-09T10:35:00.000000+02:00'
+    created: '2026-01-09T10:35:00+02:00'
     description: A Helm chart for CockroachDB - Distributed SQL database
-    digest: 8515ddceb0113a71e9621606e732420962b4631548ea622d42a9c11ea8088c18
+    digest: 4441dd87d0dd7ad66e81af5aef973d0017ef4a75e601d86019a22dca9b388a2e
     home: https://www.cockroachlabs.com/
     keywords:
     - database
@@ -57,7 +57,7 @@ entries:
   ollama:
   - apiVersion: v2
     appVersion: latest
-    created: '2026-01-09T10:23:57.716027+02:00'
+    created: '2026-01-09T10:26:36.196126+02:00'
     description: A Helm chart for Ollama LLM server
     digest: 22688c9bac4c0fa396cc1d0c6e0690e5a1cf576f0c7f0899657dadf52e5f67a2
     name: ollama
@@ -67,7 +67,7 @@ entries:
     version: 0.1.0
   - apiVersion: v2
     appVersion: latest
-    created: '2026-01-09T10:23:57.718539+02:00'
+    created: '2026-01-09T10:26:36.198771+02:00'
     description: A Helm chart for Ollama LLM server
     digest: 22688c9bac4c0fa396cc1d0c6e0690e5a1cf576f0c7f0899657dadf52e5f67a2
     name: ollama
@@ -78,7 +78,7 @@ entries:
   sins:
   - apiVersion: v2
     appVersion: 1.0.70
-    created: '2026-01-09T10:23:57.717644+02:00'
+    created: '2026-01-09T10:26:36.197633+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 66c31f88c874c1a0178a96ce3bcf23f93d8447bb4076c76fbf1f07ab44153a23
@@ -95,7 +95,7 @@ entries:
     version: 1.0.70
   - apiVersion: v2
     appVersion: 1.0.70
-    created: '2026-01-09T10:23:57.719833+02:00'
+    created: '2026-01-09T10:26:36.203474+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 66c31f88c874c1a0178a96ce3bcf23f93d8447bb4076c76fbf1f07ab44153a23
@@ -112,7 +112,7 @@ entries:
     version: 1.0.70
   - apiVersion: v2
     appVersion: 1.0.32
-    created: '2026-01-09T10:23:57.717371+02:00'
+    created: '2026-01-09T10:26:36.19727+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 13e0519c38d8a39d71be4581d80bd42274663f8367c361bb8f2c41362f37c96e
@@ -129,7 +129,7 @@ entries:
     version: 1.0.32
   - apiVersion: v2
     appVersion: 1.0.32
-    created: '2026-01-09T10:23:57.719389+02:00'
+    created: '2026-01-09T10:26:36.203026+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 13e0519c38d8a39d71be4581d80bd42274663f8367c361bb8f2c41362f37c96e
@@ -146,7 +146,7 @@ entries:
     version: 1.0.32
   - apiVersion: v2
     appVersion: 1.0.31
-    created: '2026-01-09T10:23:57.71709+02:00'
+    created: '2026-01-09T10:26:36.196529+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 545e02d061edcaaa6b0809e4f710f8cebfd1bc6ea0fa3b3f112ec0a7e140d2cd
@@ -163,7 +163,7 @@ entries:
     version: 1.0.31
   - apiVersion: v2
     appVersion: 1.0.31
-    created: '2026-01-09T10:23:57.719013+02:00'
+    created: '2026-01-09T10:26:36.202478+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 545e02d061edcaaa6b0809e4f710f8cebfd1bc6ea0fa3b3f112ec0a7e140d2cd
@@ -178,4 +178,4 @@ entries:
     urls:
     - https://swipentap.github.io/charts/gh-pages-repo/sins-1.0.31.tgz
     version: 1.0.31
-generated: '2026-01-09T10:23:57.714964+02:00'
+generated: '2026-01-09T10:26:36.194107+02:00'
