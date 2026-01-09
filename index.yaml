@@ -52,7 +52,7 @@ entries:
     name: cockroachdb
     type: application
     urls:
-    - https://swipentap.github.io/charts/cockroachdb-1.0.1.tgz
+    - https://raw.githubusercontent.com/swipentap/charts/gh-pages/cockroachdb-1.0.1.tgz
     version: 1.0.1
   - apiVersion: v2
     appVersion: v23.2.0
