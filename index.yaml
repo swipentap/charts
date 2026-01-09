@@ -40,7 +40,7 @@ entries:
   cockroachdb:
   - apiVersion: v2
     appVersion: v23.2.0
-    created: '2026-01-09T12:33:01.562635+02:00'
+    created: '2026-01-09T12:43:33.592328+02:00'
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: bcfe5dd90cc211e682b1d45c1ad6e56d600322a4770856be559c26f551ebed8f
     home: https://www.cockroachlabs.com/
@@ -52,7 +52,7 @@ entries:
     name: cockroachdb
     type: application
     urls:
-    - https://raw.githubusercontent.com/swipentap/charts/gh-pages/cockroachdb-1.0.1.tgz
+    - https://swipentap.github.io/charts/cockroachdb-1.0.1.tgz
     version: 1.0.1
   - apiVersion: v2
     appVersion: v23.2.0
@@ -194,4 +194,4 @@ entries:
     urls:
     - https://swipentap.github.io/charts/gh-pages-repo/sins-1.0.31.tgz
     version: 1.0.31
-generated: '2026-01-09T12:33:01.559185+02:00'
+generated: '2026-01-09T12:43:33.592300+02:00'
