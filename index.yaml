@@ -3,7 +3,7 @@ entries:
   certa:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-01-09T12:25:12.073169+02:00"
+    created: '2026-01-09T12:25:12.073169+02:00'
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: f42de4823c75bf6c7240b5c853616df9d8549b51b2854ae70fbc6be238e2aa15
@@ -21,7 +21,7 @@ entries:
     version: 1.0.0
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-01-09T12:25:12.077194+02:00"
+    created: '2026-01-09T12:25:12.077194+02:00'
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: f42de4823c75bf6c7240b5c853616df9d8549b51b2854ae70fbc6be238e2aa15
@@ -40,7 +40,7 @@ entries:
   cockroachdb:
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-09T12:25:12.073561+02:00"
+    created: '2026-01-09T12:25:12.073561+02:00'
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: d73a516f395dd4c573562a1d702410fab7409f62eb23fe2734f5a2a8e590baf3
     home: https://www.cockroachlabs.com/
@@ -52,11 +52,11 @@ entries:
     name: cockroachdb
     type: application
     urls:
-    - https://swipentap.github.io/charts/cockroachdb-1.0.1.tgz
+    - https://github.com/swipentap/charts/releases/download/cockroachdb-1.0.1/cockroachdb-1.0.1.tgz
     version: 1.0.1
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-09T12:25:12.073375+02:00"
+    created: '2026-01-09T12:25:12.073375+02:00'
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: c7b75841cd5022e6a241783d90ecaf7c0e7bc0985ccfd42c430da324eb71cee3
     home: https://www.cockroachlabs.com/
@@ -73,7 +73,7 @@ entries:
   ollama:
   - apiVersion: v2
     appVersion: latest
-    created: "2026-01-09T12:25:12.075897+02:00"
+    created: '2026-01-09T12:25:12.075897+02:00'
     description: A Helm chart for Ollama LLM server
     digest: 22688c9bac4c0fa396cc1d0c6e0690e5a1cf576f0c7f0899657dadf52e5f67a2
     name: ollama
@@ -83,7 +83,7 @@ entries:
     version: 0.1.0
   - apiVersion: v2
     appVersion: latest
-    created: "2026-01-09T12:25:12.077541+02:00"
+    created: '2026-01-09T12:25:12.077541+02:00'
     description: A Helm chart for Ollama LLM server
     digest: 22688c9bac4c0fa396cc1d0c6e0690e5a1cf576f0c7f0899657dadf52e5f67a2
     name: ollama
@@ -94,7 +94,7 @@ entries:
   sins:
   - apiVersion: v2
     appVersion: 1.0.70
-    created: "2026-01-09T12:25:12.076798+02:00"
+    created: '2026-01-09T12:25:12.076798+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 66c31f88c874c1a0178a96ce3bcf23f93d8447bb4076c76fbf1f07ab44153a23
@@ -111,7 +111,7 @@ entries:
     version: 1.0.70
   - apiVersion: v2
     appVersion: 1.0.70
-    created: "2026-01-09T12:25:12.078849+02:00"
+    created: '2026-01-09T12:25:12.078849+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 66c31f88c874c1a0178a96ce3bcf23f93d8447bb4076c76fbf1f07ab44153a23
@@ -128,7 +128,7 @@ entries:
     version: 1.0.70
   - apiVersion: v2
     appVersion: 1.0.32
-    created: "2026-01-09T12:25:12.076509+02:00"
+    created: '2026-01-09T12:25:12.076509+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 13e0519c38d8a39d71be4581d80bd42274663f8367c361bb8f2c41362f37c96e
@@ -145,7 +145,7 @@ entries:
     version: 1.0.32
   - apiVersion: v2
     appVersion: 1.0.32
-    created: "2026-01-09T12:25:12.078411+02:00"
+    created: '2026-01-09T12:25:12.078411+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 13e0519c38d8a39d71be4581d80bd42274663f8367c361bb8f2c41362f37c96e
@@ -162,7 +162,7 @@ entries:
     version: 1.0.32
   - apiVersion: v2
     appVersion: 1.0.31
-    created: "2026-01-09T12:25:12.076226+02:00"
+    created: '2026-01-09T12:25:12.076226+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 545e02d061edcaaa6b0809e4f710f8cebfd1bc6ea0fa3b3f112ec0a7e140d2cd
@@ -179,7 +179,7 @@ entries:
     version: 1.0.31
   - apiVersion: v2
     appVersion: 1.0.31
-    created: "2026-01-09T12:25:12.077991+02:00"
+    created: '2026-01-09T12:25:12.077991+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 545e02d061edcaaa6b0809e4f710f8cebfd1bc6ea0fa3b3f112ec0a7e140d2cd
@@ -194,4 +194,4 @@ entries:
     urls:
     - https://swipentap.github.io/charts/gh-pages-repo/sins-1.0.31.tgz
     version: 1.0.31
-generated: "2026-01-09T12:25:12.072308+02:00"
+generated: '2026-01-09T12:25:12.072308+02:00'
