@@ -3,10 +3,10 @@ entries:
   certa:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: '2026-01-08T23:22:58.221185+02:00'
+    created: '2026-01-09T10:23:57.715592+02:00'
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
-    digest: 1fc3eb3a242c475d282f1b9825ccdb5c3baa23d00940c7360ed35e8c31090e9f
+    digest: f42de4823c75bf6c7240b5c853616df9d8549b51b2854ae70fbc6be238e2aa15
     home: https://github.com/swipentap/CertA
     keywords:
     - certificate
@@ -19,12 +19,30 @@ entries:
     urls:
     - https://swipentap.github.io/charts/certa-1.0.0.tgz
     version: 1.0.0
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: '2026-01-09T10:23:57.718152+02:00'
+    description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
+      Authority for local use
+    digest: f42de4823c75bf6c7240b5c853616df9d8549b51b2854ae70fbc6be238e2aa15
+    home: https://github.com/swipentap/CertA
+    keywords:
+    - certificate
+    - ca
+    - certificate-authority
+    - postgresql
+    - aspnetcore
+    name: certa
+    type: application
+    urls:
+    - https://swipentap.github.io/charts/gh-pages-repo/certa-1.0.0.tgz
+    version: 1.0.0
   cockroachdb:
   - apiVersion: v2
     appVersion: v23.2.0
-    created: '2026-01-09T10:20:00.000000+02:00'
+    created: '2026-01-09T10:35:00.000000+02:00'
     description: A Helm chart for CockroachDB - Distributed SQL database
-    digest: b92bdf853be97a6078deacb7961b8dbe5b96a741c29fa043ebf2f87a49585d77
+    digest: 8515ddceb0113a71e9621606e732420962b4631548ea622d42a9c11ea8088c18
     home: https://www.cockroachlabs.com/
     keywords:
     - database
@@ -39,7 +57,7 @@ entries:
   ollama:
   - apiVersion: v2
     appVersion: latest
-    created: '2026-01-08T23:22:58.221185+02:00'
+    created: '2026-01-09T10:23:57.716027+02:00'
     description: A Helm chart for Ollama LLM server
     digest: 22688c9bac4c0fa396cc1d0c6e0690e5a1cf576f0c7f0899657dadf52e5f67a2
     name: ollama
@@ -47,10 +65,20 @@ entries:
     urls:
     - https://swipentap.github.io/charts/ollama-0.1.0.tgz
     version: 0.1.0
+  - apiVersion: v2
+    appVersion: latest
+    created: '2026-01-09T10:23:57.718539+02:00'
+    description: A Helm chart for Ollama LLM server
+    digest: 22688c9bac4c0fa396cc1d0c6e0690e5a1cf576f0c7f0899657dadf52e5f67a2
+    name: ollama
+    type: application
+    urls:
+    - https://swipentap.github.io/charts/gh-pages-repo/ollama-0.1.0.tgz
+    version: 0.1.0
   sins:
   - apiVersion: v2
     appVersion: 1.0.70
-    created: '2026-01-08T23:22:58.224965+02:00'
+    created: '2026-01-09T10:23:57.717644+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 66c31f88c874c1a0178a96ce3bcf23f93d8447bb4076c76fbf1f07ab44153a23
@@ -66,8 +94,25 @@ entries:
     - https://swipentap.github.io/charts/sins-1.0.70.tgz
     version: 1.0.70
   - apiVersion: v2
+    appVersion: 1.0.70
+    created: '2026-01-09T10:23:57.719833+02:00'
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: 66c31f88c874c1a0178a96ce3bcf23f93d8447bb4076c76fbf1f07ab44153a23
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - https://swipentap.github.io/charts/gh-pages-repo/sins-1.0.70.tgz
+    version: 1.0.70
+  - apiVersion: v2
     appVersion: 1.0.32
-    created: '2026-01-08T23:22:58.222518+02:00'
+    created: '2026-01-09T10:23:57.717371+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 13e0519c38d8a39d71be4581d80bd42274663f8367c361bb8f2c41362f37c96e
@@ -83,8 +128,25 @@ entries:
     - https://swipentap.github.io/charts/sins-1.0.32.tgz
     version: 1.0.32
   - apiVersion: v2
+    appVersion: 1.0.32
+    created: '2026-01-09T10:23:57.719389+02:00'
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: 13e0519c38d8a39d71be4581d80bd42274663f8367c361bb8f2c41362f37c96e
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - https://swipentap.github.io/charts/gh-pages-repo/sins-1.0.32.tgz
+    version: 1.0.32
+  - apiVersion: v2
     appVersion: 1.0.31
-    created: '2026-01-08T23:22:58.221947+02:00'
+    created: '2026-01-09T10:23:57.71709+02:00'
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 545e02d061edcaaa6b0809e4f710f8cebfd1bc6ea0fa3b3f112ec0a7e140d2cd
@@ -99,4 +161,21 @@ entries:
     urls:
     - https://swipentap.github.io/charts/sins-1.0.31.tgz
     version: 1.0.31
-generated: '2026-01-09T07:30:05.468999254Z'
+  - apiVersion: v2
+    appVersion: 1.0.31
+    created: '2026-01-09T10:23:57.719013+02:00'
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: 545e02d061edcaaa6b0809e4f710f8cebfd1bc6ea0fa3b3f112ec0a7e140d2cd
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - https://swipentap.github.io/charts/gh-pages-repo/sins-1.0.31.tgz
+    version: 1.0.31
+generated: '2026-01-09T10:23:57.714964+02:00'

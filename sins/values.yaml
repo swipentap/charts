@@ -1,0 +1,98 @@
+namespace:
+  name: sins
+  create: true
+
+postgresql:
+  image:
+    repository: postgres
+    tag: "15"
+    pullPolicy: IfNotPresent
+  
+  replicaCount: 1
+  
+  service:
+    type: ClusterIP
+    port: 5432
+  
+  env:
+    POSTGRES_DB: dns_server
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+  
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    existingClaim: ""
+
+sins:
+  image:
+    repository: judyandiealvarez/sins
+    tag: "1.0.70"
+    pullPolicy: IfNotPresent
+  
+  replicaCount: 1
+  
+  service:
+    type: LoadBalancer
+    ports:
+      dnsUdp:
+        port: 5353
+        targetPort: 53
+      dnsTcp:
+        port: 5353
+        targetPort: 53
+      http:
+        port: 8080
+        targetPort: 80
+  
+  env:
+    ASPNETCORE_URLS: "http://0.0.0.0:80"
+  
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  
+  dns:
+    cacheTimeout: 60
+    upstreamServers:
+      - "8.8.8.8"
+      - "1.1.1.1"
+
+webui:
+  enabled: true
+  image:
+    repository: judyandiealvarez/sins
+    tag: "1.0.70"
+    pullPolicy: IfNotPresent
+  
+  replicaCount: 1
+  
+  service:
+    type: NodePort
+    port: 80
+    nodePort: 30080
+  
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+labels:
+  app: sins

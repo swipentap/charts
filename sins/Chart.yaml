@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: 1.0.70
+description: A Helm chart for SiNS (Simple Name Server) - DNS server with web management
+  interface
+home: https://github.com/swipentap/SiNS
+keywords:
+- dns
+- nameserver
+- postgresql
+- vuejs
+name: sins
+type: application
+version: 1.0.70

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sins.fullname" . }}
+  namespace: {{ include "sins.namespace" . }}
+  labels:
+    {{- include "sins.labels" . | nindent 4 }}
+    app.kubernetes.io/component: dns-server
+spec:
+  replicas: {{ .Values.sins.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "sins.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: dns-server
+  template:
+    metadata:
+      labels:
+        {{- include "sins.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: dns-server
+    spec:
+      containers:
+      - name: sins
+        image: "{{ .Values.sins.image.repository }}:{{ .Values.sins.image.tag }}"
+        imagePullPolicy: {{ .Values.sins.image.pullPolicy }}
+        ports:
+        - containerPort: 53
+          name: dns-udp
+          protocol: UDP
+        - containerPort: 53
+          name: dns-tcp
+          protocol: TCP
+        - containerPort: 80
+          name: http
+        env:
+        - name: ConnectionStrings__DefaultConnection
+          value: "Host={{ include "sins.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }};Database={{ .Values.postgresql.env.POSTGRES_DB }};Username={{ .Values.postgresql.env.POSTGRES_USER }};Password={{ .Values.postgresql.env.POSTGRES_PASSWORD }}"
+        - name: ASPNETCORE_URLS
+          value: {{ .Values.sins.env.ASPNETCORE_URLS | quote }}
+        resources:
+          {{- toYaml .Values.sins.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /api/dns/health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/dns/health
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5

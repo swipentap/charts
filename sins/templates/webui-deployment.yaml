@@ -1,0 +1,36 @@
+{{- if .Values.webui.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sins.fullname" . }}-webui
+  namespace: {{ include "sins.namespace" . }}
+  labels:
+    {{- include "sins.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webui
+spec:
+  replicas: {{ .Values.webui.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "sins.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: webui
+  template:
+    metadata:
+      labels:
+        {{- include "sins.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: webui
+    spec:
+      containers:
+      - name: webui
+        image: "{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
+        imagePullPolicy: {{ .Values.webui.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.webui.service.port }}
+          name: http
+        env:
+        - name: ConnectionStrings__DefaultConnection
+          value: "Host={{ include "sins.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }};Database={{ .Values.postgresql.env.POSTGRES_DB }};Username={{ .Values.postgresql.env.POSTGRES_USER }};Password={{ .Values.postgresql.env.POSTGRES_PASSWORD }}"
+        - name: ASPNETCORE_URLS
+          value: {{ .Values.sins.env.ASPNETCORE_URLS | quote }}
+        resources:
+          {{- toYaml .Values.webui.resources | nindent 10 }}
+{{- end }}

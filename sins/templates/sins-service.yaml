@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sins.fullname" . }}
+  namespace: {{ include "sins.namespace" . }}
+  labels:
+    {{- include "sins.labels" . | nindent 4 }}
+    app.kubernetes.io/component: dns-server
+spec:
+  type: {{ .Values.sins.service.type }}
+  ports:
+  - port: {{ .Values.sins.service.ports.dnsUdp.port }}
+    targetPort: {{ .Values.sins.service.ports.dnsUdp.targetPort }}
+    protocol: UDP
+    name: dns-udp
+  - port: {{ .Values.sins.service.ports.dnsTcp.port }}
+    targetPort: {{ .Values.sins.service.ports.dnsTcp.targetPort }}
+    protocol: TCP
+    name: dns-tcp
+  - port: {{ .Values.sins.service.ports.http.port }}
+    targetPort: {{ .Values.sins.service.ports.http.targetPort }}
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "sins.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: dns-server
