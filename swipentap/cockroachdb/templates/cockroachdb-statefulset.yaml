@@ -33,21 +33,35 @@ spec:
         - -ecx
         - |
           set -e
+          POD_INDEX=$(hostname | sed 's/.*-\([0-9]*\)$/\1/')
           JOIN_LIST=""
-          for i in $(seq 0 $(({{ .Values.cockroachdb.replicaCount }} - 1))); do
+          # Only join to nodes with lower index (already running)
+          for i in $(seq 0 $((POD_INDEX - 1))); do
             if [ -n "$JOIN_LIST" ]; then
               JOIN_LIST="$JOIN_LIST,"
             fi
             JOIN_LIST="${JOIN_LIST}{{ include "cockroachdb.fullname" . }}-${i}.{{ include "cockroachdb.fullname" . }}.{{ include "cockroachdb.namespace" . }}.svc.cluster.local:{{ .Values.cockroachdb.service.sqlPort }}"
           done
-          /cockroach/cockroach start \
-            --insecure \
-            --http-addr=0.0.0.0:{{ .Values.cockroachdb.service.httpPort }} \
-            --listen-addr=0.0.0.0:{{ .Values.cockroachdb.service.sqlPort }} \
-            --advertise-addr=$(hostname -f):{{ .Values.cockroachdb.service.sqlPort }} \
-            --join=$JOIN_LIST \
-            --cache=.25 \
-            --max-sql-memory=.25
+          # For the first node (index 0), start without --join to initialize cluster
+          if [ "$POD_INDEX" -eq "0" ]; then
+            /cockroach/cockroach start \
+              --insecure \
+              --http-addr=0.0.0.0:{{ .Values.cockroachdb.service.httpPort }} \
+              --listen-addr=0.0.0.0:{{ .Values.cockroachdb.service.sqlPort }} \
+              --advertise-addr=$(hostname -f):{{ .Values.cockroachdb.service.sqlPort }} \
+              --cache=.25 \
+              --max-sql-memory=.25
+          else
+            # For subsequent nodes, join to existing nodes
+            /cockroach/cockroach start \
+              --insecure \
+              --http-addr=0.0.0.0:{{ .Values.cockroachdb.service.httpPort }} \
+              --listen-addr=0.0.0.0:{{ .Values.cockroachdb.service.sqlPort }} \
+              --advertise-addr=$(hostname -f):{{ .Values.cockroachdb.service.sqlPort }} \
+              --join=$JOIN_LIST \
+              --cache=.25 \
+              --max-sql-memory=.25
+          fi
         env:
         {{- range $key, $value := .Values.cockroachdb.env }}
         - name: {{ $key }}
