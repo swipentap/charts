@@ -22,7 +22,7 @@ entries:
   cockroachdb:
   - apiVersion: v2
     appVersion: v23.2.0
-    created: '2026-01-09T09:28:00.000000+02:00'
+    created: '2026-01-09T10:20:00.000000+02:00'
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: b92bdf853be97a6078deacb7961b8dbe5b96a741c29fa043ebf2f87a49585d77
     home: https://www.cockroachlabs.com/
