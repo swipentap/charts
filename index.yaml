@@ -42,7 +42,7 @@ entries:
     appVersion: v23.2.0
     created: '2026-01-09T10:35:00+02:00'
     description: A Helm chart for CockroachDB - Distributed SQL database
-    digest: f94d5c523a770583095af63eb0a76fb8812c7fb697bf1ecbe693a6f6e3ade428
+    digest: c7b75841cd5022e6a241783d90ecaf7c0e7bc0985ccfd42c430da324eb71cee3
     home: https://www.cockroachlabs.com/
     keywords:
     - database
