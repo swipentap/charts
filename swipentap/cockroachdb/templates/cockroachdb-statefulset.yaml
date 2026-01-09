@@ -34,21 +34,22 @@ spec:
         - |
           set -e
           POD_INDEX=$(hostname | sed 's/.*-\([0-9]*\)$/\1/')
-          # Build join list with all nodes except self (CockroachDB will connect to available ones)
-          JOIN_LIST=""
-          for i in $(seq 0 $(({{ .Values.cockroachdb.replicaCount }} - 1))); do
-            # Skip self in join list
-            if [ $i -eq $POD_INDEX ]; then
-              continue
-            fi
-            if [ -n "$JOIN_LIST" ]; then
-              JOIN_LIST="$JOIN_LIST,"
-            fi
-            JOIN_LIST="${JOIN_LIST}{{ include "cockroachdb.fullname" . }}-${i}.{{ include "cockroachdb.fullname" . }}.{{ include "cockroachdb.namespace" . }}.svc.cluster.local:{{ .Values.cockroachdb.service.sqlPort }}"
-          done
-          # For the first node, if join list is empty, use itself to initialize
-          if [ -z "$JOIN_LIST" ] && [ "$POD_INDEX" -eq "0" ]; then
+          # For the first node, join to itself to initialize the cluster
+          if [ $POD_INDEX -eq 0 ]; then
             JOIN_LIST="{{ include "cockroachdb.fullname" . }}-0.{{ include "cockroachdb.fullname" . }}.{{ include "cockroachdb.namespace" . }}.svc.cluster.local:{{ .Values.cockroachdb.service.sqlPort }}"
+          else
+            # For subsequent nodes, join to all other nodes (excluding self)
+            JOIN_LIST=""
+            for i in $(seq 0 $(({{ .Values.cockroachdb.replicaCount }} - 1))); do
+              # Skip self in join list
+              if [ $i -eq $POD_INDEX ]; then
+                continue
+              fi
+              if [ -n "$JOIN_LIST" ]; then
+                JOIN_LIST="$JOIN_LIST,"
+              fi
+              JOIN_LIST="${JOIN_LIST}{{ include "cockroachdb.fullname" . }}-${i}.{{ include "cockroachdb.fullname" . }}.{{ include "cockroachdb.namespace" . }}.svc.cluster.local:{{ .Values.cockroachdb.service.sqlPort }}"
+            done
           fi
           /cockroach/cockroach start \
             --insecure \
