@@ -42,13 +42,15 @@ spec:
             fi
             JOIN_LIST="${JOIN_LIST}{{ include "cockroachdb.fullname" . }}-${i}.{{ include "cockroachdb.fullname" . }}.{{ include "cockroachdb.namespace" . }}.svc.cluster.local:{{ .Values.cockroachdb.service.sqlPort }}"
           done
-          # For the first node (index 0), start without --join to initialize cluster
+          # For the first node (index 0), use --join with itself to initialize cluster
           if [ "$POD_INDEX" -eq "0" ]; then
+            JOIN_LIST="{{ include "cockroachdb.fullname" . }}-0.{{ include "cockroachdb.fullname" . }}.{{ include "cockroachdb.namespace" . }}.svc.cluster.local:{{ .Values.cockroachdb.service.sqlPort }}"
             /cockroach/cockroach start \
               --insecure \
               --http-addr=0.0.0.0:{{ .Values.cockroachdb.service.httpPort }} \
               --listen-addr=0.0.0.0:{{ .Values.cockroachdb.service.sqlPort }} \
               --advertise-addr=$(hostname -f):{{ .Values.cockroachdb.service.sqlPort }} \
+              --join=$JOIN_LIST \
               --cache=.25 \
               --max-sql-memory=.25
           else
