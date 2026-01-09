@@ -1,0 +1,42 @@
+namespace:
+  name: cockroachdb
+  create: true
+
+cockroachdb:
+  image:
+    repository: cockroachdb/cockroach
+    tag: "v23.2.0"
+    pullPolicy: IfNotPresent
+  
+  replicaCount: 3
+  
+  service:
+    type: ClusterIP
+    httpPort: 8080
+    sqlPort: 26257
+  
+  env:
+    COCKROACH_DATABASE: "defaultdb"
+    COCKROACH_USER: "root"
+    COCKROACH_PASSWORD: ""
+  
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+  
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    existingClaim: ""
+  
+  init:
+    enabled: true
+
+labels:
+  app: cockroachdb

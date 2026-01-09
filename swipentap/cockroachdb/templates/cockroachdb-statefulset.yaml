@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "cockroachdb.fullname" . }}
+  namespace: {{ include "cockroachdb.namespace" . }}
+  labels:
+    {{- include "cockroachdb.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  serviceName: {{ include "cockroachdb.fullname" . }}
+  replicas: {{ .Values.cockroachdb.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "cockroachdb.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        {{- include "cockroachdb.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+      - name: cockroachdb
+        image: "{{ .Values.cockroachdb.image.repository }}:{{ .Values.cockroachdb.image.tag }}"
+        imagePullPolicy: {{ .Values.cockroachdb.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.cockroachdb.service.httpPort }}
+          name: http
+        - containerPort: {{ .Values.cockroachdb.service.sqlPort }}
+          name: sql
+        command:
+        - /bin/bash
+        - -ecx
+        - |
+          set -e
+          JOIN_LIST=""
+          for i in $(seq 0 $(({{ .Values.cockroachdb.replicaCount }} - 1))); do
+            if [ -n "$JOIN_LIST" ]; then
+              JOIN_LIST="$JOIN_LIST,"
+            fi
+            JOIN_LIST="$JOIN_LIST{{ include "cockroachdb.fullname" . }}-$i.{{ include "cockroachdb.fullname" . }}:{{ .Values.cockroachdb.service.sqlPort }}"
+          done
+          /cockroach/cockroach start \
+            --insecure \
+            --http-addr=0.0.0.0:{{ .Values.cockroachdb.service.httpPort }} \
+            --listen-addr=0.0.0.0:{{ .Values.cockroachdb.service.sqlPort }} \
+            --advertise-addr=$(hostname -f):{{ .Values.cockroachdb.service.sqlPort }} \
+            --join=$JOIN_LIST \
+            --cache=.25 \
+            --max-sql-memory=.25
+        env:
+        {{- range $key, $value := .Values.cockroachdb.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.cockroachdb.resources | nindent 10 }}
+        volumeMounts:
+        - name: datadir
+          mountPath: /cockroach/cockroach-data
+        livenessProbe:
+          httpGet:
+            path: /health?ready=1
+            port: {{ .Values.cockroachdb.service.httpPort }}
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health?ready=1
+            port: {{ .Values.cockroachdb.service.httpPort }}
+          initialDelaySeconds: 10
+          periodSeconds: 5
+  {{- if .Values.cockroachdb.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes:
+        - {{ .Values.cockroachdb.persistence.accessMode }}
+      {{- if .Values.cockroachdb.persistence.storageClass }}
+      storageClassName: {{ .Values.cockroachdb.persistence.storageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.cockroachdb.persistence.size }}
+  {{- end }}

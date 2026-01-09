@@ -1,0 +1,12 @@
+apiVersion: v2
+name: cockroachdb
+description: A Helm chart for CockroachDB - Distributed SQL database
+type: application
+version: 1.0.0
+appVersion: "v23.2.0"
+keywords:
+  - database
+  - sql
+  - distributed
+  - cockroachdb
+home: https://www.cockroachlabs.com/
