@@ -3,6 +3,7 @@ namespace:
   create: true
 
 postgresql:
+  enabled: true
   image:
     repository: postgres
     tag: "15"

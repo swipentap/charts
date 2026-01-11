@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "sins.fullname" . }}-postgresql-data
-  namespace: {{ include "sins.namespace" . }}
+  name: {{ include "certa.fullname" . }}-postgresql-data
+  namespace: {{ include "certa.namespace" . }}
   labels:
-    {{- include "sins.labels" . | nindent 4 }}
+    {{- include "certa.labels" . | nindent 4 }}
     app.kubernetes.io/component: postgresql
 spec:
   accessModes:

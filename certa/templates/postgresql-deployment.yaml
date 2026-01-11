@@ -2,21 +2,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "sins.fullname" . }}-postgresql
-  namespace: {{ include "sins.namespace" . }}
+  name: {{ include "certa.fullname" . }}-postgresql
+  namespace: {{ include "certa.namespace" . }}
   labels:
-    {{- include "sins.labels" . | nindent 4 }}
+    {{- include "certa.labels" . | nindent 4 }}
     app.kubernetes.io/component: postgresql
 spec:
   replicas: {{ .Values.postgresql.replicaCount }}
   selector:
     matchLabels:
-      {{- include "sins.selectorLabels" . | nindent 6 }}
+      {{- include "certa.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: postgresql
   template:
     metadata:
       labels:
-        {{- include "sins.selectorLabels" . | nindent 8 }}
+        {{- include "certa.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: postgresql
     spec:
       containers:
@@ -62,7 +62,7 @@ spec:
           claimName: {{ .Values.postgresql.persistence.existingClaim }}
       {{- else }}
         persistentVolumeClaim:
-          claimName: {{ include "sins.fullname" . }}-postgresql-data
+          claimName: {{ include "certa.fullname" . }}-postgresql-data
       {{- end }}
       {{- else }}
         emptyDir: {}
