@@ -32,10 +32,18 @@ spec:
         - containerPort: 80
           name: http
         env:
+        {{- if .Values.postgresql.enabled }}
         - name: ConnectionStrings__DefaultConnection
           value: "Host={{ include "sins.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }};Database={{ .Values.postgresql.env.POSTGRES_DB }};Username={{ .Values.postgresql.env.POSTGRES_USER }};Password={{ .Values.postgresql.env.POSTGRES_PASSWORD }}"
+        {{- end }}
         - name: ASPNETCORE_URLS
           value: {{ .Values.sins.env.ASPNETCORE_URLS | quote }}
+        {{- range $key, $value := .Values.sins.env }}
+        {{- if ne $key "ASPNETCORE_URLS" }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
         resources:
           {{- toYaml .Values.sins.resources | nindent 10 }}
         livenessProbe:
