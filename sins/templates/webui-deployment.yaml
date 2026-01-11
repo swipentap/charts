@@ -31,6 +31,8 @@ spec:
         - name: ConnectionStrings__DefaultConnection
           value: "Host={{ include "sins.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }};Database={{ .Values.postgresql.env.POSTGRES_DB }};Username={{ .Values.postgresql.env.POSTGRES_USER }};Password={{ .Values.postgresql.env.POSTGRES_PASSWORD }}"
         {{- end }}
+        - name: ASPNETCORE_URLS
+          value: {{ .Values.sins.env.ASPNETCORE_URLS | default "http://0.0.0.0:80" | quote }}
         {{- range $key, $value := .Values.webui.env }}
         - name: {{ $key }}
           value: {{ $value | quote }}
