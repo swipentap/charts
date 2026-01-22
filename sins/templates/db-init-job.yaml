@@ -1,0 +1,64 @@
+{{- if not .Values.postgresql.enabled }}
+{{- if .Values.webui.dbInit.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "sins.fullname" . }}-db-init
+  namespace: {{ include "sins.namespace" . }}
+  labels:
+    {{- include "sins.labels" . | nindent 4 }}
+    app.kubernetes.io/component: db-init
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "sins.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: db-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: db-init
+        image: postgres:15-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Initializing database for SiNS..."
+          
+          # Parse connection string
+          DB_HOST="{{ .Values.webui.dbInit.dbHost }}"
+          DB_PORT="{{ .Values.webui.dbInit.dbPort }}"
+          ADMIN_USER="{{ .Values.webui.dbInit.adminUser }}"
+          ADMIN_PASSWORD="{{ .Values.webui.dbInit.adminPassword }}"
+          APP_DATABASE="{{ .Values.webui.dbInit.appDatabase }}"
+          
+          # Wait for database to be ready
+          echo "Waiting for database to be ready..."
+          until PGPASSWORD="$ADMIN_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$ADMIN_USER" -d postgres -c '\q' 2>/dev/null; do
+            echo "Database is not ready yet. Waiting..."
+            sleep 2
+          done
+          echo "Database is ready!"
+          
+          # Create database if it doesn't exist
+          echo "Creating database $APP_DATABASE if it doesn't exist..."
+          PGPASSWORD="$ADMIN_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$ADMIN_USER" -d postgres <<EOF
+          SELECT 'CREATE DATABASE $APP_DATABASE'
+          WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$APP_DATABASE')\gexec
+          EOF
+          
+          echo "Database initialization completed successfully!"
+        env:
+        - name: PGPASSWORD
+          value: {{ .Values.webui.dbInit.adminPassword | quote }}
+      {{- if .Values.webui.dbInit.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.webui.dbInit.imagePullSecrets | nindent 8 }}
+      {{- end }}
+{{- end }}
+{{- end }}

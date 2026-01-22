@@ -1,0 +1,87 @@
+{{- if not .Values.postgresql.enabled }}
+{{- if .Values.certa.dbInit.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "certa.fullname" . }}-db-init
+  namespace: {{ include "certa.namespace" . }}
+  labels:
+    {{- include "certa.labels" . | nindent 4 }}
+    app.kubernetes.io/component: db-init
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "certa.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: db-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: db-init
+        image: postgres:15-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Initializing database for CertA..."
+          
+          # Parse connection string
+          DB_HOST="{{ .Values.certa.dbInit.dbHost }}"
+          DB_PORT="{{ .Values.certa.dbInit.dbPort }}"
+          ADMIN_USER="{{ .Values.certa.dbInit.adminUser }}"
+          ADMIN_PASSWORD="{{ .Values.certa.dbInit.adminPassword }}"
+          APP_USER="{{ .Values.certa.dbInit.appUser }}"
+          APP_PASSWORD="{{ .Values.certa.dbInit.appPassword }}"
+          APP_DATABASE="{{ .Values.certa.dbInit.appDatabase }}"
+          
+          # Wait for database to be ready
+          echo "Waiting for database to be ready..."
+          until PGPASSWORD="$ADMIN_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$ADMIN_USER" -d postgres -c '\q' 2>/dev/null; do
+            echo "Database is not ready yet. Waiting..."
+            sleep 2
+          done
+          echo "Database is ready!"
+          
+          # Create user if it doesn't exist
+          echo "Creating user $APP_USER if it doesn't exist..."
+          PGPASSWORD="$ADMIN_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$ADMIN_USER" -d postgres <<EOF
+          DO \$\$
+          BEGIN
+            IF NOT EXISTS (SELECT FROM pg_catalog.pg_user WHERE usename = '$APP_USER') THEN
+              CREATE USER $APP_USER WITH PASSWORD '$APP_PASSWORD';
+              RAISE NOTICE 'User $APP_USER created';
+            ELSE
+              RAISE NOTICE 'User $APP_USER already exists';
+            END IF;
+          END
+          \$\$;
+          EOF
+          
+          # Create database if it doesn't exist
+          echo "Creating database $APP_DATABASE if it doesn't exist..."
+          PGPASSWORD="$ADMIN_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$ADMIN_USER" -d postgres <<EOF
+          SELECT 'CREATE DATABASE $APP_DATABASE OWNER $APP_USER'
+          WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$APP_DATABASE')\gexec
+          EOF
+          
+          # Grant privileges
+          echo "Granting privileges..."
+          PGPASSWORD="$ADMIN_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$ADMIN_USER" -d postgres <<EOF
+          GRANT ALL PRIVILEGES ON DATABASE $APP_DATABASE TO $APP_USER;
+          EOF
+          
+          echo "Database initialization completed successfully!"
+        env:
+        - name: PGPASSWORD
+          value: {{ .Values.certa.dbInit.adminPassword | quote }}
+      {{- if .Values.certa.dbInit.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.certa.dbInit.imagePullSecrets | nindent 8 }}
+      {{- end }}
+{{- end }}
+{{- end }}

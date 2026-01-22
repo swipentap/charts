@@ -106,6 +106,14 @@ webui:
     limits:
       memory: "256Mi"
       cpu: "200m"
+  
+  dbInit:
+    enabled: false
+    dbHost: yb-tservers.yugabytedb
+    dbPort: "5433"
+    adminUser: yugabyte
+    adminPassword: yugabyte
+    appDatabase: dns_server
 
 labels:
   app: sins

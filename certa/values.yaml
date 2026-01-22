@@ -73,6 +73,16 @@ certa:
     limits:
       memory: "512Mi"
       cpu: "500m"
+  
+  dbInit:
+    enabled: false
+    dbHost: yb-tservers.yugabytedb
+    dbPort: "5433"
+    adminUser: yugabyte
+    adminPassword: yugabyte
+    appUser: certa
+    appPassword: certa123
+    appDatabase: certa
 
 labels:
   app: certa
