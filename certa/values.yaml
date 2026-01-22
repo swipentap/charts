@@ -48,6 +48,18 @@ certa:
     port: 8080
     nodePort: 30082
   
+  ingress:
+    enabled: false
+    className: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    hosts:
+      - host: certa.dev.net
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+  
   env:
     ASPNETCORE_ENVIRONMENT: Production
     ASPNETCORE_URLS: "http://0.0.0.0:8080"

@@ -87,6 +87,18 @@ webui:
     port: 80
     nodePort: 30080
   
+  ingress:
+    enabled: false
+    className: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    hosts:
+      - host: ns.dev.net
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+  
   resources:
     requests:
       memory: "128Mi"

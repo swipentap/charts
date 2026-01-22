@@ -1,0 +1,42 @@
+{{- if .Values.certa.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "certa.fullname" . }}
+  namespace: {{ include "certa.namespace" . }}
+  labels:
+    {{- include "certa.labels" . | nindent 4 }}
+  {{- with .Values.certa.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.certa.ingress.className }}
+  ingressClassName: {{ .Values.certa.ingress.className }}
+  {{- end }}
+  {{- if .Values.certa.ingress.tls }}
+  tls:
+    {{- range .Values.certa.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.certa.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "certa.fullname" $ }}
+                port:
+                  number: {{ $.Values.certa.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}

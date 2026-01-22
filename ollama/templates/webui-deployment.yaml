@@ -1,0 +1,54 @@
+{{- if .Values.webui.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ollama.fullname" . }}-webui
+  namespace: {{ include "ollama.namespace" . }}
+  labels:
+    {{- include "ollama.labels" . | nindent 4 }}
+    app.kubernetes.io/component: webui
+spec:
+  replicas: {{ .Values.webui.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "ollama.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: webui
+  template:
+    metadata:
+      labels:
+        {{- include "ollama.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: webui
+    spec:
+      containers:
+      - name: webui
+        image: "{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
+        imagePullPolicy: {{ .Values.webui.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.webui.service.port }}
+          name: http
+        env:
+        - name: OLLAMA_BASE_URL
+          value: {{ if .Values.webui.env.OLLAMA_BASE_URL }}{{ .Values.webui.env.OLLAMA_BASE_URL | quote }}{{ else }}http://{{ include "ollama.fullname" . }}:{{ .Values.ollama.service.port }}{{ end }}
+        resources:
+          {{- toYaml .Values.webui.resources | nindent 10 }}
+        volumeMounts:
+        {{- if .Values.webui.persistence.enabled }}
+        - name: webui-data
+          mountPath: /app/backend/data
+        {{- end }}
+      volumes:
+      {{- if .Values.webui.persistence.enabled }}
+      {{- if .Values.webui.persistence.existingClaim }}
+      - name: webui-data
+        persistentVolumeClaim:
+          claimName: {{ .Values.webui.persistence.existingClaim }}
+      {{- else }}
+      - name: webui-data
+        persistentVolumeClaim:
+          claimName: {{ include "ollama.fullname" . }}-webui-data
+      {{- end }}
+      {{- else }}
+      - name: webui-data
+        emptyDir: {}
+      {{- end }}
+{{- end }}

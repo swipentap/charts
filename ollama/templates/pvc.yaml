@@ -1,0 +1,22 @@
+{{- if and .Values.ollama.persistence.enabled (not .Values.ollama.persistence.existingClaim) }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "ollama.fullname" . }}-data
+  namespace: {{ include "ollama.namespace" . }}
+  labels:
+    {{- include "ollama.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.ollama.persistence.accessMode }}
+  {{- if .Values.ollama.persistence.storageClass }}
+  {{- if (eq "-" .Values.ollama.persistence.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: {{ .Values.ollama.persistence.storageClass }}
+  {{- end }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.ollama.persistence.size }}
+{{- end }}
