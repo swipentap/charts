@@ -17,3 +17,4 @@ spec:
     {{- end }}
   selector:
     {{- include "ollama.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: server
