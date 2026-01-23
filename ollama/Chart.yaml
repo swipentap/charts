@@ -3,4 +3,4 @@ appVersion: latest
 description: A Helm chart for Ollama LLM server
 name: ollama
 type: application
-version: 0.1.2
+version: 0.1.3
