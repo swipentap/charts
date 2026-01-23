@@ -3,7 +3,7 @@ entries:
   certa:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-01-23T01:01:03.212588+02:00"
+    created: "2026-01-23T09:03:12.619495+02:00"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: 24a3ff800e21ab15746a81a8cfd21271c491736006bb5120cbfb73384310457d
@@ -21,7 +21,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-01-23T01:01:03.223464+02:00"
+    created: "2026-01-23T09:03:12.630375+02:00"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: 7c047400f88c5523c930d5baa32738bbaa56e58d46b0b45ab0aaaacf9c49115b
@@ -39,7 +39,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-01-23T01:01:03.210688+02:00"
+    created: "2026-01-23T09:03:12.616957+02:00"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: 57379fb918c396fb17a29faf887fd7e8928ab7af3fb03eb8633d3464760ea6b4
@@ -57,7 +57,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-01-23T01:01:03.208398+02:00"
+    created: "2026-01-23T09:03:12.616372+02:00"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: 35cd26244e7b457107e7044adbb90dc874cf3b82cc960ad098664eaca0f7bc0d
@@ -76,7 +76,7 @@ entries:
   cockroachdb:
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.216935+02:00"
+    created: "2026-01-23T09:03:12.621745+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: a5c58db2b43e1e09d613cea91b51f51e797f233c9784eb38f1df36bcc56d8716
     home: https://www.cockroachlabs.com/
@@ -92,7 +92,7 @@ entries:
     version: 1.0.11
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.216571+02:00"
+    created: "2026-01-23T09:03:12.621247+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: dc972912676eb5fb812de23fd70b13210bbd4802434592b75f7bf7fcf49c0f31
     home: https://www.cockroachlabs.com/
@@ -108,7 +108,7 @@ entries:
     version: 1.0.10
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.21858+02:00"
+    created: "2026-01-23T09:03:12.623739+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: aef832c79440d69be8ca765b97f5c07a4774f9a08e8640b00d946ca00628f7d7
     home: https://www.cockroachlabs.com/
@@ -124,7 +124,7 @@ entries:
     version: 1.0.9
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.218298+02:00"
+    created: "2026-01-23T09:03:12.623421+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: 3fa3cfc1afc57ebacbd32e24155fc04a9b82d852eb91fb2acd8920e094658c55
     home: https://www.cockroachlabs.com/
@@ -140,7 +140,7 @@ entries:
     version: 1.0.8
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.217977+02:00"
+    created: "2026-01-23T09:03:12.623097+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: 412797815ac3a255c347c236b097e557b0a4ad0a7f19924e63676f25af9980d7
     home: https://www.cockroachlabs.com/
@@ -156,7 +156,7 @@ entries:
     version: 1.0.7
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.217781+02:00"
+    created: "2026-01-23T09:03:12.622845+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: 3fc9413f3f1fc76d13f9781082390583d4543850f1a334813e43fdb27db67adb
     home: https://www.cockroachlabs.com/
@@ -172,7 +172,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.217582+02:00"
+    created: "2026-01-23T09:03:12.6226+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: 0d18aa0d308be674dcaade5f15b32a91bde77010c0b2431dfff90e535ee3f542
     home: https://www.cockroachlabs.com/
@@ -188,7 +188,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.217378+02:00"
+    created: "2026-01-23T09:03:12.622327+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: 0157560d86ce381815e3cce94af4025960a721bf3d329653060da1538e6bc479
     home: https://www.cockroachlabs.com/
@@ -204,7 +204,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.217162+02:00"
+    created: "2026-01-23T09:03:12.622019+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: c76d9d18720ad257f8d39a2115ed65d38f67c441c4eba57c8f4df24f6a7ff591
     home: https://www.cockroachlabs.com/
@@ -220,7 +220,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.213611+02:00"
+    created: "2026-01-23T09:03:12.620372+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: bcfe5dd90cc211e682b1d45c1ad6e56d600322a4770856be559c26f551ebed8f
     home: https://www.cockroachlabs.com/
@@ -236,7 +236,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: v23.2.0
-    created: "2026-01-23T01:01:03.213168+02:00"
+    created: "2026-01-23T09:03:12.619991+02:00"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: c7b75841cd5022e6a241783d90ecaf7c0e7bc0985ccfd42c430da324eb71cee3
     home: https://www.cockroachlabs.com/
@@ -253,7 +253,17 @@ entries:
   ollama:
   - apiVersion: v2
     appVersion: latest
-    created: "2026-01-23T01:01:03.223862+02:00"
+    created: "2026-01-23T09:03:12.62458+02:00"
+    description: A Helm chart for Ollama LLM server
+    digest: 75bafd8b0f9cc62b9ea9e6b64819cc00bea4e02007118bf3491482d2806bda88
+    name: ollama
+    type: application
+    urls:
+    - ollama-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: latest
+    created: "2026-01-23T09:03:12.63068+02:00"
     description: A Helm chart for Ollama LLM server
     digest: 2f0eb508b81598bde6052405c65d0f8c4078a6f0a48fe7e06a7fcecbf9baa844
     name: ollama
@@ -263,7 +273,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: latest
-    created: "2026-01-23T01:01:03.219026+02:00"
+    created: "2026-01-23T09:03:12.6242+02:00"
     description: A Helm chart for Ollama LLM server
     digest: 22688c9bac4c0fa396cc1d0c6e0690e5a1cf576f0c7f0899657dadf52e5f67a2
     name: ollama
@@ -274,7 +284,7 @@ entries:
   sins:
   - apiVersion: v2
     appVersion: 1.0.70
-    created: "2026-01-23T01:01:03.223047+02:00"
+    created: "2026-01-23T09:03:12.629779+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 5c399399cfdde3384e5333963ae8b28583986fedae07dd91351f6634a59b1fb0
@@ -291,7 +301,7 @@ entries:
     version: 1.0.75
   - apiVersion: v2
     appVersion: 1.0.70
-    created: "2026-01-23T01:01:03.231498+02:00"
+    created: "2026-01-23T09:03:12.636689+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 5ac38a979d35e5e3970189c805fc22f4cc6c97dbd8caf833407af5b2ba814ee6
@@ -308,7 +318,7 @@ entries:
     version: 1.0.74
   - apiVersion: v2
     appVersion: 1.0.70
-    created: "2026-01-23T01:01:03.228538+02:00"
+    created: "2026-01-23T09:03:12.635092+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: fb760a36cee11126f56a538efdb98fc83eb7b6c49dffcc3e1f66e9d17e34b070
@@ -325,7 +335,7 @@ entries:
     version: 1.0.73
   - apiVersion: v2
     appVersion: 1.0.70
-    created: "2026-01-23T01:01:03.226683+02:00"
+    created: "2026-01-23T09:03:12.633641+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 9db10394d7f25999d7e3f70cb5e806a34c8cb8af6d0731478a123321476110af
@@ -342,7 +352,7 @@ entries:
     version: 1.0.72
   - apiVersion: v2
     appVersion: 1.0.70
-    created: "2026-01-23T01:01:03.22495+02:00"
+    created: "2026-01-23T09:03:12.631793+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 3a51b5478d7227ea0e32a4b7a66e16974c0aa561bd724de6728e288ce5214ebe
@@ -359,7 +369,7 @@ entries:
     version: 1.0.71
   - apiVersion: v2
     appVersion: 1.0.70
-    created: "2026-01-23T01:01:03.22049+02:00"
+    created: "2026-01-23T09:03:12.626109+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: ad456f867d73f4d8bfc033feac951103265988521ce64ed1d2cd15c2516ecb39
@@ -376,7 +386,7 @@ entries:
     version: 1.0.70
   - apiVersion: v2
     appVersion: 1.0.70
-    created: "2026-01-23T01:01:03.224274+02:00"
+    created: "2026-01-23T09:03:12.63122+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 3c3b48df52310c47698e676b9cf3f1c8752e4583984d216043acc2c45ba93f14
@@ -393,7 +403,7 @@ entries:
     version: 1.0.70
   - apiVersion: v2
     appVersion: 1.0.32
-    created: "2026-01-23T01:01:03.219895+02:00"
+    created: "2026-01-23T09:03:12.625407+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 13e0519c38d8a39d71be4581d80bd42274663f8367c361bb8f2c41362f37c96e
@@ -410,7 +420,7 @@ entries:
     version: 1.0.32
   - apiVersion: v2
     appVersion: 1.0.31
-    created: "2026-01-23T01:01:03.219478+02:00"
+    created: "2026-01-23T09:03:12.624972+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 545e02d061edcaaa6b0809e4f710f8cebfd1bc6ea0fa3b3f112ec0a7e140d2cd
@@ -425,4 +435,4 @@ entries:
     urls:
     - sins-1.0.31.tgz
     version: 1.0.31
-generated: "2026-01-23T01:01:03.207182+02:00"
+generated: "2026-01-23T09:03:12.615206+02:00"

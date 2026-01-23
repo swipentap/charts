@@ -10,10 +10,12 @@ spec:
   selector:
     matchLabels:
       {{- include "ollama.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: server
   template:
     metadata:
       labels:
         {{- include "ollama.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: server
     spec:
       containers:
       - name: ollama
