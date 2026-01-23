@@ -3,9 +3,9 @@ entries:
   ollama:
   - apiVersion: v2
     appVersion: latest
-    created: "2026-01-23T11:39:16.101418+02:00"
+    created: "2026-01-23T12:08:39.166807+02:00"
     description: A Helm chart for Ollama LLM server
-    digest: d3628a78ca55382fa292c6087bb7c67ad24589e0a7e58daf4f5f6a47b0969af1
+    digest: 70d8385f286728fe692805d4c5d8185670771900278832e803f79c7abed07794
     name: ollama
     type: application
     urls:
@@ -13,7 +13,7 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: latest
-    created: "2026-01-23T11:39:16.100462+02:00"
+    created: "2026-01-23T12:08:39.16627+02:00"
     description: A Helm chart for Ollama LLM server
     digest: 2f0eb508b81598bde6052405c65d0f8c4078a6f0a48fe7e06a7fcecbf9baa844
     name: ollama
@@ -21,4 +21,4 @@ entries:
     urls:
     - https://swipentap.github.io/charts/ollama-0.1.1.tgz
     version: 0.1.1
-generated: "2026-01-23T11:39:16.099546+02:00"
+generated: "2026-01-23T12:08:39.165699+02:00"
