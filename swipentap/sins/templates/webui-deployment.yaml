@@ -27,8 +27,13 @@ spec:
         - containerPort: {{ .Values.webui.service.port }}
           name: http
         env:
+        {{- if .Values.webui.env.ConnectionStrings__DefaultConnection }}
+        - name: ConnectionStrings__DefaultConnection
+          value: {{ .Values.webui.env.ConnectionStrings__DefaultConnection | quote }}
+        {{- else }}
         - name: ConnectionStrings__DefaultConnection
           value: "Host={{ include "sins.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }};Database={{ .Values.postgresql.env.POSTGRES_DB }};Username={{ .Values.postgresql.env.POSTGRES_USER }};Password={{ .Values.postgresql.env.POSTGRES_PASSWORD }}"
+        {{- end }}
         - name: ASPNETCORE_URLS
           value: {{ .Values.sins.env.ASPNETCORE_URLS | quote }}
         resources:
