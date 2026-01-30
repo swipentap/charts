@@ -86,6 +86,13 @@ webui:
     port: 80
     nodePort: 30080
   
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts: []
+    tls: []
+  
   resources:
     requests:
       memory: "128Mi"
