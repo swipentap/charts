@@ -51,6 +51,7 @@ sins:
       dnsTcp:
         port: 5353
         targetPort: 53
+        nodePort: 31758
       http:
         port: 8080
         targetPort: 80

@@ -15,6 +15,9 @@ spec:
     name: dns-udp
   - port: {{ .Values.sins.service.ports.dnsTcp.port }}
     targetPort: {{ .Values.sins.service.ports.dnsTcp.targetPort }}
+    {{- if .Values.sins.service.ports.dnsTcp.nodePort }}
+    nodePort: {{ .Values.sins.service.ports.dnsTcp.nodePort }}
+    {{- end }}
     protocol: TCP
     name: dns-tcp
   - port: {{ .Values.sins.service.ports.http.port }}
