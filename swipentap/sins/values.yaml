@@ -43,11 +43,12 @@ sins:
   replicaCount: 1
   
   service:
-    type: LoadBalancer
+    type: NodePort
     ports:
       dnsUdp:
         port: 5353
         targetPort: 53
+        nodePort: 31757
       dnsTcp:
         port: 5353
         targetPort: 53
