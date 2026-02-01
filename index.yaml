@@ -3,6 +3,24 @@ entries:
   certa:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-02-01T12:10:13.955589389Z"
+    description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
+      Authority for local use
+    digest: 921dc96c8210d68a210630d8ed77ac4fd90bb1b0a3161a40f4c9380b8ef05c84
+    home: https://github.com/swipentap/CertA
+    keywords:
+    - certificate
+    - ca
+    - certificate-authority
+    - postgresql
+    - aspnetcore
+    name: certa
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/certa-1.0.4/certa-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-01-25T01:03:34.365684+02:00"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
@@ -253,6 +271,16 @@ entries:
   ollama:
   - apiVersion: v2
     appVersion: latest
+    created: "2026-02-01T12:10:14.096466523Z"
+    description: A Helm chart for Ollama LLM server
+    digest: 2438a13b0210ef23d47a58eda8419cd63943b1f02dcf75cb2d6434458778749b
+    name: ollama
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/ollama-0.1.5/ollama-0.1.5.tgz
+    version: 0.1.5
+  - apiVersion: v2
+    appVersion: latest
     created: "2026-01-25T01:03:34.37339+02:00"
     description: A Helm chart for Ollama LLM server
     digest: 396d21b0e68e58407c28d1c4466afc3425fe1c4f84c3a5cd63b7cb2a134708b5
@@ -312,6 +340,23 @@ entries:
     - ollama-0.1.0.tgz
     version: 0.1.0
   sins:
+  - apiVersion: v2
+    appVersion: 1.0.77
+    created: "2026-02-01T12:10:14.247552252Z"
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: f1d830805034f9780b0bfde82e4de4c40a3697dbe859361a16067944d7ad32e7
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/sins-1.0.83/sins-1.0.83.tgz
+    version: 1.0.83
   - apiVersion: v2
     appVersion: 1.0.77
     created: "2026-02-01T11:55:11.123518867Z"
@@ -567,4 +612,4 @@ entries:
     urls:
     - sins-1.0.31.tgz
     version: 1.0.31
-generated: "2026-02-01T11:55:11.123688407Z"
+generated: "2026-02-01T12:10:14.247733739Z"
