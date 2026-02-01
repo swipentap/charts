@@ -2,6 +2,10 @@ namespace:
   name: certa
   create: true
 
+# Domain configuration for ingress
+domain: "dev.net"  # Default domain, can be overridden (e.g., "prod.net", "test.net")
+subdomain: "certa"  # Subdomain for this service (e.g., "certa" -> "certa.dev.net")
+
 postgresql:
   image:
     repository: postgres
@@ -60,6 +64,13 @@ certa:
     limits:
       memory: "512Mi"
       cpu: "500m"
+  
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts: []
+    tls: []
 
 labels:
   app: certa

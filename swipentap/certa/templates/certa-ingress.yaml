@@ -1,24 +1,23 @@
-{{- if .Values.webui.enabled }}
-{{- if .Values.webui.ingress.enabled }}
+{{- if .Values.certa.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "sins.fullname" . }}-webui
-  namespace: {{ include "sins.namespace" . }}
+  name: {{ include "certa.fullname" . }}
+  namespace: {{ include "certa.namespace" . }}
   labels:
-    {{- include "sins.labels" . | nindent 4 }}
-    app.kubernetes.io/component: webui
-  {{- with .Values.webui.ingress.annotations }}
+    {{- include "certa.labels" . | nindent 4 }}
+    app.kubernetes.io/component: certa
+  {{- with .Values.certa.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if .Values.webui.ingress.className }}
-  ingressClassName: {{ .Values.webui.ingress.className }}
+  {{- if .Values.certa.ingress.className }}
+  ingressClassName: {{ .Values.certa.ingress.className }}
   {{- end }}
-  {{- if .Values.webui.ingress.tls }}
+  {{- if .Values.certa.ingress.tls }}
   tls:
-    {{- range .Values.webui.ingress.tls }}
+    {{- range .Values.certa.ingress.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
@@ -27,8 +26,8 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- if .Values.webui.ingress.hosts }}
-    {{- range .Values.webui.ingress.hosts }}
+    {{- if .Values.certa.ingress.hosts }}
+    {{- range .Values.certa.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -37,9 +36,9 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "sins.fullname" $ }}-webui
+                name: {{ include "certa.fullname" $ }}
                 port:
-                  number: {{ $.Values.webui.service.port }}
+                  number: {{ $.Values.certa.service.port }}
           {{- end }}
     {{- end }}
     {{- else if and .Values.subdomain .Values.domain }}
@@ -50,9 +49,8 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "sins.fullname" . }}-webui
+                name: {{ include "certa.fullname" . }}
                 port:
-                  number: {{ .Values.webui.service.port }}
+                  number: {{ .Values.certa.service.port }}
     {{- end }}
-{{- end }}
 {{- end }}

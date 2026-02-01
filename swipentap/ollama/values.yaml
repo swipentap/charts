@@ -2,6 +2,10 @@ namespace:
   name: ollama
   create: true
 
+# Domain configuration for ingress
+domain: "dev.net"  # Default domain, can be overridden (e.g., "prod.net", "test.net")
+subdomain: "ollama"  # Subdomain for this service (e.g., "ollama" -> "ollama.dev.net")
+
 ollama:
   image:
     repository: ollama/ollama
@@ -68,6 +72,13 @@ webui:
     storageClass: ""
     accessMode: ReadWriteOnce
     existingClaim: ""
+  
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts: []
+    tls: []
 
 labels:
   app: ollama

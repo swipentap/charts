@@ -3,10 +3,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "sins.fullname" . }}-webui
-  namespace: {{ include "sins.namespace" . }}
+  name: {{ include "ollama.fullname" . }}-webui
+  namespace: {{ include "ollama.namespace" . }}
   labels:
-    {{- include "sins.labels" . | nindent 4 }}
+    {{- include "ollama.labels" . | nindent 4 }}
     app.kubernetes.io/component: webui
   {{- with .Values.webui.ingress.annotations }}
   annotations:
@@ -37,7 +37,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "sins.fullname" $ }}-webui
+                name: {{ include "ollama.fullname" $ }}-webui
                 port:
                   number: {{ $.Values.webui.service.port }}
           {{- end }}
@@ -50,7 +50,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ include "sins.fullname" . }}-webui
+                name: {{ include "ollama.fullname" . }}-webui
                 port:
                   number: {{ .Values.webui.service.port }}
     {{- end }}
