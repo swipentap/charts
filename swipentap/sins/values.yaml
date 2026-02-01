@@ -73,6 +73,11 @@ sins:
     upstreamServers:
       - "8.8.8.8"
       - "1.1.1.1"
+  
+  waitForPostgresql:
+    enabled: false
+    host: ""
+    port: 5432
 
 webui:
   enabled: true
@@ -102,6 +107,11 @@ webui:
     limits:
       memory: "256Mi"
       cpu: "200m"
+  
+  waitForPostgresql:
+    enabled: false
+    host: ""
+    port: 5432
 
 labels:
   app: sins

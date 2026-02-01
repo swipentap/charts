@@ -18,6 +18,25 @@ spec:
         {{- include "sins.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: dns-server
     spec:
+      {{- if or .Values.sins.waitForPostgresql.enabled (and (not .Values.sins.env.ConnectionStrings__DefaultConnection) .Values.postgresql.enabled) }}
+      initContainers:
+      - name: wait-for-postgresql
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          echo "Waiting for PostgreSQL to be ready..."
+          {{- if .Values.sins.waitForPostgresql.enabled }}
+          until nc -z {{ .Values.sins.waitForPostgresql.host }} {{ .Values.sins.waitForPostgresql.port }}; do
+          {{- else }}
+          until nc -z {{ include "sins.fullname" . }}-postgresql {{ .Values.postgresql.service.port }}; do
+          {{- end }}
+            echo "PostgreSQL is not ready yet. Waiting..."
+            sleep 2
+          done
+          echo "PostgreSQL is ready!"
+      {{- end }}
       containers:
       - name: sins
         image: "{{ .Values.sins.image.repository }}:{{ .Values.sins.image.tag }}"

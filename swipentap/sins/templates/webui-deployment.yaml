@@ -19,6 +19,25 @@ spec:
         {{- include "sins.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: webui
     spec:
+      {{- if or .Values.webui.waitForPostgresql.enabled (and (not .Values.webui.env.ConnectionStrings__DefaultConnection) .Values.postgresql.enabled) }}
+      initContainers:
+      - name: wait-for-postgresql
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          echo "Waiting for PostgreSQL to be ready..."
+          {{- if .Values.webui.waitForPostgresql.enabled }}
+          until nc -z {{ .Values.webui.waitForPostgresql.host }} {{ .Values.webui.waitForPostgresql.port }}; do
+          {{- else }}
+          until nc -z {{ include "sins.fullname" . }}-postgresql {{ .Values.postgresql.service.port }}; do
+          {{- end }}
+            echo "PostgreSQL is not ready yet. Waiting..."
+            sleep 2
+          done
+          echo "PostgreSQL is ready!"
+      {{- end }}
       containers:
       - name: webui
         image: "{{ .Values.webui.image.repository }}:{{ .Values.webui.image.tag }}"
