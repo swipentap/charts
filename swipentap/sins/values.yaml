@@ -41,7 +41,7 @@ postgresql:
 sins:
   image:
     repository: judyandiealvarez/sins
-    tag: "1.0.77"
+    tag: "1.0.78"
     pullPolicy: IfNotPresent
   
   replicaCount: 1
@@ -87,7 +87,7 @@ webui:
   enabled: true
   image:
     repository: judyandiealvarez/sins
-    tag: "1.0.77"
+    tag: "1.0.78"
     pullPolicy: IfNotPresent
   
   replicaCount: 1
