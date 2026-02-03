@@ -31,6 +31,76 @@ spec:
             sleep 2
           done
           echo "PostgreSQL is ready!"
+      {{- if .Values.certa.dbInit.enabled }}
+      - name: db-init
+        image: postgres:15-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Initializing database and role for CertA..."
+          
+          CERTA_USER="{{ .Values.certa.dbInit.appUser }}"
+          CERTA_PASSWORD="{{ .Values.certa.dbInit.appPassword }}"
+          DB_NAME="{{ .Values.certa.dbInit.appDatabase }}"
+          DB_HOST="{{ .Values.certa.dbInit.dbHost }}"
+          DB_PORT="{{ .Values.certa.dbInit.dbPort }}"
+          POSTGRES_PASSWORD="{{ .Values.certa.dbInit.adminPassword }}"
+          
+          echo "Waiting for PostgreSQL to be ready..."
+          MAX_WAIT=300
+          ELAPSED=0
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            if PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.certa.dbInit.adminUser }} -d postgres -c '\q' 2>/dev/null; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... (${ELAPSED}s/${MAX_WAIT}s)"
+            sleep 2
+            ELAPSED=$((ELAPSED + 2))
+          done
+          
+          if [ $ELAPSED -ge $MAX_WAIT ]; then
+            echo "ERROR: Timeout waiting for PostgreSQL"
+            exit 1
+          fi
+          
+          echo "Creating role $CERTA_USER if it doesn't exist..."
+          if ! PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.certa.dbInit.adminUser }} -d postgres -c "SELECT 1 FROM pg_roles WHERE rolname = '$CERTA_USER';" 2>/dev/null | grep -q 1; then
+            echo "Role does not exist, creating it..."
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.certa.dbInit.adminUser }} -d postgres -c "CREATE ROLE $CERTA_USER WITH LOGIN PASSWORD '$CERTA_PASSWORD' CREATEDB;" 2>&1 || {
+              echo "ERROR: Failed to create role"
+              exit 1
+            }
+          else
+            echo "Role exists, updating password..."
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.certa.dbInit.adminUser }} -d postgres -c "ALTER ROLE $CERTA_USER WITH PASSWORD '$CERTA_PASSWORD' CREATEDB;" 2>&1 || {
+              echo "ERROR: Failed to update role"
+              exit 1
+            }
+          fi
+          
+          echo "Creating database $DB_NAME if it doesn't exist..."
+          if ! PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.certa.dbInit.adminUser }} -d postgres -c "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME';" 2>/dev/null | grep -q 1; then
+            echo "Database does not exist, creating it..."
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.certa.dbInit.adminUser }} -d postgres -c "CREATE DATABASE $DB_NAME OWNER $CERTA_USER;" 2>&1 || {
+              echo "ERROR: Failed to create database"
+              exit 1
+            }
+          else
+            echo "Database already exists"
+          fi
+          
+          echo "Granting all privileges on database $DB_NAME to $CERTA_USER..."
+          PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.certa.dbInit.adminUser }} -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $CERTA_USER;" 2>&1 || {
+            echo "ERROR: Failed to grant privileges"
+            exit 1
+          }
+          
+          echo "Database initialization for CertA completed successfully!"
+      {{- end }}
       containers:
       - name: certa
         image: "{{ .Values.certa.image.repository }}:{{ .Values.certa.image.tag }}"

@@ -1,9 +1,63 @@
 apiVersion: v1
 entries:
+  certa:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-02-03T16:13:16.381771+02:00"
+    description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
+      Authority for local use
+    digest: 64534318cd0564eb18e15a887c12fed6147ec30d90116eaca42052a2eb720c96
+    home: https://github.com/swipentap/CertA
+    keywords:
+    - certificate
+    - ca
+    - certificate-authority
+    - postgresql
+    - aspnetcore
+    name: certa
+    type: application
+    urls:
+    - swipentap/certa-1.0.5.tgz
+    version: 1.0.5
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-02-03T16:13:16.38122+02:00"
+    description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
+      Authority for local use
+    digest: c47819cd0466426b8f752a06ca96bea216c45d477bf3ad8801f9b950df0b050e
+    home: https://github.com/swipentap/CertA
+    keywords:
+    - certificate
+    - ca
+    - certificate-authority
+    - postgresql
+    - aspnetcore
+    name: certa
+    type: application
+    urls:
+    - swipentap/certa-1.0.4.tgz
+    version: 1.0.4
   sins:
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-02T13:02:23.532712+02:00"
+    created: "2026-02-03T16:13:16.38308+02:00"
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: 64106dc1e22fbc4df6ea5b465b4e3a8868b199a8e4b6dc9a9770c0c318e9dbd5
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - swipentap/sins-1.0.85.tgz
+    version: 1.0.85
+  - apiVersion: v2
+    appVersion: 1.0.78
+    created: "2026-02-03T16:13:16.380685+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 65b4dbab23044683463296dd6fe0256993a9d833513475b3a0ff304d26b82d77
@@ -16,6 +70,23 @@ entries:
     name: sins
     type: application
     urls:
-    - https://swipentap.github.io/charts/sins-1.0.84.tgz
+    - sins-1.0.84.tgz
     version: 1.0.84
-generated: "2026-02-02T13:02:23.530267+02:00"
+  - apiVersion: v2
+    appVersion: 1.0.78
+    created: "2026-02-03T16:13:16.382498+02:00"
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: 1cdce01842649c555aee619a2e0ea521c262cfcf290bcfd1db0e8a63fc37cfcc
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - swipentap/sins-1.0.84.tgz
+    version: 1.0.84
+generated: "2026-02-03T16:13:16.379699+02:00"

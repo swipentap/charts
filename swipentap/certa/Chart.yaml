@@ -2,7 +2,7 @@ apiVersion: v2
 name: certa
 description: A Helm chart for CertA (Simple Certificate Authority) - Certificate Authority for local use
 type: application
-version: 1.0.4
+version: 1.0.5
 appVersion: "1.0.0"
 keywords:
   - certificate

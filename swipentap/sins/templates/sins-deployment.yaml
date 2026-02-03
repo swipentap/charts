@@ -18,8 +18,8 @@ spec:
         {{- include "sins.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: dns-server
     spec:
-      {{- if or .Values.sins.waitForPostgresql.enabled (and (not .Values.sins.env.ConnectionStrings__DefaultConnection) .Values.postgresql.enabled) }}
       initContainers:
+      {{- if or .Values.sins.waitForPostgresql.enabled (and (not .Values.sins.env.ConnectionStrings__DefaultConnection) .Values.postgresql.enabled) }}
       - name: wait-for-postgresql
         image: busybox:1.36
         command:
@@ -36,6 +36,76 @@ spec:
             sleep 2
           done
           echo "PostgreSQL is ready!"
+      {{- end }}
+      {{- if .Values.sins.dbInit.enabled }}
+      - name: db-init
+        image: postgres:15-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Initializing database and role for SiNS..."
+          
+          SINS_USER="{{ .Values.sins.dbInit.appUser | default "sins" }}"
+          SINS_PASSWORD="{{ .Values.sins.dbInit.appPassword | default "sins123" }}"
+          DB_NAME="{{ .Values.sins.dbInit.appDatabase | default "dns_server" }}"
+          DB_HOST="{{ .Values.sins.dbInit.dbHost }}"
+          DB_PORT="{{ .Values.sins.dbInit.dbPort }}"
+          POSTGRES_PASSWORD="{{ .Values.sins.dbInit.adminPassword }}"
+          
+          echo "Waiting for PostgreSQL to be ready..."
+          MAX_WAIT=300
+          ELAPSED=0
+          
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            if PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.sins.dbInit.adminUser }} -d postgres -c '\q' 2>/dev/null; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... (${ELAPSED}s/${MAX_WAIT}s)"
+            sleep 2
+            ELAPSED=$((ELAPSED + 2))
+          done
+          
+          if [ $ELAPSED -ge $MAX_WAIT ]; then
+            echo "ERROR: Timeout waiting for PostgreSQL"
+            exit 1
+          fi
+          
+          echo "Creating role $SINS_USER if it doesn't exist..."
+          if ! PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.sins.dbInit.adminUser }} -d postgres -c "SELECT 1 FROM pg_roles WHERE rolname = '$SINS_USER';" 2>/dev/null | grep -q 1; then
+            echo "Role does not exist, creating it..."
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.sins.dbInit.adminUser }} -d postgres -c "CREATE ROLE $SINS_USER WITH LOGIN PASSWORD '$SINS_PASSWORD' CREATEDB;" 2>&1 || {
+              echo "ERROR: Failed to create role"
+              exit 1
+            }
+          else
+            echo "Role exists, updating password..."
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.sins.dbInit.adminUser }} -d postgres -c "ALTER ROLE $SINS_USER WITH PASSWORD '$SINS_PASSWORD' CREATEDB;" 2>&1 || {
+              echo "ERROR: Failed to update role"
+              exit 1
+            }
+          fi
+          
+          echo "Creating database $DB_NAME if it doesn't exist..."
+          if ! PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.sins.dbInit.adminUser }} -d postgres -c "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME';" 2>/dev/null | grep -q 1; then
+            echo "Database does not exist, creating it..."
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.sins.dbInit.adminUser }} -d postgres -c "CREATE DATABASE $DB_NAME OWNER $SINS_USER;" 2>&1 || {
+              echo "ERROR: Failed to create database"
+              exit 1
+            }
+          else
+            echo "Database already exists"
+          fi
+          
+          echo "Granting all privileges on database $DB_NAME to $SINS_USER..."
+          PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U {{ .Values.sins.dbInit.adminUser }} -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $SINS_USER;" 2>&1 || {
+            echo "ERROR: Failed to grant privileges"
+            exit 1
+          }
+          
+          echo "Database initialization for SiNS completed successfully!"
       {{- end }}
       containers:
       - name: sins
