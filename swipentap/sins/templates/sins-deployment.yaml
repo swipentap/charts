@@ -37,7 +37,7 @@ spec:
           done
           echo "PostgreSQL is ready!"
       {{- end }}
-      {{- if and .Values.sins.dbInit (hasKey .Values.sins.dbInit "enabled") .Values.sins.dbInit.enabled }}
+      {{- if and (hasKey .Values.sins "dbInit") .Values.sins.dbInit (hasKey .Values.sins.dbInit "enabled") .Values.sins.dbInit.enabled }}
       - name: db-init
         image: postgres:15-alpine
         command:
