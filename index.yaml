@@ -3,6 +3,24 @@ entries:
   certa:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-02-03T14:14:23.332786634Z"
+    description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
+      Authority for local use
+    digest: 77480568fb4096787cfabf202059c296952af0b5ae708f9f9d6429ac2a01085a
+    home: https://github.com/swipentap/CertA
+    keywords:
+    - certificate
+    - ca
+    - certificate-authority
+    - postgresql
+    - aspnetcore
+    name: certa
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/certa-1.0.5/certa-1.0.5.tgz
+    version: 1.0.5
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-02-01T12:10:13.955589389Z"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
@@ -342,6 +360,23 @@ entries:
   sins:
   - apiVersion: v2
     appVersion: 1.0.78
+    created: "2026-02-03T14:14:23.604786607Z"
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: 975f76e3c5cef129cd0aec0891eb3f434fe3ab4d69d655254ca3ebf8b1df3a5a
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/sins-1.0.85/sins-1.0.85.tgz
+    version: 1.0.85
+  - apiVersion: v2
+    appVersion: 1.0.78
     created: "2026-02-02T11:02:38.758592007Z"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
@@ -629,4 +664,4 @@ entries:
     urls:
     - sins-1.0.31.tgz
     version: 1.0.31
-generated: "2026-02-02T11:02:38.758706139Z"
+generated: "2026-02-03T14:14:23.605035018Z"
