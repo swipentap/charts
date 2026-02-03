@@ -176,12 +176,17 @@ spec:
           for domain in "${DNS_RECORDS[@]}"; do
             echo "Processing $domain -> $HAPROXY_IP"
             
-            if PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "INSERT INTO $TABLE_NAME (Name, Type, Value, Ttl, CreatedAt, UpdatedAt) VALUES ('$domain', 'A', '$HAPROXY_IP', 300, NOW(), NOW()) ON CONFLICT (\"Name\", \"Type\") DO UPDATE SET Value = EXCLUDED.Value, Ttl = EXCLUDED.Ttl, UpdatedAt = NOW();" 2>/dev/null; then
+            # Use INSERT with ON CONFLICT to insert or update
+            if PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "INSERT INTO \"$TABLE_NAME\" (\"Name\", \"Type\", \"Value\", \"Ttl\", \"CreatedAt\", \"UpdatedAt\") VALUES ('$domain', 'A', '$HAPROXY_IP', 300, NOW(), NOW()) ON CONFLICT (\"Name\", \"Type\") DO UPDATE SET \"Value\" = EXCLUDED.\"Value\", \"Ttl\" = EXCLUDED.\"Ttl\", \"UpdatedAt\" = NOW();" >/dev/null 2>&1; then
               echo "  ✓ Added/Updated $domain"
-              continue
+            else
+              # Fallback to UPDATE if INSERT fails
+              if PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "UPDATE \"$TABLE_NAME\" SET \"Value\"='$HAPROXY_IP', \"UpdatedAt\"=NOW() WHERE \"Name\"='$domain' AND \"Type\"='A';" >/dev/null 2>&1; then
+                echo "  ✓ Updated $domain"
+              else
+                echo "  ✗ Could not add/update $domain"
+              fi
             fi
-            
-            PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "UPDATE $TABLE_NAME SET Value='$HAPROXY_IP' WHERE Name='$domain' AND Type='A';" 2>/dev/null && echo "  ✓ Updated $domain" || echo "  ✗ Could not update $domain"
           done
           
           echo "DNS records initialization completed!"

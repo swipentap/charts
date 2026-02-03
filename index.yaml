@@ -3,7 +3,7 @@ entries:
   certa:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-02-03T18:03:31.014637+02:00"
+    created: "2026-02-03T18:08:25.062775+02:00"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: 64534318cd0564eb18e15a887c12fed6147ec30d90116eaca42052a2eb720c96
@@ -21,7 +21,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-02-03T18:03:31.014087+02:00"
+    created: "2026-02-03T18:08:25.062265+02:00"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: c47819cd0466426b8f752a06ca96bea216c45d477bf3ad8801f9b950df0b050e
@@ -40,7 +40,24 @@ entries:
   sins:
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T18:03:31.013466+02:00"
+    created: "2026-02-03T18:08:25.061754+02:00"
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: 772a93d2fdf12d2dcf76edda2319579c722a239967e2a97542e425b4d7fb8d9d
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - sins-1.0.93.tgz
+    version: 1.0.93
+  - apiVersion: v2
+    appVersion: 1.0.78
+    created: "2026-02-03T18:08:25.061408+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: a307405b474bd102d8578c4905784cb0f1f83630ad5de934d38ba60845cefeb1
@@ -57,7 +74,7 @@ entries:
     version: 1.0.92
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T18:03:31.012986+02:00"
+    created: "2026-02-03T18:08:25.060876+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: e8a5f624fbddc7b78b61db24e256a4ee67b5f0d4a78176bdd67b3c92f7a03ff4
@@ -74,7 +91,7 @@ entries:
     version: 1.0.91
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T18:03:31.01116+02:00"
+    created: "2026-02-03T18:08:25.060179+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: c53f62d8487a4b94cd62e91dd0750bea2baaed0eb9d81db5b5e03da4a1d19fc1
@@ -91,7 +108,7 @@ entries:
     version: 1.0.90
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T18:03:31.017518+02:00"
+    created: "2026-02-03T18:08:25.066641+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 19d452d66c0a3d2258acf7f8e1edbf05015a71bb76d2a6f136026d51e37a640a
@@ -108,7 +125,7 @@ entries:
     version: 1.0.89
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T18:03:31.016898+02:00"
+    created: "2026-02-03T18:08:25.064863+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 7da8c328c015512e57da536e2cf1a30cc71d531123c8cabd21e9182617d13f68
@@ -125,7 +142,7 @@ entries:
     version: 1.0.88
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T18:03:31.010511+02:00"
+    created: "2026-02-03T18:08:25.059536+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 05b003acfda0d4f651f089660cb3a3221fd437ab5b1e3e8fb235ed42b1ff5129
@@ -142,7 +159,7 @@ entries:
     version: 1.0.87
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T18:03:31.016235+02:00"
+    created: "2026-02-03T18:08:25.064264+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: b48fc98f29d2bf0d6f67b451f3413cee59bce955ae236c6ea39905572fc4a146
@@ -159,7 +176,7 @@ entries:
     version: 1.0.86
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T18:03:31.015609+02:00"
+    created: "2026-02-03T18:08:25.063676+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 66ff0127adc4ff955d63d410b96011bcbd656cd64738257f4a1c5709626c94b5
@@ -176,7 +193,7 @@ entries:
     version: 1.0.85
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T18:03:31.009876+02:00"
+    created: "2026-02-03T18:08:25.057484+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 65b4dbab23044683463296dd6fe0256993a9d833513475b3a0ff304d26b82d77
@@ -193,7 +210,7 @@ entries:
     version: 1.0.84
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T18:03:31.015121+02:00"
+    created: "2026-02-03T18:08:25.063226+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 1cdce01842649c555aee619a2e0ea521c262cfcf290bcfd1db0e8a63fc37cfcc
@@ -208,4 +225,4 @@ entries:
     urls:
     - swipentap/sins-1.0.84.tgz
     version: 1.0.84
-generated: "2026-02-03T18:03:31.008636+02:00"
+generated: "2026-02-03T18:08:25.056193+02:00"
