@@ -3,7 +3,7 @@ entries:
   certa:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-02-03T16:15:09.696334+02:00"
+    created: "2026-02-03T16:22:32.275924+02:00"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: 64534318cd0564eb18e15a887c12fed6147ec30d90116eaca42052a2eb720c96
@@ -21,7 +21,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-02-03T16:15:09.694335+02:00"
+    created: "2026-02-03T16:22:32.275376+02:00"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
     digest: c47819cd0466426b8f752a06ca96bea216c45d477bf3ad8801f9b950df0b050e
@@ -40,10 +40,10 @@ entries:
   sins:
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T16:15:09.697542+02:00"
+    created: "2026-02-03T16:22:32.277037+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
-    digest: 64106dc1e22fbc4df6ea5b465b4e3a8868b199a8e4b6dc9a9770c0c318e9dbd5
+    digest: 66ff0127adc4ff955d63d410b96011bcbd656cd64738257f4a1c5709626c94b5
     home: https://github.com/swipentap/SiNS
     keywords:
     - dns
@@ -57,7 +57,7 @@ entries:
     version: 1.0.85
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T16:15:09.693871+02:00"
+    created: "2026-02-03T16:22:32.274782+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 65b4dbab23044683463296dd6fe0256993a9d833513475b3a0ff304d26b82d77
@@ -74,7 +74,7 @@ entries:
     version: 1.0.84
   - apiVersion: v2
     appVersion: 1.0.78
-    created: "2026-02-03T16:15:09.696987+02:00"
+    created: "2026-02-03T16:22:32.276506+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
       management interface
     digest: 1cdce01842649c555aee619a2e0ea521c262cfcf290bcfd1db0e8a63fc37cfcc
@@ -89,4 +89,4 @@ entries:
     urls:
     - swipentap/sins-1.0.84.tgz
     version: 1.0.84
-generated: "2026-02-03T16:15:09.692812+02:00"
+generated: "2026-02-03T16:22:32.273426+02:00"
