@@ -144,26 +144,22 @@ spec:
             exit 1
           fi
           
-          # Check if DnsRecords table exists (case-sensitive)
+          # Check if DnsRecords table exists by trying to query it directly
           TABLE_NAME=""
-          if PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -t -c "SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'DnsRecords';" 2>/dev/null | grep -q 1; then
-            TABLE_NAME="DnsRecords"
-          else
-            # Try other possible table names
-            for table in DnsRecords records dns_records zones domains; do
-              if PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "SELECT 1 FROM \"$table\" LIMIT 1;" 2>/dev/null; then
-                TABLE_NAME="$table"
-                break
-              fi
-            done
-          fi
+          for table in "DnsRecords" "records" "dns_records" "zones" "domains"; do
+            if PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "SELECT 1 FROM \"$table\" LIMIT 1;" >/dev/null 2>&1; then
+              TABLE_NAME="$table"
+              echo "Found table: $TABLE_NAME"
+              break
+            fi
+          done
           
           if [ -z "$TABLE_NAME" ]; then
             echo "ERROR: Could not find DNS records table"
+            echo "Available tables:"
+            PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "\dt" 2>&1 || true
             exit 1
           fi
-          
-          echo "Using table: $TABLE_NAME"
           
           declare -a DNS_RECORDS=(
             "sonar.prod.net"
