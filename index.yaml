@@ -21,6 +21,24 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-02-14T16:28:29.078942144Z"
+    description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
+      Authority for local use
+    digest: c7f46641a02538722d32c13004eddb3a7cdf30b9a3ea0990711b384f67fc484f
+    home: https://github.com/swipentap/CertA
+    keywords:
+    - certificate
+    - ca
+    - certificate-authority
+    - postgresql
+    - aspnetcore
+    name: certa
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/certa-1.0.5-94/certa-1.0.5-94.tgz
+    version: 1.0.5-94
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-02-14T15:06:34.409344777Z"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
@@ -162,6 +180,22 @@ entries:
     urls:
     - cockroachdb-1.0.11.tgz
     version: 1.0.11
+  - apiVersion: v2
+    appVersion: v23.2.0
+    created: "2026-02-14T16:28:29.248073824Z"
+    description: A Helm chart for CockroachDB - Distributed SQL database
+    digest: 670f595cd28718dabbb8bb6505c9017a033f49a54bdda7751c53748a9d49858c
+    home: https://www.cockroachlabs.com/
+    keywords:
+    - database
+    - sql
+    - distributed
+    - cockroachdb
+    name: cockroachdb
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/cockroachdb-1.0.11-94/cockroachdb-1.0.11-94.tgz
+    version: 1.0.11-94
   - apiVersion: v2
     appVersion: v23.2.0
     created: "2026-02-14T15:06:34.556033552Z"
@@ -384,6 +418,33 @@ entries:
     version: 2.6.7
   - apiVersion: v2
     appVersion: 2024.06.46
+    created: "2026-02-14T16:28:29.431920068Z"
+    description: This chart installs the Mailu mail system on Kubernetes
+    digest: 66cfb5e6d886353e000ea38d16107986bc31dc1ae89fd6084a3a839d1e330437
+    home: https://mailu.io
+    icon: https://mailu.io/master/_images/logo.png
+    keywords:
+    - mailu
+    - mail
+    - email
+    - smtp
+    - imap
+    - pop3
+    - webmail
+    - postfix
+    - dovecot
+    - roundcube
+    maintainers:
+    - name: Mailu
+      url: https://mailu.io
+    name: mailu
+    sources:
+    - https://github.com/Mailu/helm-charts/
+    urls:
+    - https://github.com/swipentap/charts/releases/download/mailu-2.6.7-94/mailu-2.6.7-94.tgz
+    version: 2.6.7-94
+  - apiVersion: v2
+    appVersion: 2024.06.46
     created: "2026-02-14T15:06:34.782682241Z"
     description: This chart installs the Mailu mail system on Kubernetes
     digest: 5abf5171389d4a00dc908bfcd9391ea5533da5545ea246e23040d6116bab5092
@@ -557,6 +618,16 @@ entries:
     version: 0.1.6
   - apiVersion: v2
     appVersion: latest
+    created: "2026-02-14T16:28:29.562531407Z"
+    description: A Helm chart for Ollama LLM server
+    digest: 33d924cf010a0c1f9c259d0a58247424cfff5f6eb78f42a2c155e49474ccffe7
+    name: ollama
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/ollama-0.1.6-94/ollama-0.1.6-94.tgz
+    version: 0.1.6-94
+  - apiVersion: v2
+    appVersion: latest
     created: "2026-02-14T15:06:34.897561968Z"
     description: A Helm chart for Ollama LLM server
     digest: 4cc48b2cdc98191d008810583b5e57d9c8bcae4b2890a3ac172a46b27d21119c
@@ -657,6 +728,15 @@ entries:
     version: 1.0.0
   - apiVersion: v2
     appVersion: 1.23.0
+    created: "2026-02-14T16:28:29.761502453Z"
+    description: PostgreSQL stack - CNPG operator, cluster, and pgAdmin
+    digest: 3610d1119cb4ec03af5081f58c48862aefaa1ed0d0c7c59e55311274fe550b09
+    name: postgresql
+    urls:
+    - https://github.com/swipentap/charts/releases/download/postgresql-1.0.0-94/postgresql-1.0.0-94.tgz
+    version: 1.0.0-94
+  - apiVersion: v2
+    appVersion: 1.23.0
     created: "2026-02-14T15:06:35.067618006Z"
     description: PostgreSQL stack - CNPG operator, cluster, and pgAdmin
     digest: 397525182dcf4e629e16b9d64661406aa4414009903d2c1f3c773ec350f32ea5
@@ -691,6 +771,23 @@ entries:
     urls:
     - https://github.com/swipentap/charts/releases/download/sins-1.0.93/sins-1.0.93.tgz
     version: 1.0.93
+  - apiVersion: v2
+    appVersion: 1.0.78
+    created: "2026-02-14T16:28:29.913913403Z"
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: 453f2ca7c480850ffb5ad212efcbdbe6ce73dde52527beea78ff1b915a83edd3
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/sins-1.0.93-94/sins-1.0.93-94.tgz
+    version: 1.0.93-94
   - apiVersion: v2
     appVersion: 1.0.78
     created: "2026-02-14T15:06:35.221450452Z"
@@ -1150,4 +1247,4 @@ entries:
     urls:
     - sins-1.0.31.tgz
     version: 1.0.31
-generated: "2026-02-14T15:06:35.22185731Z"
+generated: "2026-02-14T16:28:29.91540252Z"
