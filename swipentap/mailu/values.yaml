@@ -310,6 +310,14 @@ externalDatabase:
   ## @param externalDatabase.appendix String appended to the SQLAlchemy URI
   appendix: ""
 
+  ## PostgreSQL init: create mailu/roundcube DBs if they don't exist (only when type=postgresql)
+  ## @param externalDatabase.adminPassword Postgres superuser password for init container (creates DBs). Ignored if existingAdminSecret is set.
+  adminPassword: ""
+  ## @param externalDatabase.existingAdminSecret Secret containing postgres superuser password for init (key from adminSecretPasswordKey)
+  existingAdminSecret: ""
+  ## @param externalDatabase.adminSecretPasswordKey Key in existingAdminSecret for postgres password
+  adminSecretPasswordKey: "password"
+
 externalRedis:
   ## @param externalRedis.enabled Set to true to use an external Redis instance (ignored if `redis.enabled` is true)
   enabled: false

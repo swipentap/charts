@@ -64,8 +64,68 @@ spec:
       {{- if .Values.admin.dnsConfig }}
       dnsConfig: {{- include "mailu.tplvalues.render" (dict "value" .Values.admin.dnsConfig "context" $) | nindent 8 }}
       {{- end }}
+      {{- if or .Values.admin.initContainers (and .Values.externalDatabase.enabled (eq .Values.externalDatabase.type "postgresql")) }}
+      initContainers:
+      {{- if and .Values.externalDatabase.enabled (eq .Values.externalDatabase.type "postgresql") (or .Values.externalDatabase.adminPassword .Values.externalDatabase.existingAdminSecret) }}
+      - name: postgres-db-init
+        image: postgres:15-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          export PGHOST="{{ include "mailu.database.host" . }}"
+          export PGPORT="{{ include "mailu.database.port" . }}"
+          export PGUSER=postgres
+          export PGPASSWORD=$(cat /etc/postgres-admin/{{ .Values.externalDatabase.adminSecretPasswordKey | default "password" }})
+          MAILU_DB=$(cat /etc/mailu-db/{{ .Values.externalDatabase.existingSecretDatabaseKey }})
+          MAILU_USER=$(cat /etc/mailu-db/{{ .Values.externalDatabase.existingSecretUsernameKey }})
+          MAILU_PW=$(cat /etc/mailu-db/{{ .Values.externalDatabase.existingSecretPasswordKey }})
+          ROUNDCUBE_DB="{{ .Values.global.database.roundcube.database }}"
+          ROUNDCUBE_USER="{{ .Values.global.database.roundcube.username }}"
+          ROUNDCUBE_PW=$(cat /etc/roundcube-db/{{ include "mailu.database.roundcube.secretKey" . }})
+          echo "Waiting for PostgreSQL..."
+          for i in $(seq 1 60); do
+            if PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -c '\q' 2>/dev/null; then break; fi
+            [ $i -eq 60 ] && { echo "Timeout waiting for PostgreSQL"; exit 1; }
+            sleep 2
+          done
+          echo "Creating mailu user and database..."
+          if ! PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='$MAILU_USER';" | grep -q 1; then
+            PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -c "CREATE ROLE \"$MAILU_USER\" WITH LOGIN PASSWORD '$MAILU_PW';"
+          else
+            PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -c "ALTER ROLE \"$MAILU_USER\" WITH PASSWORD '$MAILU_PW';"
+          fi
+          if ! PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$MAILU_DB';" | grep -q 1; then
+            PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -c "CREATE DATABASE \"$MAILU_DB\" OWNER \"$MAILU_USER\";"
+          fi
+          PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"$MAILU_DB\" TO \"$MAILU_USER\";"
+          echo "Creating roundcube user and database..."
+          if ! PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='$ROUNDCUBE_USER';" | grep -q 1; then
+            PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -c "CREATE ROLE \"$ROUNDCUBE_USER\" WITH LOGIN PASSWORD '$ROUNDCUBE_PW';"
+          else
+            PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -c "ALTER ROLE \"$ROUNDCUBE_USER\" WITH PASSWORD '$ROUNDCUBE_PW';"
+          fi
+          if ! PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='$ROUNDCUBE_DB';" | grep -q 1; then
+            PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -c "CREATE DATABASE \"$ROUNDCUBE_DB\" OWNER \"$ROUNDCUBE_USER\";"
+          fi
+          PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE \"$ROUNDCUBE_DB\" TO \"$ROUNDCUBE_USER\";"
+          PGPASSWORD="$PGPASSWORD" psql -h "$PGHOST" -p "$PGPORT" -U postgres -d "$ROUNDCUBE_DB" -c "ALTER SCHEMA public OWNER TO \"$ROUNDCUBE_USER\";"
+          echo "PostgreSQL init done."
+        volumeMounts:
+        - name: postgres-admin
+          mountPath: /etc/postgres-admin
+          readOnly: true
+        - name: mailu-db-creds
+          mountPath: /etc/mailu-db
+          readOnly: true
+        - name: roundcube-db-creds
+          mountPath: /etc/roundcube-db
+          readOnly: true
+      {{- end }}
       {{- if .Values.admin.initContainers }}
-      initContainers: {{- include "mailu.tplvalues.render" (dict "value" .Values.admin.initContainers "context" $) | nindent 8 }}
+      {{- include "mailu.tplvalues.render" (dict "value" .Values.admin.initContainers "context" $) | nindent 6 }}
+      {{- end }}
       {{- end }}
       {{- if .Values.admin.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.admin.podSecurityContext "enabled" | toYaml | nindent 8 }}
@@ -149,6 +209,17 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: {{ include "mailu.admin.claimName" . }}
+        {{- if and .Values.externalDatabase.enabled (eq .Values.externalDatabase.type "postgresql") (or .Values.externalDatabase.adminPassword .Values.externalDatabase.existingAdminSecret) }}
+        - name: postgres-admin
+          secret:
+            secretName: {{ .Values.externalDatabase.existingAdminSecret | default (printf "%s-postgres-admin" (include "mailu.fullname" .)) }}
+        - name: mailu-db-creds
+          secret:
+            secretName: {{ include "mailu.database.external.secretName" . }}
+        - name: roundcube-db-creds
+          secret:
+            secretName: {{ include "mailu.database.roundcube.secretName" . }}
+        {{- end }}
         {{- if .Values.admin.extraVolumes }}
         {{- include "mailu.tplvalues.render" (dict "value" .Values.admin.extraVolumes "context" $) | nindent 8 }}
         {{- end }}
