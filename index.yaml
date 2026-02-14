@@ -422,6 +422,40 @@ entries:
     urls:
     - cockroachdb-1.0.0.tgz
     version: 1.0.0
+  keycloak:
+  - apiVersion: v2
+    appVersion: 17.0.1-legacy
+    created: "2026-02-14T20:44:46.12813216Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+      version: 10.16.2
+    description: Open Source Identity and Access Management For Modern Applications
+      and Services
+    digest: 2c77d60331c04a3c44e376f51a5be9825ea426cc0689352d99dbc1e60efcc304
+    home: https://www.keycloak.org/
+    icon: https://www.keycloak.org/resources/images/keycloak_icon_512px.svg
+    keywords:
+    - sso
+    - idm
+    - openid connect
+    - saml
+    - kerberos
+    - ldap
+    maintainers:
+    - email: unguiculus@gmail.com
+      name: unguiculus
+    - email: thomas.darimont+github@gmail.com
+      name: thomasdarimont
+    name: keycloak
+    sources:
+    - https://github.com/codecentric/helm-charts
+    - https://github.com/jboss-dockerfiles/keycloak
+    - https://github.com/bitnami/charts/tree/master/bitnami/postgresql
+    urls:
+    - https://github.com/swipentap/charts/releases/download/charts-111/keycloak-18.10.0-111.tgz
+    version: 18.10.0-111
   mailu:
   - apiVersion: v2
     appVersion: 2024.06.46
@@ -759,16 +793,6 @@ entries:
     version: 0.1.2
   - apiVersion: v2
     appVersion: latest
-    created: "2026-01-25T01:03:34.379238+02:00"
-    description: A Helm chart for Ollama LLM server
-    digest: 2e5b716661a16d9e0fdab03250c1116503a4395b11703f16e44ad13277a2ce09
-    name: ollama
-    type: application
-    urls:
-    - ollama/ollama-0.1.2.tgz
-    version: 0.1.2
-  - apiVersion: v2
-    appVersion: latest
     created: "2026-01-25T01:03:34.378795+02:00"
     description: A Helm chart for Ollama LLM server
     digest: 2f0eb508b81598bde6052405c65d0f8c4078a6f0a48fe7e06a7fcecbf9baa844
@@ -787,6 +811,24 @@ entries:
     urls:
     - ollama-0.1.0.tgz
     version: 0.1.0
+  plane-ce:
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 1.2.0
+    created: "2026-02-14T20:44:46.129325275Z"
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: 4b46d00d0527b206dcc66deff15667eca760e36f19285706045d4b4a129c1383
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/charts-111/plane-ce-1.4.1-111.tgz
+    version: 1.4.1-111
   postgresql:
   - apiVersion: v2
     appVersion: 1.23.0
@@ -1294,23 +1336,6 @@ entries:
     - sins-1.0.70.tgz
     version: 1.0.70
   - apiVersion: v2
-    appVersion: 1.0.70
-    created: "2026-01-25T01:03:34.379769+02:00"
-    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
-      management interface
-    digest: 3c3b48df52310c47698e676b9cf3f1c8752e4583984d216043acc2c45ba93f14
-    home: https://github.com/swipentap/SiNS
-    keywords:
-    - dns
-    - nameserver
-    - postgresql
-    - vuejs
-    name: sins
-    type: application
-    urls:
-    - sins/sins-1.0.70.tgz
-    version: 1.0.70
-  - apiVersion: v2
     appVersion: 1.0.32
     created: "2026-01-25T01:03:34.374516+02:00"
     description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
@@ -1344,4 +1369,64 @@ entries:
     urls:
     - sins-1.0.31.tgz
     version: 1.0.31
-generated: "2026-02-14T18:44:05.819331924Z"
+  sonarqube:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: "Upgrade Chart's version to 2026.2.0"
+        - kind: security
+          description: "Update ingress-nginx subchart to v4.14.3"
+        - kind: added
+          description: "Upgrade SonarQube Community build to 26.2.0.119303"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/images: |
+        - name: sonarqube-community
+          image: sonarqube:26.2.0.119303-community
+        - name: sonarqube-developer
+          image: sonarqube:2026.1.0-developer
+        - name: sonarqube-enterprise
+          image: sonarqube:2026.1.0-enterprise
+      artifacthub.io/links: |
+        - name: support
+          url: https://community.sonarsource.com/
+        - name: Chart Source
+          url: https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube
+      charts.openshift.io/name: sonarqube
+    apiVersion: v2
+    appVersion: 2026.1.0
+    created: "2026-02-14T20:44:46.135633235Z"
+    dependencies:
+    - condition: nginx.enabled,ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.14.3
+    description: SonarQube is a self-managed, automatic code review tool that systematically
+      helps you deliver clean code. As a core element of our Sonar solution, SonarQube
+      integrates into your existing workflow and detects issues in your code to help
+      you perform continuous code inspections of your projects. The tool analyses
+      30+ different programming languages and integrates into your CI pipeline and
+      DevOps platform to ensure that your code meets high-quality standards.
+    digest: 761fca4de91647a6ac4b60e2d1a52a86a6164de31a2ef980660d4f541e23e68f
+    home: https://www.sonarqube.org/
+    icon: https://raw.githubusercontent.com/SonarSource/sonarqube-static-resources/master/helm/SonarQubeServerLogo.png
+    keywords:
+    - coverage
+    - security
+    - code
+    - quality
+    kubeVersion: '>= 1.24.0-0'
+    maintainers:
+    - email: carmine.vassallo@sonarsource.com
+      name: carminevassallo
+    - email: hatem.amairi@sonarsource.com
+      name: hatem-amairi-sonarsource
+    name: sonarqube
+    sources:
+    - https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube
+    - https://github.com/SonarSource/docker-sonarqube
+    - https://github.com/SonarSource/sonarqube
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/charts-111/sonarqube-2026.2.0-111.tgz
+    version: 2026.2.0-111
+generated: "2026-02-14T20:44:46.12303483Z"
