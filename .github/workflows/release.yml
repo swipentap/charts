@@ -29,7 +29,7 @@ jobs:
         with:
           version: 'v3.17.0'
 
-      - name: Bump chart versions for this run (keycloak, sonarqube, plane-ce only)
+      - name: Bump chart versions (keycloak, sonarqube, plane-ce only)
         run: |
           for chart in keycloak sonarqube plane-ce; do
             f="swipentap/${chart}/Chart.yaml"
@@ -40,27 +40,42 @@ jobs:
 
       - name: Helm dependency update for charts with dependencies
         run: |
-          for d in swipentap/*/; do
-            if [ -f "${d}Chart.yaml" ] && grep -q "dependencies:" "${d}Chart.yaml"; then
-              echo "Running helm dependency update in $d"
-              helm dependency update "$d"
-            fi
+          for d in swipentap/keycloak swipentap/sonarqube; do
+            [ -f "${d}/Chart.yaml" ] && grep -q "dependencies:" "${d}/Chart.yaml" || continue
+            echo "Running helm dependency update in $d"
+            helm dependency update "$d"
           done
 
-      - name: Verify packaging of keycloak, sonarqube, plane-ce
+      - name: Package keycloak, sonarqube, plane-ce
         run: |
+          rm -rf .cr-release-packages
+          mkdir -p .cr-release-packages
           for chart in keycloak sonarqube plane-ce; do
             echo "Packaging swipentap/$chart..."
-            helm package "swipentap/$chart" -d /tmp/chart-packages || { echo "ERROR: helm package failed for $chart"; exit 1; }
+            helm package "swipentap/$chart" -d .cr-release-packages || { echo "ERROR: helm package failed for $chart"; exit 1; }
           done
-          ls -la /tmp/chart-packages
+          ls -la .cr-release-packages
 
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
-        with:
-          charts_dir: swipentap
-          config: cr.yaml
-          skip_existing: true
-          mark_as_latest: true
+      - name: Create GitHub release and upload chart packages
         env:
-          CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          release_tag="charts-${{ github.run_number }}"
+          gh release create "$release_tag" .cr-release-packages/*.tgz --repo swipentap/charts --title "Charts ${{ github.run_number }}" --notes "Keycloak, SonarQube, Plane CE charts"
+          echo "RELEASE_TAG=$release_tag" >> "$GITHUB_ENV"
+
+      - name: Clone gh-pages and update index
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          release_tag="charts-${{ github.run_number }}"
+          base_url="https://github.com/swipentap/charts/releases/download/${release_tag}"
+          git clone --branch gh-pages --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/swipentap/charts.git" gh-pages
+          cp gh-pages/index.yaml .cr-release-packages/index.yaml.bak
+          helm repo index .cr-release-packages --merge .cr-release-packages/index.yaml.bak --url "$base_url"
+          cp .cr-release-packages/index.yaml gh-pages/index.yaml
+          cd gh-pages
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add index.yaml
+          git diff --staged --quiet && echo "No index changes" || (git commit -m "Update index for $release_tag" && git push origin gh-pages)
