@@ -1,8 +1,12 @@
-{{/* Returns the database type (sqlite/mysql/postgresql) */}}
+{{/* Returns the database type (sqlite/mysql/postgresql). In-chart mariadb/postgresql have been removed; use externalDatabase. */}}
 {{- define "mailu.database.type" -}}
-{{- if or .Values.postgresql.enabled (and .Values.externalDatabase.enabled (eq .Values.externalDatabase.type "postgresql")) -}}
+{{- if .Values.mariadb.enabled -}}
+    {{- fail "mariadb subchart has been removed; use externalDatabase.enabled with externalDatabase.type: mysql" -}}
+{{- else if .Values.postgresql.enabled -}}
+    {{- fail "postgresql subchart has been removed; use externalDatabase.enabled with externalDatabase.type: postgresql" -}}
+{{- else if and .Values.externalDatabase.enabled (eq .Values.externalDatabase.type "postgresql") -}}
     {{- print "postgresql" }}
-{{- else if or .Values.mariadb.enabled (and .Values.externalDatabase.enabled (eq .Values.externalDatabase.type "mysql")) -}}
+{{- else if and .Values.externalDatabase.enabled (eq .Values.externalDatabase.type "mysql") -}}
     {{- print "mysql" }}
 {{- else if not .Values.externalDatabase.enabled -}}
     {{- print "sqlite" }}
@@ -14,9 +18,9 @@
 {{/* Returns the database hostname */}}
 {{- define "mailu.database.host" -}}
 {{- if .Values.mariadb.enabled -}}
-    {{- template "mariadb.primary.fullname" .Subcharts.mariadb -}}
+    {{- fail "mariadb subchart has been removed; use externalDatabase" -}}
 {{- else if .Values.postgresql.enabled -}}
-    {{- template "postgresql.v1.primary.fullname" .Subcharts.postgresql -}}
+    {{- fail "postgresql subchart has been removed; use externalDatabase" -}}
 {{- else if .Values.externalDatabase.enabled -}}
     {{- .Values.externalDatabase.host -}}
 {{- end -}}
@@ -25,9 +29,9 @@
 {{/* Return the database port */}}
 {{- define "mailu.database.port" -}}
 {{- if .Values.mariadb.enabled -}}
-    {{- print "3306" -}}
+    {{- fail "mariadb subchart has been removed; use externalDatabase" -}}
 {{- else if .Values.postgresql.enabled -}}
-    {{- print "5432" -}}
+    {{- fail "postgresql subchart has been removed; use externalDatabase" -}}
 {{- else if .Values.externalDatabase.enabled -}}
     {{- if eq .Values.externalDatabase.type "mysql" -}}
         {{- .Values.externalDatabase.port | default "3306" -}}
@@ -40,17 +44,9 @@
 {{/* Return the database name for Mailu */}}
 {{- define "mailu.database.name" -}}
 {{- if .Values.mariadb.enabled -}}
-    {{- .Values.mariadb.auth.database | quote -}}
+    {{- fail "mariadb subchart has been removed; use externalDatabase" -}}
 {{- else if .Values.postgresql.enabled -}}
-    {{- if .Values.global.postgresql -}}
-        {{- if .Values.global.postgresql.auth -}}
-            {{- coalesce .Values.global.postgresql.auth.database .Values.postgresql.auth.database | quote -}}
-        {{- else -}}
-            {{- .Values.postgresql.auth.database | quote -}}
-        {{- end -}}
-    {{- else -}}
-        {{- .Values.postgresql.auth.database | quote -}}
-    {{- end -}}
+    {{- fail "postgresql subchart has been removed; use externalDatabase" -}}
 {{- else -}}
     {{- (include "mailu.database.external.database" .) | quote }}
 {{- end -}}
@@ -59,17 +55,9 @@
 {{/* Return the database username for Mailu */}}
 {{- define "mailu.database.username" -}}
 {{- if .Values.mariadb.enabled -}}
-    {{- .Values.mariadb.auth.username | quote }}
+    {{- fail "mariadb subchart has been removed; use externalDatabase" -}}
 {{- else if .Values.postgresql.enabled -}}
-    {{- if .Values.global.postgresql }}
-        {{- if .Values.global.postgresql.auth }}
-            {{- coalesce .Values.global.postgresql.auth.username .Values.postgresql.auth.username | quote -}}
-        {{- else -}}
-            {{- .Values.postgresql.auth.username | quote -}}
-        {{- end -}}
-    {{- else -}}
-        {{- .Values.postgresql.auth.username | quote -}}
-    {{- end -}}
+    {{- fail "postgresql subchart has been removed; use externalDatabase" -}}
 {{- else }}
     {{- (include "mailu.database.external.username" .) | quote }}
 {{- end -}}
@@ -98,9 +86,9 @@
 {{/* Return the name of the mailu database secret with its credentials */}}
 {{- define "mailu.database.secretName" -}}
 {{- if .Values.mariadb.enabled -}}
-    {{- template "mariadb.secretName" .Subcharts.mariadb -}}
+    {{- fail "mariadb subchart has been removed; use externalDatabase" -}}
 {{- else if .Values.postgresql.enabled -}}
-    {{- template "postgresql.v1.secretName" .Subcharts.postgresql -}}
+    {{- fail "postgresql subchart has been removed; use externalDatabase" -}}
 {{- else if ne (include "mailu.database.type" .) "sqlite" -}}
     {{- if .Values.externalDatabase.enabled -}}
         {{- include "mailu.database.external.secretName" . -}}
@@ -113,9 +101,9 @@
 {{/* Return the database password key */}}
 {{- define "mailu.database.secretKey" -}}
 {{- if .Values.mariadb.enabled -}}
-    {{- print "mariadb-password" -}}
+    {{- fail "mariadb subchart has been removed; use externalDatabase" -}}
 {{- else if .Values.postgresql.enabled -}}
-    {{- print "password" -}}
+    {{- fail "postgresql subchart has been removed; use externalDatabase" -}}
 {{- else -}}
     {{- if .Values.externalDatabase.enabled -}}
         {{- .Values.externalDatabase.existingSecretPasswordKey -}}
