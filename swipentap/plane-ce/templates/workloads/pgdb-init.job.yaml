@@ -1,0 +1,73 @@
+{{- if and (not .Values.postgres.local_setup) .Values.postgres.dbInit.enabled .Values.postgres.dbInit.host (or .Values.postgres.dbInit.adminPassword .Values.postgres.dbInit.existingAdminSecret) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: {{ .Release.Namespace }}
+  name: {{ .Release.Name }}-pgdb-init
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        app.name: {{ .Release.Namespace }}-{{ .Release.Name }}-pgdb-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: db-init
+        image: postgres:15-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Initializing database for Plane..."
+          DB_NAME="{{ .Values.postgres.dbInit.database | default .Values.env.pgdb_name | default "plane" }}"
+          DB_HOST="{{ .Values.postgres.dbInit.host }}"
+          DB_PORT="{{ .Values.postgres.dbInit.port }}"
+          {{- if .Values.postgres.dbInit.existingAdminSecret }}
+          POSTGRES_PASSWORD=$(cat /etc/postgres-admin/password)
+          {{- else }}
+          POSTGRES_PASSWORD="{{ .Values.postgres.dbInit.adminPassword }}"
+          {{- end }}
+          echo "Waiting for PostgreSQL to be ready..."
+          MAX_WAIT=300
+          ELAPSED=0
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            if PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c '\q' 2>/dev/null; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... (${ELAPSED}s/${MAX_WAIT}s)"
+            sleep 2
+            ELAPSED=$((ELAPSED + 2))
+          done
+          if [ $ELAPSED -ge $MAX_WAIT ]; then
+            echo "ERROR: Timeout waiting for PostgreSQL"
+            exit 1
+          fi
+          echo "Creating database $DB_NAME if it doesn't exist..."
+          if ! PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME';" 2>/dev/null | grep -q 1; then
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "CREATE DATABASE $DB_NAME;" 2>&1 || { echo "ERROR: Failed to create database"; exit 1; }
+          else
+            echo "Database already exists"
+          fi
+          echo "Database initialization for Plane completed successfully!"
+        {{- if .Values.postgres.dbInit.existingAdminSecret }}
+        volumeMounts:
+        - name: postgres-admin
+          mountPath: /etc/postgres-admin
+          readOnly: true
+        {{- end }}
+      {{- if .Values.postgres.dbInit.existingAdminSecret }}
+      volumes:
+      - name: postgres-admin
+        secret:
+          secretName: {{ .Values.postgres.dbInit.existingAdminSecret }}
+          items:
+          - key: {{ .Values.postgres.dbInit.adminSecretPasswordKey }}
+            path: password
+      {{- end }}
+{{- end }}

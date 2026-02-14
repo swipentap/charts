@@ -1,0 +1,85 @@
+{{- if and .Values.externalDatabase.enabled (or .Values.externalDatabase.adminPassword .Values.externalDatabase.existingAdminSecret) }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "keycloak.fullname" . }}-db-init
+  labels:
+    {{- include "keycloak.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "keycloak.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: db-init
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: db-init
+        image: postgres:15-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Initializing database and role for Keycloak..."
+          KEYCLOAK_USER="{{ .Values.externalDatabase.username }}"
+          KEYCLOAK_PASSWORD="{{ .Values.externalDatabase.password }}"
+          DB_NAME="{{ .Values.externalDatabase.database }}"
+          DB_HOST="{{ .Values.externalDatabase.host }}"
+          DB_PORT="{{ .Values.externalDatabase.port }}"
+          {{- if .Values.externalDatabase.existingAdminSecret }}
+          POSTGRES_PASSWORD=$(cat /etc/postgres-admin/password)
+          {{- else }}
+          POSTGRES_PASSWORD="{{ .Values.externalDatabase.adminPassword }}"
+          {{- end }}
+          echo "Waiting for PostgreSQL to be ready..."
+          MAX_WAIT=300
+          ELAPSED=0
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            if PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c '\q' 2>/dev/null; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... (${ELAPSED}s/${MAX_WAIT}s)"
+            sleep 2
+            ELAPSED=$((ELAPSED + 2))
+          done
+          if [ $ELAPSED -ge $MAX_WAIT ]; then
+            echo "ERROR: Timeout waiting for PostgreSQL"
+            exit 1
+          fi
+          echo "Creating role $KEYCLOAK_USER if it doesn't exist..."
+          if ! PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "SELECT 1 FROM pg_roles WHERE rolname = '$KEYCLOAK_USER';" 2>/dev/null | grep -q 1; then
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "CREATE ROLE $KEYCLOAK_USER WITH LOGIN PASSWORD '$KEYCLOAK_PASSWORD';" 2>&1 || { echo "ERROR: Failed to create role"; exit 1; }
+          else
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "ALTER ROLE $KEYCLOAK_USER WITH PASSWORD '$KEYCLOAK_PASSWORD';" 2>&1 || { echo "ERROR: Failed to update role"; exit 1; }
+          fi
+          echo "Creating database $DB_NAME if it doesn't exist..."
+          if ! PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME';" 2>/dev/null | grep -q 1; then
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "CREATE DATABASE $DB_NAME OWNER $KEYCLOAK_USER;" 2>&1 || { echo "ERROR: Failed to create database"; exit 1; }
+          else
+            echo "Database already exists"
+          fi
+          PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $KEYCLOAK_USER;" 2>&1 || true
+          echo "Database initialization for Keycloak completed successfully!"
+        {{- if .Values.externalDatabase.existingAdminSecret }}
+        volumeMounts:
+        - name: postgres-admin
+          mountPath: /etc/postgres-admin
+          readOnly: true
+        {{- end }}
+      {{- if .Values.externalDatabase.existingAdminSecret }}
+      volumes:
+      - name: postgres-admin
+        secret:
+          secretName: {{ .Values.externalDatabase.existingAdminSecret }}
+          items:
+          - key: {{ .Values.externalDatabase.adminSecretPasswordKey }}
+            path: password
+      {{- end }}
+{{- end }}
