@@ -395,6 +395,16 @@ entries:
     urls:
     - ollama-0.1.0.tgz
     version: 0.1.0
+  postgresql:
+  - apiVersion: v2
+    appVersion: 1.23.0
+    created: "2026-02-14T09:39:52.168687306Z"
+    description: PostgreSQL stack - CNPG operator, cluster, and pgAdmin
+    digest: 3e54825518ec9454fdc5991a5fdd2e50daa5a759ed07b0ac94b28f0015d56499
+    name: postgresql
+    urls:
+    - https://github.com/swipentap/charts/releases/download/postgresql-1.0.0/postgresql-1.0.0.tgz
+    version: 1.0.0
   sins:
   - apiVersion: v2
     appVersion: 1.0.78
@@ -838,4 +848,4 @@ entries:
     urls:
     - sins-1.0.31.tgz
     version: 1.0.31
-generated: "2026-02-14T00:40:06.674125061Z"
+generated: "2026-02-14T09:39:52.168799364Z"
