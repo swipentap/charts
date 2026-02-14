@@ -75,8 +75,9 @@ jobs:
           echo "Discovering changed charts since '$latest_tag'..."
           changed_files=$(git diff --find-renames --name-only "$latest_tag" -- "$charts_dir" || true)
           depth=$(($(echo "$charts_dir" | tr '/' '\n' | grep -v '^$' | wc -l) + 1))
-          changed_charts=$(echo "$changed_files" | cut -d'/' -f"1-$depth" | sort -u | while read -r d; do [ -f "$d/Chart.yaml" ] && echo "$d"; done)
-          echo "Changed charts:"
+          all_changed=$(echo "$changed_files" | cut -d'/' -f"1-$depth" | sort -u | while read -r d; do [ -f "$d/Chart.yaml" ] && echo "$d"; done)
+          changed_charts=$(echo "$all_changed" | grep -E "swipentap/(keycloak|sonarqube|plane-ce)$" || true)
+          echo "Changed charts (keycloak/sonarqube/plane-ce only):"
           echo "$changed_charts"
           rm -rf .cr-release-packages .cr-index
           mkdir -p .cr-release-packages .cr-index
@@ -86,7 +87,12 @@ jobs:
             ./cr package "$chart" --package-path .cr-release-packages --config cr.yaml
           done
           ls -la .cr-release-packages
-          echo "Uploading to GitHub Releases..."
-          ./cr upload -o "$owner" -r "$repo" -c "$(git rev-parse HEAD)" --config cr.yaml --skip-existing --make-release-latest=true
+          count=$(ls -1 .cr-release-packages/*.tgz 2>/dev/null | wc -l)
+          if [ "$count" -eq 0 ]; then
+            echo "No packages to release."
+            exit 0
+          fi
+          echo "Uploading to GitHub Releases (token set)..."
+          ./cr upload -o "$owner" -r "$repo" -c "$(git rev-parse HEAD)" --config cr.yaml --skip-existing --make-release-latest=true -t "$CR_TOKEN"
           echo "Updating index..."
-          ./cr index -o "$owner" -r "$repo" --push --config cr.yaml
+          ./cr index -o "$owner" -r "$repo" --push --config cr.yaml -t "$CR_TOKEN"
