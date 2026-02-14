@@ -1,0 +1,126 @@
+{{- if .Values.customPgadmin.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+  namespace: {{ .Values.customPgadmin.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      initContainers:
+      - name: db-init
+        image: postgres:15-alpine
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Initializing database and role for pgAdmin..."
+
+          PGADMIN_USER="pgadmin"
+          PGADMIN_PASSWORD="{{ .Values.customPgadmin.dbPassword }}"
+          DB_NAME="pgadmin"
+          DB_HOST="postgresql-rw.postgresql.svc.cluster.local"
+          DB_PORT="5432"
+          POSTGRES_PASSWORD="{{ .Values.customPostgresql.credentials.password }}"
+
+          echo "Waiting for PostgreSQL to be ready..."
+          MAX_WAIT=300
+          ELAPSED=0
+
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            if PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c '\q' 2>/dev/null; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... (${ELAPSED}s/${MAX_WAIT}s)"
+            sleep 2
+            ELAPSED=$((ELAPSED + 2))
+          done
+
+          if [ $ELAPSED -ge $MAX_WAIT ]; then
+            echo "ERROR: Timeout waiting for PostgreSQL"
+            exit 1
+          fi
+
+          echo "Creating role $PGADMIN_USER if it doesn't exist..."
+          if ! PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "SELECT 1 FROM pg_roles WHERE rolname = '$PGADMIN_USER';" 2>/dev/null | grep -q 1; then
+            echo "Role does not exist, creating it..."
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "CREATE ROLE $PGADMIN_USER WITH LOGIN PASSWORD '$PGADMIN_PASSWORD';" || {
+              echo "ERROR: Failed to create role"
+              exit 1
+            }
+          else
+            echo "Role exists, updating password..."
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "ALTER ROLE $PGADMIN_USER WITH PASSWORD '$PGADMIN_PASSWORD';" || {
+              echo "ERROR: Failed to update role"
+              exit 1
+            }
+          fi
+
+          echo "Creating database $DB_NAME if it doesn't exist..."
+          if ! PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "SELECT 1 FROM pg_database WHERE datname = '$DB_NAME';" 2>/dev/null | grep -q 1; then
+            echo "Database does not exist, creating it..."
+            PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "CREATE DATABASE $DB_NAME OWNER $PGADMIN_USER;" || {
+              echo "ERROR: Failed to create database"
+              exit 1
+            }
+          else
+            echo "Database already exists"
+          fi
+
+          echo "Granting all privileges on database $DB_NAME to $PGADMIN_USER..."
+          PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $PGADMIN_USER;" || {
+            echo "ERROR: Failed to grant privileges"
+            exit 1
+          }
+
+          echo "Database initialization for pgAdmin completed successfully!"
+      containers:
+      - name: pgadmin
+        image: dpage/pgadmin4:latest
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: pgadmin-secret
+              key: PGADMIN_DEFAULT_EMAIL
+        - name: PGADMIN_DEFAULT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pgadmin-secret
+              key: PGADMIN_DEFAULT_PASSWORD
+        - name: PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION
+          value: "False"
+        - name: PGADMIN_CONFIG_WTF_CSRF_CHECK_ENABLED
+          value: "False"
+        - name: PGADMIN_CONFIG_SERVER_MODE
+          value: "True"
+        - name: SQLALCHEMY_DATABASE_URI
+          value: "postgresql://pgadmin:{{ .Values.customPgadmin.dbPassword }}@postgresql-rw.postgresql.svc.cluster.local:5432/pgadmin"
+        volumeMounts:
+        - name: pgadmin-data
+          mountPath: /var/lib/pgadmin
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+      volumes:
+      - name: pgadmin-data
+        emptyDir: {}
+{{- end }}

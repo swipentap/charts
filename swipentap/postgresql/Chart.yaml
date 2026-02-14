@@ -1,0 +1,5 @@
+apiVersion: v2
+name: postgresql
+description: PostgreSQL stack - CNPG operator, cluster, and pgAdmin
+version: 1.0.0
+appVersion: "1.23.0"

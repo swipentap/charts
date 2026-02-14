@@ -1,0 +1,6 @@
+{{- if .Values.customPgadmin.enabled }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.customPgadmin.namespace }}
+{{- end }}

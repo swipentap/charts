@@ -1,0 +1,56 @@
+{{- if .Values.customPostgresql.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgresql
+  namespace: {{ .Values.customPostgresql.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  instances: {{ .Values.customPostgresql.cluster.instances }}
+  topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        cnpg.io/cluster: postgresql
+        cnpg.io/podRole: instance
+  postgresql:
+    parameters:
+      max_connections: {{ .Values.customPostgresql.cluster.maxConnections | quote }}
+      shared_buffers: {{ .Values.customPostgresql.cluster.sharedBuffers | quote }}
+      effective_cache_size: {{ .Values.customPostgresql.cluster.effectiveCacheSize | quote }}
+      maintenance_work_mem: {{ .Values.customPostgresql.cluster.maintenanceWorkMem | quote }}
+      checkpoint_completion_target: {{ .Values.customPostgresql.cluster.checkpointCompletionTarget | quote }}
+      wal_buffers: {{ .Values.customPostgresql.cluster.walBuffers | quote }}
+      default_statistics_target: {{ .Values.customPostgresql.cluster.defaultStatisticsTarget | quote }}
+      random_page_cost: {{ .Values.customPostgresql.cluster.randomPageCost | quote }}
+      effective_io_concurrency: {{ .Values.customPostgresql.cluster.effectiveIoConcurrency | quote }}
+      work_mem: {{ .Values.customPostgresql.cluster.workMem | quote }}
+      min_wal_size: {{ .Values.customPostgresql.cluster.minWalSize | quote }}
+      max_wal_size: {{ .Values.customPostgresql.cluster.maxWalSize | quote }}
+  storage:
+    size: {{ .Values.customPostgresql.cluster.storageSize }}
+    storageClass: {{ .Values.customPostgresql.cluster.storageClass }}
+  resources:
+    requests:
+      memory: {{ .Values.customPostgresql.resources.requests.memory | quote }}
+      cpu: {{ .Values.customPostgresql.resources.requests.cpu | quote }}
+    limits:
+      memory: {{ .Values.customPostgresql.resources.limits.memory | quote }}
+      cpu: {{ .Values.customPostgresql.resources.limits.cpu | quote }}
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: postgresql-credentials
+  bootstrap:
+    initdb:
+      database: postgres
+      owner: postgres
+      secret:
+        name: postgresql-credentials
+      dataChecksums: true
+      encoding: "UTF8"
+      localeCType: "C"
+      localeCollate: "C"
+{{- end }}

@@ -1,0 +1,44 @@
+# Upstream CNPG operator subchart values (defaults are fine)
+cloudnative-pg: {}
+
+customPostgresql:
+  enabled: true
+  namespace: postgresql
+  credentials:
+    username: postgres
+    password: postgres123
+  cluster:
+    instances: 3
+    storageSize: 20Gi
+    storageClass: local-path
+    maxConnections: "200"
+    sharedBuffers: "256MB"
+    effectiveCacheSize: "1GB"
+    maintenanceWorkMem: "64MB"
+    checkpointCompletionTarget: "0.9"
+    walBuffers: "16MB"
+    defaultStatisticsTarget: "100"
+    randomPageCost: "1.1"
+    effectiveIoConcurrency: "200"
+    workMem: "4MB"
+    minWalSize: "1GB"
+    maxWalSize: "4GB"
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: 250m
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+  nodePort: 30432
+  sonarqubeRolePassword: postgres123
+
+customPgadmin:
+  enabled: true
+  namespace: pgadmin
+  adminEmail: admin@dev.net
+  adminPassword: admin
+  dbPassword: pgadmin123
+  ingress:
+    host: pgadmin.prod.net
+    tlsSecretName: tls-prod-net-wildcard

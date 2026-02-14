@@ -1,0 +1,6 @@
+{{- if .Values.customPostgresql.enabled }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.customPostgresql.namespace }}
+{{- end }}
