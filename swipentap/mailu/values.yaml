@@ -1245,6 +1245,10 @@ postfix:
   ## @param postfix.logLevel Override default log level
   logLevel: ""
 
+  ## @param postfix.updateStrategy.type Strategy to use to update Pods
+  updateStrategy:
+    type: Recreate
+
   ## Pod image
   ## @param postfix.image.repository Pod image repository
   ## @param postfix.image.tag Pod image tag (defaults to `mailuVersion` if set, otherwise `Chart.AppVersion`)
