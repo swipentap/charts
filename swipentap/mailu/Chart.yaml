@@ -1,0 +1,23 @@
+apiVersion: v2
+appVersion: 2024.06.46
+description: This chart installs the Mailu mail system on Kubernetes
+home: https://mailu.io
+icon: https://mailu.io/master/_images/logo.png
+keywords:
+- mailu
+- mail
+- email
+- smtp
+- imap
+- pop3
+- webmail
+- postfix
+- dovecot
+- roundcube
+maintainers:
+- name: Mailu
+  url: https://mailu.io
+name: mailu
+sources:
+- https://github.com/Mailu/helm-charts/
+version: 2.6.3

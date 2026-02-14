@@ -1,0 +1,12 @@
+{{- if .Values.customCoredns.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns
+  namespace: kube-system
+data:
+  Corefile: |
+{{ .Values.customCoredns.corefile | indent 4 }}
+  NodeHosts: |
+{{ .Values.customCoredns.nodeHosts | indent 4 }}
+{{- end }}

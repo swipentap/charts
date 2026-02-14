@@ -1,0 +1,9 @@
+{{- if .Values.customTls.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: {{ .Values.customTls.serversTransport.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  insecureSkipVerify: true
+{{- end }}

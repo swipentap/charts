@@ -1,0 +1,16 @@
+{{- if .Values.customTls.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.customTls.certificate.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  secretName: {{ .Values.customTls.certificate.secretName }}
+  issuerRef:
+    name: {{ .Values.customTls.issuer.name }}
+    kind: Issuer
+  dnsNames:
+  {{- range .Values.customTls.certificate.dnsNames }}
+  - {{ . }}
+  {{- end }}
+{{- end }}
