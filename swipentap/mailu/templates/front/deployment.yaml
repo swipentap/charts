@@ -22,6 +22,7 @@ spec:
   {{- if and .Values.front.updateStrategy (eq .Values.front.kind "DaemonSet") }}
   updateStrategy: {{- toYaml .Values.front.updateStrategy | nindent 4 }}
   {{- end }}
+  progressDeadlineSeconds: 600
   revisionHistoryLimit: {{ .Values.front.revisionHistoryLimit }}
   selector:
     matchLabels: {{- include "mailu.labels.matchLabels" . | nindent 6 }}
@@ -67,7 +68,12 @@ spec:
       {{- end }}
       {{- if .Values.front.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.front.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- else }}
+      securityContext: {}
       {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
       containers:
         - name: front
           image: {{ .Values.imageRegistry }}/{{ .Values.front.image.repository }}:{{ default (include "mailu.version" .) .Values.front.image.tag }}
@@ -169,6 +175,8 @@ spec:
           {{- if .Values.front.resources }}
           resources: {{- toYaml .Values.front.resources | nindent 12 }}
           {{- end }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
           {{- if .Values.front.startupProbe.enabled }}
           startupProbe: {{- include "mailu.tplvalues.render" (dict "value" (omit .Values.front.startupProbe "enabled") "context" $) | nindent 12 }}
             exec:

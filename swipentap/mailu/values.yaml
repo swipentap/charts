@@ -1412,10 +1412,10 @@ postfix:
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
   topologySpreadConstraints: []
 
-  ## Strategy to use to update Pods
-  ## @param postfix.updateStrategy.type Can be set to RollingUpdate or Recreate
+  ## Strategy to use to update Pods (matches original Mailu chart — do not change)
+  ## @param postfix.updateStrategy.type Can be set to RollingUpdate or OnDelete
   updateStrategy:
-    type: Recreate
+    type: RollingUpdate
 
   ## @param postfix.extraEnvVars Extra environment variable to pass to the running container
   ## For example:
@@ -2005,13 +2005,10 @@ rspamd:
   ## @param rspamd.extraContainers Add additional containers to the pod
   extraContainers: []
 
-## @section clamav parameters
+## @section clamav parameters (matches original Mailu chart — do not add replicaCount)
 clamav:
   ## @param clamav.enabled Enable ClamAV
   enabled: true
-
-  ## @param clamav.replicaCount Number of clamav replicas to deploy
-  replicaCount: 1
 
   ## @param clamav.logLevel Override default log level
   logLevel: ""

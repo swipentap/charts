@@ -18,6 +18,7 @@ spec:
   {{- if .Values.webmail.updateStrategy }}
   strategy: {{- toYaml .Values.webmail.updateStrategy | nindent 4 }}
   {{- end }}
+  progressDeadlineSeconds: 600
   revisionHistoryLimit: {{ .Values.webmail.revisionHistoryLimit }}
   selector:
     matchLabels: {{- include "mailu.labels.matchLabels" . | nindent 6 }}
@@ -63,7 +64,12 @@ spec:
       {{- end }}
       {{- if .Values.webmail.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.webmail.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- else }}
+      securityContext: {}
       {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
       containers:
         - name: webmail
           image: {{ .Values.imageRegistry }}/{{ .Values.webmail.image.repository }}:{{ default (include "mailu.version" .) .Values.webmail.image.tag }}
@@ -103,6 +109,8 @@ spec:
           {{- if .Values.webmail.resources }}
           resources: {{- toYaml .Values.webmail.resources | nindent 12 }}
           {{- end }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
           {{- if .Values.webmail.startupProbe.enabled }}
           startupProbe: {{- include "mailu.tplvalues.render" (dict "value" (omit .Values.webmail.startupProbe "enabled") "context" $) | nindent 12 }}
             exec:

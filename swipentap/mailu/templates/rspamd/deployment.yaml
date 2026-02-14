@@ -18,6 +18,7 @@ spec:
   {{- if .Values.rspamd.updateStrategy }}
   strategy: {{- toYaml .Values.rspamd.updateStrategy | nindent 4 }}
   {{- end }}
+  progressDeadlineSeconds: 600
   revisionHistoryLimit: {{ .Values.rspamd.revisionHistoryLimit }}
   selector:
     matchLabels: {{- include "mailu.labels.matchLabels" . | nindent 6 }}
@@ -63,7 +64,12 @@ spec:
       {{- end }}
       {{- if .Values.rspamd.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.rspamd.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- else }}
+      securityContext: {}
       {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
       hostname: rspamd # https://github.com/Mailu/helm-charts/issues/95
       containers:
         - name: rspamd
@@ -114,6 +120,8 @@ spec:
           {{- if .Values.rspamd.resources }}
           resources: {{- toYaml .Values.rspamd.resources | nindent 12 }}
           {{- end }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
           {{- if .Values.rspamd.startupProbe.enabled }}
           startupProbe: {{- include "mailu.tplvalues.render" (dict "value" (omit .Values.rspamd.startupProbe "enabled") "context" $) | nindent 12 }}
             httpGet:

@@ -14,7 +14,7 @@ metadata:
   annotations: {{- include "mailu.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 spec:
-  replicas: {{ .Values.clamav.replicaCount }}
+  replicas: {{ .Values.clamav.replicaCount | default 1 }}
   revisionHistoryLimit: 10
   podManagementPolicy: OrderedReady
   persistentVolumeClaimRetentionPolicy:

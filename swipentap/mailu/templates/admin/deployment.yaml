@@ -17,6 +17,7 @@ spec:
   {{- if .Values.admin.updateStrategy }}
   strategy: {{- toYaml .Values.admin.updateStrategy | nindent 4 }}
   {{- end }}
+  progressDeadlineSeconds: 600
   revisionHistoryLimit: {{ .Values.admin.revisionHistoryLimit }}
   selector:
     matchLabels: {{- include "mailu.labels.matchLabels" . | nindent 6 }}
@@ -68,7 +69,12 @@ spec:
       {{- end }}
       {{- if .Values.admin.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.admin.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- else }}
+      securityContext: {}
       {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
       containers:
         - name: admin
           image: {{ .Values.imageRegistry }}/{{ .Values.admin.image.repository }}:{{ default (include "mailu.version" .) .Values.admin.image.tag }}
@@ -110,6 +116,8 @@ spec:
           {{- if .Values.admin.resources }}
           resources: {{- toYaml .Values.admin.resources | nindent 12 }}
           {{- end }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
           {{- if .Values.admin.startupProbe.enabled }}
           startupProbe: {{- include "mailu.tplvalues.render" (dict "value" (omit .Values.admin.startupProbe "enabled") "context" $) | nindent 12 }}
             httpGet:
