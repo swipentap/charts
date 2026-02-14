@@ -2010,6 +2010,9 @@ clamav:
   ## @param clamav.enabled Enable ClamAV
   enabled: true
 
+  ## @param clamav.replicaCount Number of clamav replicas to deploy
+  replicaCount: 1
+
   ## @param clamav.logLevel Override default log level
   logLevel: ""
 
