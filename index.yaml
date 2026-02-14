@@ -286,6 +286,34 @@ entries:
     urls:
     - cockroachdb-1.0.0.tgz
     version: 1.0.0
+  mailu:
+  - apiVersion: v2
+    appVersion: 2024.06.46
+    created: "2026-02-14T00:40:06.674032026Z"
+    description: This chart installs the Mailu mail system on Kubernetes
+    digest: 2cccb3c52f2a420ac193a77b0ae809e3edd22e3dc14938aa306bdd3ad80bbe35
+    home: https://mailu.io
+    icon: https://mailu.io/master/_images/logo.png
+    keywords:
+    - mailu
+    - mail
+    - email
+    - smtp
+    - imap
+    - pop3
+    - webmail
+    - postfix
+    - dovecot
+    - roundcube
+    maintainers:
+    - name: Mailu
+      url: https://mailu.io
+    name: mailu
+    sources:
+    - https://github.com/Mailu/helm-charts/
+    urls:
+    - https://github.com/swipentap/charts/releases/download/mailu-2.6.3/mailu-2.6.3.tgz
+    version: 2.6.3
   ollama:
   - apiVersion: v2
     appVersion: latest
@@ -810,4 +838,4 @@ entries:
     urls:
     - sins-1.0.31.tgz
     version: 1.0.31
-generated: "2026-02-05T11:38:32.849102814Z"
+generated: "2026-02-14T00:40:06.674125061Z"
