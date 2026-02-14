@@ -29,9 +29,11 @@ jobs:
         with:
           version: 'v3.17.0'
 
-      - name: Bump chart versions for this run
+      - name: Bump chart versions for this run (keycloak, sonarqube, plane-ce only)
         run: |
-          for f in swipentap/*/Chart.yaml; do
+          for chart in keycloak sonarqube plane-ce; do
+            f="swipentap/${chart}/Chart.yaml"
+            [ -f "$f" ] || continue
             sed -i "s/^\(version: \)\(.*\)/\1\2-${{ github.run_number }}/" "$f"
             echo "Set version in $f"
           done
@@ -60,6 +62,5 @@ jobs:
           config: cr.yaml
           skip_existing: true
           mark_as_latest: true
-          packages_with_index: true
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
