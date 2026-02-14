@@ -31,12 +31,9 @@ jobs:
 
       - name: Bump chart versions for this run
         run: |
-          for chart in keycloak sonarqube plane-ce; do
-            f="swipentap/${chart}/Chart.yaml"
-            if [ -f "$f" ]; then
-              sed -i "s/^\(version: \)\(.*\)/\1\2-${{ github.run_number }}/" "$f"
-              echo "Set version in $f"
-            fi
+          for f in swipentap/*/Chart.yaml; do
+            sed -i "s/^\(version: \)\(.*\)/\1\2-${{ github.run_number }}/" "$f"
+            echo "Set version in $f"
           done
 
       - name: Helm dependency update for charts with dependencies
