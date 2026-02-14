@@ -56,43 +56,13 @@ jobs:
           done
           ls -la /tmp/chart-packages
 
-      - name: Install chart-releaser
-        run: |
-          curl -sSLo cr.tar.gz "https://github.com/helm/chart-releaser/releases/download/v1.6.1/chart-releaser_1.6.1_linux_amd64.tar.gz"
-          tar -xzf cr.tar.gz
-          chmod +x cr
-          ./cr version
-
-      - name: Package and release (explicit to surface errors)
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        with:
+          charts_dir: swipentap
+          config: cr.yaml
+          skip_existing: true
+          mark_as_latest: true
+          packages_with_index: true
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -e
-          charts_dir=swipentap
-          owner=swipentap
-          repo=charts
-          latest_tag=$(git describe --tags --abbrev=0 HEAD~ 2>/dev/null || git rev-list --max-parents=0 --first-parent HEAD | head -1)
-          echo "Discovering changed charts since '$latest_tag'..."
-          changed_files=$(git diff --find-renames --name-only "$latest_tag" -- "$charts_dir" || true)
-          depth=$(($(echo "$charts_dir" | tr '/' '\n' | grep -v '^$' | wc -l) + 1))
-          all_changed=$(echo "$changed_files" | cut -d'/' -f"1-$depth" | sort -u | while read -r d; do [ -f "$d/Chart.yaml" ] && echo "$d"; done)
-          changed_charts=$(echo "$all_changed" | grep -E "swipentap/(keycloak|sonarqube|plane-ce)$" || true)
-          echo "Changed charts (keycloak/sonarqube/plane-ce only):"
-          echo "$changed_charts"
-          rm -rf .cr-release-packages .cr-index
-          mkdir -p .cr-release-packages .cr-index
-          for chart in $changed_charts; do
-            [ -d "$chart" ] || continue
-            echo "Packaging $chart..."
-            ./cr package "$chart" --package-path .cr-release-packages --config cr.yaml
-          done
-          ls -la .cr-release-packages
-          count=$(ls -1 .cr-release-packages/*.tgz 2>/dev/null | wc -l)
-          if [ "$count" -eq 0 ]; then
-            echo "No packages to release."
-            exit 0
-          fi
-          echo "Uploading to GitHub Releases (token set)..."
-          ./cr upload -o "$owner" -r "$repo" -c "$(git rev-parse HEAD)" --config cr.yaml --skip-existing --make-release-latest=true -t "$CR_TOKEN"
-          echo "Updating index..."
-          ./cr index -o "$owner" -r "$repo" --push --config cr.yaml -t "$CR_TOKEN"
