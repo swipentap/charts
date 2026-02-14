@@ -289,6 +289,33 @@ entries:
   mailu:
   - apiVersion: v2
     appVersion: 2024.06.46
+    created: "2026-02-14T11:29:39.866328556Z"
+    description: This chart installs the Mailu mail system on Kubernetes
+    digest: 0de90cf650d5e6ec6b4e0bd8d44d2a673d4cea74adbb149ab8b8be74dcfa739b
+    home: https://mailu.io
+    icon: https://mailu.io/master/_images/logo.png
+    keywords:
+    - mailu
+    - mail
+    - email
+    - smtp
+    - imap
+    - pop3
+    - webmail
+    - postfix
+    - dovecot
+    - roundcube
+    maintainers:
+    - name: Mailu
+      url: https://mailu.io
+    name: mailu
+    sources:
+    - https://github.com/Mailu/helm-charts/
+    urls:
+    - https://github.com/swipentap/charts/releases/download/mailu-2.6.7/mailu-2.6.7.tgz
+    version: 2.6.7
+  - apiVersion: v2
+    appVersion: 2024.06.46
     created: "2026-02-14T11:16:01.928309381Z"
     description: This chart installs the Mailu mail system on Kubernetes
     digest: 656b0b0cbb0bfece8e83fde416da4529b11b413d741f7bc6cc710c6c1d216ba1
@@ -929,4 +956,4 @@ entries:
     urls:
     - sins-1.0.31.tgz
     version: 1.0.31
-generated: "2026-02-14T11:16:01.92842084Z"
+generated: "2026-02-14T11:29:39.866412677Z"
