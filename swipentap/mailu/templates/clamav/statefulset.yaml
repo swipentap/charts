@@ -15,6 +15,11 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ .Values.clamav.replicaCount }}
+  revisionHistoryLimit: 10
+  podManagementPolicy: OrderedReady
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
   {{- if .Values.clamav.updateStrategy }}
   updateStrategy:
     {{- include "mailu.tplvalues.render" (dict "value" .Values.clamav.updateStrategy "context" $ ) | nindent 4 }}
@@ -64,7 +69,12 @@ spec:
       {{- end }}
       {{- if .Values.clamav.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.clamav.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- else }}
+      securityContext: {}
       {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
       containers:
         - name: clamav
           image: {{ .Values.clamav.image.registry }}/{{ .Values.clamav.image.repository }}:{{ .Values.clamav.image.tag }}
@@ -103,7 +113,11 @@ spec:
               protocol: TCP
           {{- if or .Values.clamav.resources.limits .Values.clamav.resources.requests }}
           resources: {{- toYaml .Values.clamav.resources | nindent 12 }}
+          {{- else }}
+          resources: {}
           {{- end }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
           {{- if .Values.clamav.startupProbe.enabled }}
           startupProbe: {{- include "mailu.tplvalues.render" (dict "value" (omit .Values.clamav.startupProbe "enabled") "context" $) | nindent 12 }}
             exec:
@@ -135,7 +149,9 @@ spec:
             claimName: {{ printf "%s" (tpl .Values.clamav.persistence.existingClaim .) }}
   {{- else }}
   volumeClaimTemplates:
-    - metadata:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
         name: data
         labels: {{- include "mailu.labels.matchLabels" . | nindent 10 }}
           app.kubernetes.io/component: clamav
@@ -162,6 +178,7 @@ spec:
         resources:
           requests:
             storage: {{ .Values.clamav.persistence.size | quote }}
+        volumeMode: Filesystem
         {{- if .Values.clamav.persistence.selector }}
         selector: {{- include "mailu.tplvalues.render" (dict "value" .Values.clamav.persistence.selector "context" $) | nindent 10 }}
         {{- end }}
@@ -169,5 +186,7 @@ spec:
         dataSource: {{- include "mailu.tplvalues.render" (dict "value" .Values.clamav.persistence.dataSource "context" $) | nindent 10 }}
         {{- end }}
         {{- include "mailu.storage.class" (dict "persistence" .Values.clamav.persistence "global" .Values.global) | nindent 8 }}
+      status:
+        phase: Pending
   {{- end }}
 {{- end }}
