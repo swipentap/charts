@@ -31,9 +31,12 @@ jobs:
 
       - name: Bump chart versions for this run
         run: |
-          for f in swipentap/*/Chart.yaml; do
-            sed -i "s/^\(version: \)\(.*\)/\1\2-${{ github.run_number }}/" "$f"
-            echo "Set version in $f"
+          for chart in keycloak sonarqube plane-ce; do
+            f="swipentap/${chart}/Chart.yaml"
+            if [ -f "$f" ]; then
+              sed -i "s/^\(version: \)\(.*\)/\1\2-${{ github.run_number }}/" "$f"
+              echo "Set version in $f"
+            fi
           done
 
       - name: Helm dependency update for charts with dependencies
@@ -58,7 +61,7 @@ jobs:
         with:
           charts_dir: swipentap
           config: cr.yaml
-          skip_existing: false
+          skip_existing: true
           mark_as_latest: true
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
