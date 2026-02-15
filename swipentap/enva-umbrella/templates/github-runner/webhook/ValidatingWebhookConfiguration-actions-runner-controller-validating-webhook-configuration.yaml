@@ -1,0 +1,70 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: actions-runner-system/actions-runner-controller-serving-cert
+  creationTimestamp: null
+  name: actions-runner-controller-validating-webhook-configuration
+webhooks:
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: actions-runner-controller-webhook
+      namespace: actions-runner-system
+      path: /validate-actions-summerwind-dev-v1alpha1-runner
+  failurePolicy: Fail
+  name: validate.runner.actions.summerwind.dev
+  rules:
+  - apiGroups:
+    - actions.summerwind.dev
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - runners
+  sideEffects: None
+  timeoutSeconds: 10
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: actions-runner-controller-webhook
+      namespace: actions-runner-system
+      path: /validate-actions-summerwind-dev-v1alpha1-runnerdeployment
+  failurePolicy: Fail
+  name: validate.runnerdeployment.actions.summerwind.dev
+  rules:
+  - apiGroups:
+    - actions.summerwind.dev
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - runnerdeployments
+  sideEffects: None
+  timeoutSeconds: 10
+- admissionReviewVersions:
+  - v1beta1
+  clientConfig:
+    service:
+      name: actions-runner-controller-webhook
+      namespace: actions-runner-system
+      path: /validate-actions-summerwind-dev-v1alpha1-runnerreplicaset
+  failurePolicy: Fail
+  name: validate.runnerreplicaset.actions.summerwind.dev
+  rules:
+  - apiGroups:
+    - actions.summerwind.dev
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - runnerreplicasets
+  sideEffects: None
