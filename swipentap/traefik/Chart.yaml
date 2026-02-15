@@ -1,0 +1,9 @@
+apiVersion: v2
+name: traefik
+description: Traefik Service for K3s (subchart - deploy with enva-umbrella)
+type: application
+version: 1.0.0
+appVersion: "1.0"
+annotations:
+  category: sub
+kubeVersion: ">= 1.19.0-0"

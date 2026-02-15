@@ -4,14 +4,9 @@ global:
   domain: dev.net
   tlsSecret: tls-dev-net-wildcard
 
-# envaapps repo for directory-based apps (github-runner, tls-secret, traefik)
+# envaapps repo for tls-secret (github-runner and traefik are subcharts)
 envaappsRepo: https://github.com/swipentap/envaapps
 envaappsRevision: main
-
-# github-runner: path and revision per env (dev uses github-runner-dev + dev branch)
-githubRunner:
-  path: manifests/github-runner-dev
-  targetRevision: dev
 
 # mailu: CoreDNS nodeHosts per env (dev subnet 10.11.4.x)
 mailu:

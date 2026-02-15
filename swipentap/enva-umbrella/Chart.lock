@@ -1,0 +1,9 @@
+dependencies:
+- name: github-runner
+  repository: file://../github-runner
+  version: 1.0.0
+- name: traefik
+  repository: file://../traefik
+  version: 1.0.0
+digest: sha256:86f5f4704d7a8e6332858852d31f5cba915a4e16deaef4594aa028cd978815ac
+generated: "2026-02-16T00:34:47.305133+02:00"

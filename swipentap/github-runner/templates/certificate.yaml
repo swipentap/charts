@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: actions-runner-controller-serving-cert
+  namespace: actions-runner-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  secretName: actions-runner-controller-serving-cert
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+  dnsNames:
+  - actions-runner-controller-webhook.actions-runner-system.svc
+  - actions-runner-controller-webhook.actions-runner-system.svc.cluster.local
