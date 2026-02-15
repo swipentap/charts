@@ -31,6 +31,12 @@ jobs:
             echo "Set version in $f"
           done
 
+      - name: Add dependency helm repos for cr package
+        run: |
+          helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+
       - name: Helm dependency update for charts with dependencies
         run: |
           for d in swipentap/*/; do
