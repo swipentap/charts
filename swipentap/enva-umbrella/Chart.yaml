@@ -10,8 +10,8 @@ keywords:
   - enva
 dependencies:
   - name: github-runner
-    version: 1.0.0
+    version: ">=1.0.0"
     repository: file://../github-runner
   - name: traefik
-    version: 1.0.0
+    version: ">=1.0.0"
     repository: file://../traefik
