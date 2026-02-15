@@ -24,6 +24,13 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+      - name: Helm dependency update for enva-umbrella (before bump, subcharts at 1.0.0)
+        run: |
+          if [ -f swipentap/enva-umbrella/Chart.yaml ] && grep -q "dependencies:" swipentap/enva-umbrella/Chart.yaml; then
+            echo "Running helm dependency update for enva-umbrella (pre-bump)"
+            helm dependency update swipentap/enva-umbrella
+          fi
+
       - name: Bump chart versions for this run
         run: |
           for f in swipentap/*/Chart.yaml; do
@@ -40,6 +47,10 @@ jobs:
       - name: Helm dependency update for charts with dependencies
         run: |
           for d in swipentap/*/; do
+            if [ "$d" = "swipentap/enva-umbrella/" ]; then
+              echo "Skipping enva-umbrella (already updated before bump)"
+              continue
+            fi
             if [ -f "${d}Chart.yaml" ] && grep -q "dependencies:" "${d}Chart.yaml"; then
               echo "Running helm dependency update in $d"
               helm dependency update "$d"
