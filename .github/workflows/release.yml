@@ -41,11 +41,11 @@ jobs:
           done
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
+        uses: helm/chart-releaser-action@v1.7.0
         with:
           charts_dir: swipentap
           config: cr.yaml
-          skip_existing: false
+          skip_existing: true
           mark_as_latest: true
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
