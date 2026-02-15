@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rancher
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://releases.rancher.com/server-charts/stable
+    chart: rancher
+    targetRevision: 2.13.1
+    helm:
+      releaseName: rancher
+      valuesObject:
+        hostname: {{ .Values.rancher.hostname | quote }}
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+        tls: external
+        replicas: 1
+        bootstrapPassword: admin
+        extraEnv:
+          - name: CATTLE_BOOTSTRAP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: bootstrap-secret
+                key: bootstrapPassword
+        global:
+          cattle:
+            systemDefaultRegistry: ""
+        systemDefaultRegistry: ""
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cattle-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

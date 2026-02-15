@@ -1,0 +1,115 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mailu
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://swipentap.github.io/charts
+    chart: mailu
+    targetRevision: "2.6.7-94"
+    helm:
+      releaseName: mailu
+      valuesObject:
+        mariadb:
+          enabled: false
+        postgresql:
+          enabled: false
+        externalDatabase:
+          enabled: true
+          type: postgresql
+          host: postgresql-rw.postgresql.svc.cluster.local
+          port: "5432"
+          database: mailu
+          username: mailu
+          password: mailu123
+          adminPassword: postgres123
+        global:
+          database:
+            roundcube:
+              database: roundcube
+              username: roundcube
+              password: roundcube123
+        domain: {{ .Values.global.domain | quote }}
+        hostnames:
+          - mail.{{ .Values.global.domain }}
+        initialAccount:
+          enabled: true
+          username: admin
+          domain: {{ .Values.global.domain | quote }}
+          password: "admin"
+          mode: update
+        admin:
+          extraEnvVars:
+            - name: I_KNOW_MY_SETUP_DOESNT_FIT_REQUIREMENTS_AND_WONT_FILE_ISSUES_WITHOUT_PATCHES
+              value: "1"
+        postfix:
+          updateStrategy:
+            type: Recreate
+        ingress:
+          enabled: true
+          className: traefik
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+        front:
+          service:
+            annotations:
+              traefik.ingress.kubernetes.io/service.serversscheme: "https"
+              traefik.ingress.kubernetes.io/service.serverstransport: "mailu-front-insecure@kubernetescrd"
+        customTls:
+          enabled: true
+          issuer:
+            name: mailu-selfsigned
+          certificate:
+            name: mailu-certificates
+            secretName: mailu-certificates
+            dnsNames:
+            - mail.prod.net
+            - mail.dev.net
+            - mail.test.net
+          serversTransport:
+            name: front-insecure
+        customCoredns:
+          enabled: true
+          corefile: |
+            .:53 {
+                errors
+                health
+                ready
+                kubernetes cluster.local in-addr.arpa ip6.arpa {
+                  pods insecure
+                  fallthrough in-addr.arpa ip6.arpa
+                }
+                hosts /etc/coredns/NodeHosts {
+                  ttl 60
+                  reload 15s
+                  fallthrough
+                }
+                prometheus :9153
+                cache 30
+                loop
+                reload
+                loadbalance
+                import /etc/coredns/custom/*.override
+                forward . 8.8.8.8 8.8.4.4
+            }
+            import /etc/coredns/custom/*.server
+          nodeHosts: |
+            {{ .Values.mailu.nodeHosts | trim | nindent 12 }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mailu
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+  ignoreDifferences:
+  - kind: Ingress
+    jsonPointers:
+      - /status

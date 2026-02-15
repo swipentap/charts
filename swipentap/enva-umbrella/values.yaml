@@ -1,0 +1,34 @@
+# env: dev | test | prod - used for domain, tls secret, paths
+global:
+  env: dev
+  domain: dev.net
+  tlsSecret: tls-dev-net-wildcard
+
+# envaapps repo for directory-based apps (github-runner, tls-secret, traefik)
+envaappsRepo: https://github.com/swipentap/envaapps
+envaappsRevision: main
+
+# github-runner: path and revision per env (dev uses github-runner-dev + dev branch)
+githubRunner:
+  path: manifests/github-runner-dev
+  targetRevision: dev
+
+# mailu: CoreDNS nodeHosts per env (dev subnet 10.11.4.x)
+mailu:
+  nodeHosts: |
+    10.11.4.11 k3s-control
+    10.11.4.12 k3s-worker-1
+    10.11.4.13 k3s-worker-2
+    10.11.4.14 k3s-worker-3
+
+# postgresql: pgadmin ingress host per env
+postgresql:
+  pgadminHost: pgadmin.dev.net
+
+# sins: haproxy IP per env (dev 10.11.4.17)
+sins:
+  haproxyIp: "10.11.4.17"
+
+# rancher hostname per env
+rancher:
+  hostname: rancher.dev.net

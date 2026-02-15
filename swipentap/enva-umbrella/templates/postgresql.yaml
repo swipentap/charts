@@ -1,0 +1,155 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: postgresql
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://swipentap.github.io/charts
+    chart: postgresql
+    targetRevision: "1.0.0"
+    helm:
+      releaseName: postgresql
+      valuesObject:
+        cloudnative-pg: {}
+        customPostgresql:
+          enabled: true
+          namespace: postgresql
+          credentials:
+            username: postgres
+            password: postgres123
+          cluster:
+            instances: 3
+            storageSize: 20Gi
+            storageClass: local-path
+            maxConnections: "200"
+            sharedBuffers: "256MB"
+            effectiveCacheSize: "1GB"
+            maintenanceWorkMem: "64MB"
+            checkpointCompletionTarget: "0.9"
+            walBuffers: "16MB"
+            defaultStatisticsTarget: "100"
+            randomPageCost: "1.1"
+            effectiveIoConcurrency: "200"
+            workMem: "4MB"
+            minWalSize: "1GB"
+            maxWalSize: "4GB"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: 250m
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          nodePort: 30432
+          sonarqubeRolePassword: postgres123
+        customPgadmin:
+          enabled: true
+          namespace: pgadmin
+          adminEmail: admin@dev.net
+          adminPassword: admin
+          dbPassword: pgadmin123
+          ingress:
+            host: {{ .Values.postgresql.pgadminHost | quote }}
+            tlsSecretName: {{ .Values.global.tlsSecret | quote }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cnpg-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      jsonPointers:
+      - /metadata/annotations
+      - /metadata/labels
+      - /metadata/generation
+      - /metadata/resourceVersion
+      - /metadata/uid
+      - /metadata/creationTimestamp
+      - /spec/conversion
+      - /spec/preserveUnknownFields
+    - group: postgresql.cnpg.io
+      kind: Cluster
+      jsonPointers:
+        - /status
+        - /metadata/annotations
+        - /metadata/labels
+        - /metadata/generation
+        - /metadata/resourceVersion
+        - /metadata/uid
+        - /metadata/creationTimestamp
+        - /spec/affinity
+        - /spec/enablePDB
+        - /spec/enableSuperuserAccess
+        - /spec/failoverDelay
+        - /spec/imageName
+        - /spec/logLevel
+        - /spec/maxSyncReplicas
+        - /spec/minSyncReplicas
+        - /spec/monitoring
+        - /spec/postgresGID
+        - /spec/postgresUID
+        - /spec/primaryUpdateMethod
+        - /spec/primaryUpdateStrategy
+        - /spec/replicationSlots
+        - /spec/smartShutdownTimeout
+        - /spec/startDelay
+        - /spec/stopDelay
+        - /spec/storage/resizeInUseVolumes
+        - /spec/postgresql/parameters/archive_mode
+        - /spec/postgresql/parameters/archive_timeout
+        - /spec/postgresql/parameters/dynamic_shared_memory_type
+        - /spec/postgresql/parameters/log_destination
+        - /spec/postgresql/parameters/log_directory
+        - /spec/postgresql/parameters/log_filename
+        - /spec/postgresql/parameters/log_rotation_age
+        - /spec/postgresql/parameters/log_rotation_size
+        - /spec/postgresql/parameters/log_truncate_on_rotation
+        - /spec/postgresql/parameters/logging_collector
+        - /spec/postgresql/parameters/max_parallel_workers
+        - /spec/postgresql/parameters/max_replication_slots
+        - /spec/postgresql/parameters/max_worker_processes
+        - /spec/postgresql/parameters/shared_memory_type
+        - /spec/postgresql/parameters/shared_preload_libraries
+        - /spec/postgresql/parameters/ssl_max_protocol_version
+        - /spec/postgresql/parameters/ssl_min_protocol_version
+        - /spec/postgresql/parameters/wal_keep_size
+        - /spec/postgresql/parameters/wal_level
+        - /spec/postgresql/parameters/wal_log_hints
+        - /spec/postgresql/parameters/wal_receiver_timeout
+        - /spec/postgresql/parameters/wal_sender_timeout
+        - /spec/postgresql/syncReplicaElectionConstraint
+        - /spec/managed
+    - group: ""
+      kind: ServiceAccount
+      name: db-init
+      jsonPointers:
+        - /metadata/resourceVersion
+        - /metadata/uid
+        - /metadata/annotations
+    - group: rbac.authorization.k8s.io
+      kind: Role
+      name: db-init
+      jsonPointers:
+        - /metadata/resourceVersion
+        - /metadata/uid
+        - /metadata/annotations
+    - group: rbac.authorization.k8s.io
+      kind: RoleBinding
+      name: db-init
+      jsonPointers:
+        - /metadata/resourceVersion
+        - /metadata/uid
+        - /metadata/annotations
+    - kind: Ingress
+      jsonPointers:
+        - /status

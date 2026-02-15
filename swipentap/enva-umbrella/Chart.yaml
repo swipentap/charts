@@ -1,0 +1,10 @@
+apiVersion: v2
+name: enva-umbrella
+description: Umbrella chart for enva ArgoCD Applications (cert-manager, certa, github-runner, mailu, ollama, postgresql, rancher, sins, tls-secret, traefik)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - argocd
+  - applications
+  - enva
