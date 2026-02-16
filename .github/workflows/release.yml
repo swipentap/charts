@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'swipentap/enva-umbrella/values.yaml'
 
 permissions:
   contents: write
@@ -24,19 +26,20 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Helm dependency update for enva-umbrella (before bump, subcharts at 1.0.0)
-        run: |
-          if [ -f swipentap/enva-umbrella/Chart.yaml ] && grep -q "dependencies:" swipentap/enva-umbrella/Chart.yaml; then
-            echo "Running helm dependency update for enva-umbrella (pre-bump)"
-            helm dependency update swipentap/enva-umbrella
-          fi
-
       - name: Bump chart versions for this run
         run: |
           for f in swipentap/*/Chart.yaml; do
             sed -i "s/^\(version: \)\(.*\)/\1\2-${{ github.run_number }}/" "$f"
             echo "Set version in $f"
           done
+
+      - name: Update umbrella with new chart versions
+        run: |
+          GITHUB_RUNNER_VER=$(grep '^version:' swipentap/github-runner/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          TLS_SECRET_VER=$(grep '^version:' swipentap/tls-secret/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          sed -i "s/^githubRunnerChartRevision: .*/githubRunnerChartRevision: \"$GITHUB_RUNNER_VER\"/" swipentap/enva-umbrella/values.yaml
+          sed -i "s/^tlsSecretChartRevision: .*/tlsSecretChartRevision: \"$TLS_SECRET_VER\"/" swipentap/enva-umbrella/values.yaml
+          echo "githubRunnerChartRevision=$GITHUB_RUNNER_VER tlsSecretChartRevision=$TLS_SECRET_VER"
 
       - name: Add dependency helm repos for cr package
         run: |
@@ -47,10 +50,6 @@ jobs:
       - name: Helm dependency update for charts with dependencies
         run: |
           for d in swipentap/*/; do
-            if [ "$d" = "swipentap/enva-umbrella/" ]; then
-              echo "Skipping enva-umbrella (already updated before bump)"
-              continue
-            fi
             if [ -f "${d}Chart.yaml" ] && grep -q "dependencies:" "${d}Chart.yaml"; then
               echo "Running helm dependency update in $d"
               helm dependency update "$d"
@@ -66,3 +65,8 @@ jobs:
           mark_as_latest: true
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push umbrella values
+        run: |
+          git add swipentap/enva-umbrella/values.yaml
+          git diff --staged --quiet || (git commit -m "chore: umbrella chart revisions from release ${{ github.run_number }}" && git push origin main)
