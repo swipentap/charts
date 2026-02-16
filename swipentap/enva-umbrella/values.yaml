@@ -4,7 +4,11 @@ global:
   domain: dev.net
   tlsSecret: tls-dev-net-wildcard
 
-# envaapps repo for tls-secret (github-runner and traefik are subcharts)
+# charts repo (same as root-apps) for github-runner Helm
+chartsRepo: https://swipentap.github.io/charts
+githubRunnerChartRevision: "1.0.0"
+
+# envaapps repo for tls-secret
 envaappsRepo: https://github.com/swipentap/envaapps
 envaappsRevision: main
 
