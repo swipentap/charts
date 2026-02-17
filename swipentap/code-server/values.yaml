@@ -12,7 +12,6 @@ fullnameOverride: ""
 service:
   type: ClusterIP
   port: 8080
-  nodePort: null  # set when type: NodePort (e.g. 30880)
 
 # Continue.dev + Ollama (in-cluster)
 continue:
