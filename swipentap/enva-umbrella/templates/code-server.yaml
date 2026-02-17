@@ -27,12 +27,12 @@ spec:
           annotations:
             traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
           hosts:
-            - host: code.{{ .Values.global.domain }}
+            - host: code-server.{{ .Values.global.domain }}
               paths:
                 - /
           tls:
             - hosts:
-                - code.{{ .Values.global.domain }}
+                - code-server.{{ .Values.global.domain }}
               secretName: {{ .Values.global.tlsSecret }}
         persistence:
           storageClass: local-path
@@ -41,7 +41,7 @@ spec:
           nodePort: 30880
         extraArgs:
           - --proxy-domain
-          - code.{{ .Values.global.domain }}
+          - code-server.{{ .Values.global.domain }}
   destination:
     server: https://kubernetes.default.svc
     namespace: code-server
