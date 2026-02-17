@@ -39,9 +39,6 @@ spec:
         service:
           type: NodePort
           nodePort: 30880
-        extraArgs:
-          - --proxy-domain
-          - code-server.{{ .Values.global.domain }}
   destination:
     server: https://kubernetes.default.svc
     namespace: code-server
