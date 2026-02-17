@@ -162,7 +162,7 @@ spec:
           fi
           
           declare -a DNS_RECORDS=(
-            {{- $hosts := list "sonar" "pgadmin" "pgsql" "rancher" "ollama" "ns" "certa" "argocd" "code" }}
+            {{- $hosts := list "sonar" "pgadmin" "pgsql" "rancher" "ollama" "ns" "certa" "argocd" "code" "keycloak" }}
             {{- $envs := list "dev.net" "test.net" "prod.net" }}
             {{- range $env := $envs }}
             {{- range $h := $hosts }}
