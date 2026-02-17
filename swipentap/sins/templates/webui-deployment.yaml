@@ -162,14 +162,13 @@ spec:
           fi
           
           declare -a DNS_RECORDS=(
-            "sonar.prod.net"
-            "pgadmin.prod.net"
-            "pgsql.prod.net"
-            "rancher.prod.net"
-            "ollama.prod.net"
-            "ns.prod.net"
-            "certa.prod.net"
-            "argocd.prod.net"
+            {{- $hosts := list "sonar" "pgadmin" "pgsql" "rancher" "ollama" "ns" "certa" "argocd" "code" }}
+            {{- $envs := list "dev.net" "test.net" "prod.net" }}
+            {{- range $env := $envs }}
+            {{- range $h := $hosts }}
+            "{{ $h }}.{{ $env }}"
+            {{- end }}
+            {{- end }}
           )
           
           echo "Adding DNS A records..."
