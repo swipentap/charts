@@ -108,7 +108,7 @@ spec:
                   key: password
           {{- if .Values.extraArgs }}
           args:
-{{ toYaml .Values.extraArgs | indent 12 }}
+            {{ toYaml .Values.extraArgs | indent 12 }}
           {{- end }}
           volumeMounts:
             - name: data
