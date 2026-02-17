@@ -37,9 +37,11 @@ jobs:
         run: |
           GITHUB_RUNNER_VER=$(grep '^version:' swipentap/github-runner/Chart.yaml | sed 's/version: //' | tr -d ' ')
           TLS_SECRET_VER=$(grep '^version:' swipentap/tls-secret/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          CODE_SERVER_VER=$(grep '^version:' swipentap/code-server/Chart.yaml | sed 's/version: //' | tr -d ' ')
           sed -i "s/^githubRunnerChartRevision: .*/githubRunnerChartRevision: \"$GITHUB_RUNNER_VER\"/" swipentap/enva-umbrella/values.yaml
           sed -i "s/^tlsSecretChartRevision: .*/tlsSecretChartRevision: \"$TLS_SECRET_VER\"/" swipentap/enva-umbrella/values.yaml
-          echo "githubRunnerChartRevision=$GITHUB_RUNNER_VER tlsSecretChartRevision=$TLS_SECRET_VER"
+          sed -i "s/^codeServerChartRevision: .*/codeServerChartRevision: \"$CODE_SERVER_VER\"/" swipentap/enva-umbrella/values.yaml
+          echo "githubRunnerChartRevision=$GITHUB_RUNNER_VER tlsSecretChartRevision=$TLS_SECRET_VER codeServerChartRevision=$CODE_SERVER_VER"
 
       - name: Add dependency helm repos for cr package
         run: |
