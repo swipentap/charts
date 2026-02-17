@@ -6,8 +6,8 @@ global:
 
 # charts repo (same as root-apps) for github-runner and tls-secret Helm
 chartsRepo: https://swipentap.github.io/charts
-githubRunnerChartRevision: "1.0.1-134"
-tlsSecretChartRevision: "1.0.0-134"
+githubRunnerChartRevision: "1.0.1-135"
+tlsSecretChartRevision: "1.0.0-135"
 
 # mailu: CoreDNS nodeHosts per env (dev subnet 10.11.4.x)
 mailu:
