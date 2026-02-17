@@ -1,0 +1,30 @@
+{{- if .Values.continue.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "code-server.fullname" . }}-continue-config
+  labels:
+    {{- include "code-server.labels" . | nindent 4 }}
+data:
+  config.json: |
+    {
+      "models": [
+        {
+          "title": "Ollama",
+          "provider": "ollama",
+          "model": "{{ .Values.continue.model | default "llama3.2:3b" }}",
+          "apiBase": "{{ .Values.continue.ollamaApiBase | default "http://ollama.ollama.svc.cluster.local:11434" }}"
+        }
+      ],
+      "tabAutocompleteModel": {
+        "provider": "ollama",
+        "model": "{{ .Values.continue.tabAutocompleteModel | default "llama3.2:3b" }}",
+        "apiBase": "{{ .Values.continue.ollamaApiBase | default "http://ollama.ollama.svc.cluster.local:11434" }}"
+      },
+      "embeddingsProvider": {
+        "provider": "ollama",
+        "model": "{{ .Values.continue.embeddingsModel | default "nomic-embed-text" }}",
+        "apiBase": "{{ .Values.continue.ollamaApiBase | default "http://ollama.ollama.svc.cluster.local:11434" }}"
+      }
+    }
+{{- end }}
