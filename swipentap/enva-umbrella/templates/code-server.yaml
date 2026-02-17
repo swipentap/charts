@@ -36,6 +36,9 @@ spec:
               secretName: {{ .Values.global.tlsSecret }}
         persistence:
           storageClass: local-path
+        service:
+          type: NodePort
+          nodePort: 30880
   destination:
     server: https://kubernetes.default.svc
     namespace: code-server
