@@ -14,6 +14,11 @@ spec:
       oAuthClientName: {{ .Values.auth.oAuthClientName | quote }}
       oAuthSecret: {{ .Values.auth.oAuthSecret | quote }}
       identityProviderURL: {{ .Values.auth.identityProviderURL | quote }}
+  components:
+    cheServer:
+      extraEnvs:
+        - name: CHE_KEYCLOAK_SKIP__SERVER_CERTIFICATE__VALIDATION
+          value: "true"
   devEnvironments:
     storage:
       pvcStrategy: per-workspace
