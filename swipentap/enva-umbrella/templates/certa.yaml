@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://swipentap.github.io/charts
     chart: certa
-    targetRevision: 1.0.5
+    targetRevision: {{ .Values.certaChartRevision | quote }}
     helm:
       releaseName: certa
       valuesObject:

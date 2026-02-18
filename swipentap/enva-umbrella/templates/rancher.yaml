@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://releases.rancher.com/server-charts/stable
     chart: rancher
-    targetRevision: 2.13.1
+    targetRevision: {{ .Values.rancherChartRevision | quote }}
     helm:
       releaseName: rancher
       valuesObject:

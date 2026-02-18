@@ -39,11 +39,21 @@ jobs:
           TLS_SECRET_VER=$(grep '^version:' swipentap/tls-secret/Chart.yaml | sed 's/version: //' | tr -d ' ')
           CODE_SERVER_VER=$(grep '^version:' swipentap/code-server/Chart.yaml | sed 's/version: //' | tr -d ' ')
           KEYCLOAK_VER=$(grep '^version:' swipentap/keycloak/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          SINS_VER=$(grep '^version:' swipentap/sins/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          CERTA_VER=$(grep '^version:' swipentap/certa/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          OLLAMA_VER=$(grep '^version:' swipentap/ollama/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          POSTGRESQL_VER=$(grep '^version:' swipentap/postgresql/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          MAILU_VER=$(grep '^version:' swipentap/mailu/Chart.yaml | sed 's/version: //' | tr -d ' ')
           sed -i "s/^githubRunnerChartRevision: .*/githubRunnerChartRevision: \"$GITHUB_RUNNER_VER\"/" swipentap/enva-umbrella/values.yaml
           sed -i "s/^tlsSecretChartRevision: .*/tlsSecretChartRevision: \"$TLS_SECRET_VER\"/" swipentap/enva-umbrella/values.yaml
           sed -i "s/^codeServerChartRevision: .*/codeServerChartRevision: \"$CODE_SERVER_VER\"/" swipentap/enva-umbrella/values.yaml
           sed -i "s/^keycloakChartRevision: .*/keycloakChartRevision: \"$KEYCLOAK_VER\"/" swipentap/enva-umbrella/values.yaml
-          echo "githubRunnerChartRevision=$GITHUB_RUNNER_VER tlsSecretChartRevision=$TLS_SECRET_VER codeServerChartRevision=$CODE_SERVER_VER keycloakChartRevision=$KEYCLOAK_VER"
+          sed -i "s/^sinsChartRevision: .*/sinsChartRevision: \"$SINS_VER\"/" swipentap/enva-umbrella/values.yaml
+          sed -i "s/^certaChartRevision: .*/certaChartRevision: \"$CERTA_VER\"/" swipentap/enva-umbrella/values.yaml
+          sed -i "s/^ollamaChartRevision: .*/ollamaChartRevision: \"$OLLAMA_VER\"/" swipentap/enva-umbrella/values.yaml
+          sed -i "s/^postgresqlChartRevision: .*/postgresqlChartRevision: \"$POSTGRESQL_VER\"/" swipentap/enva-umbrella/values.yaml
+          sed -i "s/^mailuChartRevision: .*/mailuChartRevision: \"$MAILU_VER\"/" swipentap/enva-umbrella/values.yaml
+          echo "sins=$SINS_VER certa=$CERTA_VER ollama=$OLLAMA_VER postgresql=$POSTGRESQL_VER mailu=$MAILU_VER githubRunner=$GITHUB_RUNNER_VER tlsSecret=$TLS_SECRET_VER codeServer=$CODE_SERVER_VER keycloak=$KEYCLOAK_VER"
 
       - name: Add dependency helm repos for cr package
         run: |
