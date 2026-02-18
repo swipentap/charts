@@ -7,15 +7,15 @@ global:
 # charts repo (same as root-apps) for Helm chart revisions
 chartsRepo: https://swipentap.github.io/charts
 # swipentap charts (auto-updated by release workflow)
-githubRunnerChartRevision: "1.0.1-143"
-tlsSecretChartRevision: "1.0.0-143"
-eclipseCheChartRevision: "1.0.0-143"
-keycloakChartRevision: "18.10.0-143"
-sinsChartRevision: "1.0.93-143"
-certaChartRevision: "1.0.5-143"
-ollamaChartRevision: "0.1.6-143"
-postgresqlChartRevision: "1.0.0-143"
-mailuChartRevision: "2.6.7-143"
+githubRunnerChartRevision: "1.0.1-144"
+tlsSecretChartRevision: "1.0.0-144"
+eclipseCheChartRevision: "1.0.0-144"
+keycloakChartRevision: "18.10.0-144"
+sinsChartRevision: "1.0.93-144"
+certaChartRevision: "1.0.5-144"
+ollamaChartRevision: "0.1.6-144"
+postgresqlChartRevision: "1.0.0-144"
+mailuChartRevision: "2.6.7-144"
 # external charts (manual updates)
 rancherChartRevision: "2.13.1"
 certManagerChartRevision: "v1.13.3"
