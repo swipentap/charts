@@ -2,7 +2,7 @@ apiVersion: v2
 name: github-runner
 description: GitHub Actions runner controller (subchart - deploy with enva-umbrella)
 type: application
-version: 1.0.1
+version: 1.0.2
 appVersion: "0.27.6"
 annotations:
   category: sub

@@ -11,6 +11,13 @@ spec:
     repoURL: {{ .Values.chartsRepo | quote }}
     chart: github-runner
     targetRevision: {{ .Values.githubRunnerChartRevision | quote }}
+    helm:
+      valuesObject:
+        runnerGroup: {{ .Values.githubRunner.group }}
+        runnerLabels:
+          {{- range .Values.githubRunner.labels }}
+          - {{ . }}
+          {{- end }}
   destination:
     server: https://kubernetes.default.svc
     namespace: actions-runner-system

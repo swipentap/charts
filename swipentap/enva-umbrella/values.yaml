@@ -41,5 +41,12 @@ sins:
 rancher:
   hostname: rancher.dev.net
 
+# github-runner: runner group and labels per env
+githubRunner:
+  group: k3s-dev
+  labels:
+    - k3s
+    - k3s-dev
+
 # eclipse-che: Keycloak client secret per env (set in envaapps overlay)
 eclipseCheOAuthSecret: ""

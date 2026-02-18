@@ -1,0 +1,4 @@
+runnerGroup: k3s-prod
+runnerLabels:
+  - k3s
+  - k3s-prod

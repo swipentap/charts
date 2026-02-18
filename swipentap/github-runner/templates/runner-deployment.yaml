@@ -10,10 +10,11 @@ spec:
   template:
     spec:
       organization: swipentap
-      group: k3s-dev
+      group: {{ .Values.runnerGroup }}
       labels:
-        - k3s
-        - k3s-dev
+        {{- range .Values.runnerLabels }}
+        - {{ . }}
+        {{- end }}
       dockerdWithinRunnerContainer: true
       dockerEnabled: true
       image: summerwind/actions-runner-dind:latest
