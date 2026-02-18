@@ -6,5 +6,5 @@ metadata:
 data:
   {{ printf "%s.server" .Values.domain }}: |
     {{ .Values.domain }}:53 {
-        forward . {{ include "sins.fullname" . }}.{{ include "sins.namespace" . }}.svc.cluster.local:5353
+        forward . {{ .Values.haproxyIp }}:5353
     }

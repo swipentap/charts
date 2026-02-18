@@ -5,6 +5,7 @@ namespace:
 # Domain configuration for ingress
 domain: "dev.net"  # Default domain, can be overridden (e.g., "prod.net", "test.net")
 subdomain: "ns"    # Subdomain for this service (e.g., "ns" -> "ns.dev.net")
+haproxyIp: ""      # HAProxy IP for CoreDNS forwarding to sins/dnsdist (set per env)
 
 postgresql:
   image:

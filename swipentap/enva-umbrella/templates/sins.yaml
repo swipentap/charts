@@ -67,6 +67,7 @@ spec:
             port: 5432
         domain: {{ .Values.global.domain | quote }}
         subdomain: ns
+        haproxyIp: {{ .Values.sins.haproxyIp | quote }}
   destination:
     server: https://kubernetes.default.svc
     namespace: sins
