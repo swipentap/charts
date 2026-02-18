@@ -18,7 +18,7 @@ spec:
         tlsSecretName: {{ .Values.global.tlsSecret }}
         auth:
           oAuthSecret: {{ .Values.eclipseCheOAuthSecret | quote }}
-          identityProviderURL: "https://auth.{{ .Values.global.domain }}/realms/master"
+          identityProviderURL: "https://auth.{{ .Values.global.domain }}/auth/realms/master"
   destination:
     server: https://kubernetes.default.svc
     namespace: eclipse-che
