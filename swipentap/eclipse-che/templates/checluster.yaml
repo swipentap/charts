@@ -16,9 +16,8 @@ spec:
       identityProviderURL: {{ .Values.auth.identityProviderURL | quote }}
   components:
     cheServer:
-      extraEnvs:
-        - name: CHE_KEYCLOAK_SKIP__SERVER_CERTIFICATE__VALIDATION
-          value: "true"
+      extraProperties:
+        CHE_KEYCLOAK_SKIP__SERVER_CERTIFICATE__VALIDATION: "true"
   devEnvironments:
     storage:
       pvcStrategy: per-workspace
