@@ -12,6 +12,7 @@ spec:
       traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     auth:
       oAuthClientName: {{ .Values.auth.oAuthClientName | quote }}
+      oAuthSecret: {{ .Values.auth.oAuthSecret | quote }}
       identityProviderURL: {{ .Values.auth.identityProviderURL | quote }}
   devEnvironments:
     storage:

@@ -40,3 +40,6 @@ sins:
 # rancher hostname per env
 rancher:
   hostname: rancher.dev.net
+
+# eclipse-che: Keycloak client secret per env (set in envaapps overlay)
+eclipseCheOAuthSecret: ""

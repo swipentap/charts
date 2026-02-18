@@ -4,4 +4,5 @@ ingressClassName: "traefik"
 
 auth:
   oAuthClientName: "eclipse-che"
+  oAuthSecret: ""
   identityProviderURL: "https://auth.dev.net/realms/master"
