@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: eclipse-che
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://swipentap.github.io/charts
+    chart: eclipse-che
+    targetRevision: {{ .Values.eclipseCheChartRevision | quote }}
+    helm:
+      releaseName: eclipse-che
+      values: |
+        domain: che.{{ .Values.global.domain }}
+        tlsSecretName: {{ .Values.global.tlsSecret }}
+        auth:
+          identityProviderURL: "https://auth.{{ .Values.global.domain }}/realms/master"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: eclipse-che
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true

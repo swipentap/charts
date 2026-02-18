@@ -1,0 +1,18 @@
+apiVersion: org.eclipse.che/v2
+kind: CheCluster
+metadata:
+  name: eclipse-che
+  namespace: eclipse-che
+spec:
+  networking:
+    domain: {{ .Values.domain | quote }}
+    tlsSecretName: {{ .Values.tlsSecretName | quote }}
+    ingressClassName: {{ .Values.ingressClassName | quote }}
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    auth:
+      oAuthClientName: {{ .Values.auth.oAuthClientName | quote }}
+      identityProviderURL: {{ .Values.auth.identityProviderURL | quote }}
+  devEnvironments:
+    storage:
+      pvcStrategy: per-workspace

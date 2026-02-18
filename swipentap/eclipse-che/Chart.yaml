@@ -1,0 +1,14 @@
+apiVersion: v2
+name: eclipse-che
+version: 1.0.0
+description: Eclipse Che operator and CheCluster CR for enva
+type: application
+keywords:
+  - ide
+  - cloud
+  - eclipse-che
+dependencies:
+  - name: eclipse-che
+    alias: operator
+    version: "7.114.0"
+    repository: https://eclipse-che.github.io/che-operator/charts

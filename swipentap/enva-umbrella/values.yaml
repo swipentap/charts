@@ -9,7 +9,7 @@ chartsRepo: https://swipentap.github.io/charts
 # swipentap charts (auto-updated by release workflow)
 githubRunnerChartRevision: "1.0.1-141"
 tlsSecretChartRevision: "1.0.0-141"
-codeServerChartRevision: "1.0.0-141"
+eclipseCheChartRevision: "1.0.0-141"
 keycloakChartRevision: "18.10.0-141"
 sinsChartRevision: "1.0.93-141"
 certaChartRevision: "1.0.5-141"
@@ -19,6 +19,7 @@ mailuChartRevision: "2.6.7-141"
 # external charts (manual updates)
 rancherChartRevision: "2.13.1"
 certManagerChartRevision: "v1.13.3"
+devworkspaceOperatorRevision: "v0.39.0"
 
 # mailu: CoreDNS nodeHosts per env (dev subnet 10.11.4.x)
 mailu:
