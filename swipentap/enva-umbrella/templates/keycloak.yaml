@@ -30,6 +30,11 @@ spec:
               secretName: {{ .Values.global.tlsSecret }}
         route:
           enabled: false
+        extraEnv: |
+          - name: KEYCLOAK_USER
+            value: admin
+          - name: KEYCLOAK_PASSWORD
+            value: admin
   destination:
     server: https://kubernetes.default.svc
     namespace: keycloak
