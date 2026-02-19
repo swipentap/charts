@@ -2,7 +2,7 @@ apiVersion: v2
 name: freeipa
 description: FreeIPA identity management server (subchart - deploy with enva-umbrella)
 type: application
-version: 1.0.1
+version: 1.0.2
 appVersion: "4.12.2"
 annotations:
   category: sub
