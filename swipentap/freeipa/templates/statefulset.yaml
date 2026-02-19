@@ -100,6 +100,9 @@ spec:
               mountPath: /sys/fs/cgroup
               readOnly: true
       volumes:
+        - name: freeipa-data
+          persistentVolumeClaim:
+            claimName: freeipa-data
         - name: run
           emptyDir: {}
         - name: tmp
@@ -109,13 +112,3 @@ spec:
         - name: cgroups
           hostPath:
             path: /sys/fs/cgroup
-  volumeClaimTemplates:
-    - metadata:
-        name: freeipa-data
-      spec:
-        accessModes:
-          - {{ .Values.persistence.accessMode }}
-        storageClassName: {{ .Values.persistence.storageClass | quote }}
-        resources:
-          requests:
-            storage: {{ .Values.persistence.size }}

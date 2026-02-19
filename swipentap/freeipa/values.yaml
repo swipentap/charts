@@ -13,10 +13,9 @@ image:
   pullPolicy: IfNotPresent
 
 persistence:
-  enabled: true
-  storageClass: "glusterfs"
+  # Path on GlusterFS mount (mounted at /mnt/gluster on all worker nodes)
+  glusterMountPath: /mnt/gluster/freeipa
   size: 10Gi
-  accessMode: ReadWriteOnce
 
 ingress:
   enabled: true
