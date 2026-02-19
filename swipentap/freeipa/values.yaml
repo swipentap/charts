@@ -23,6 +23,9 @@ ingress:
   hostname: ipa.prod.net
   tlsSecret: tls-prod-net-wildcard
 
+securityContext:
+  privileged: true
+
 resources: {}
 
 nodeSelector: {}

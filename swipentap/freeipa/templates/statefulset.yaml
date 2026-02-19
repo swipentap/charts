@@ -31,6 +31,9 @@ spec:
         - name: freeipa
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.securityContext }}
+          securityContext: {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- end }}
           args:
             - -U
             - --realm={{ .Values.realm }}
@@ -97,7 +100,6 @@ spec:
               mountPath: /var/log/journal
             - name: cgroups
               mountPath: /sys/fs/cgroup
-              readOnly: true
       volumes:
         - name: freeipa-data
           persistentVolumeClaim:
