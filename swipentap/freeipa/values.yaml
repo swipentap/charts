@@ -1,0 +1,31 @@
+hostname: ipa.prod.net
+realm: PROD.NET
+domain: prod.net
+
+# Name of a pre-existing Kubernetes secret with keys:
+#   admin-password: <FreeIPA admin password>
+#   ds-password:    <Directory Server password>
+credentialsSecret: freeipa-credentials
+
+image:
+  repository: freeipa/freeipa-server
+  tag: "fedora-40-4.12.2"
+  pullPolicy: IfNotPresent
+
+persistence:
+  enabled: true
+  storageClass: "glusterfs"
+  size: 10Gi
+  accessMode: ReadWriteOnce
+
+ingress:
+  enabled: true
+  className: traefik
+  hostname: ipa.prod.net
+  tlsSecret: tls-prod-net-wildcard
+
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: freeipa
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.chartsRepo | quote }}
+    chart: freeipa
+    targetRevision: {{ .Values.freeipaChartRevision | quote }}
+    helm:
+      valuesObject:
+        hostname: {{ .Values.freeipa.hostname }}
+        realm: {{ .Values.freeipa.realm }}
+        domain: {{ .Values.freeipa.domain }}
+        credentialsSecret: {{ .Values.freeipa.credentialsSecret }}
+        ingress:
+          enabled: true
+          className: traefik
+          hostname: {{ .Values.freeipa.hostname }}
+          tlsSecret: {{ .Values.freeipa.ingressTlsSecret }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: freeipa
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

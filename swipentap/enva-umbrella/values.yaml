@@ -16,6 +16,7 @@ certaChartRevision: "1.0.5-151"
 ollamaChartRevision: "0.1.6-151"
 postgresqlChartRevision: "1.0.0-151"
 mailuChartRevision: "2.6.7-151"
+freeipaChartRevision: "1.0.0-151"
 # external charts (manual updates)
 rancherChartRevision: "2.13.1"
 certManagerChartRevision: "v1.13.3"
@@ -47,6 +48,14 @@ githubRunner:
   labels:
     - k3s
     - k3s-dev
+
+# freeipa: hostname, realm, domain per env (dev defaults)
+freeipa:
+  hostname: ipa.dev.net
+  realm: DEV.NET
+  domain: dev.net
+  credentialsSecret: freeipa-credentials
+  ingressTlsSecret: tls-dev-net-wildcard
 
 # eclipse-che: Keycloak client secret per env (set in envaapps overlay)
 eclipseCheOAuthSecret: ""
