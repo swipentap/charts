@@ -6,6 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/name: freeipa
     app.kubernetes.io/instance: {{ .Release.Name }}
+  annotations:
+    traefik.ingress.kubernetes.io/service.serverstransport: {{ .Release.Namespace }}-insecure-skip-verify@kubernetescrd
 spec:
   type: ClusterIP
   selector:

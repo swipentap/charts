@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/service.serversscheme: https
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
@@ -21,7 +22,7 @@ spec:
               service:
                 name: freeipa
                 port:
-                  number: 80
+                  number: 443
   tls:
     - hosts:
         - {{ .Values.ingress.hostname }}
