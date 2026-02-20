@@ -12,10 +12,28 @@ image:
   tag: "fedora-40-4.12.2"
   pullPolicy: IfNotPresent
 
+args:
+  nohostdns: true
+  nontp: true
+  setupdns: false
+  autoforwarders: true
+  allowzoneoverlap: true
+  sshtrustdns: false
+
 persistence:
-  # Path on GlusterFS mount (mounted at /mnt/gluster on all worker nodes)
-  glusterMountPath: /mnt/gluster/freeipa
+  enabled: true
+  storageClass: "local-path-freeipa"
+  annotations: {}
+  accessModes:
+    - ReadWriteOnce
   size: 10Gi
+
+podSecurityContext:
+  enabled: false
+
+containerSecurityContext:
+  enabled: true
+  privileged: true
 
 ingress:
   enabled: true
@@ -23,8 +41,14 @@ ingress:
   hostname: ipa.prod.net
   tlsSecret: tls-prod-net-wildcard
 
-securityContext:
-  privileged: true
+diagnosticMode:
+  enabled: false
+  command:
+    - sleep
+  args:
+    - infinity
+
+extraEnv: {}
 
 resources: {}
 

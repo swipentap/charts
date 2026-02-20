@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: local-path-freeipa-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: freeipa
+    app.kubernetes.io/instance: {{ .Release.Name }}
+data:
+  config.json: |-
+    {
+      "nodePathMap": [
+        {
+          "node": "DEFAULT_PATH_FOR_NON_LISTED_NODES",
+          "paths": ["/mnt/gluster/freeipa"]
+        }
+      ]
+    }
