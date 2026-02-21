@@ -18,6 +18,7 @@ spec:
     cheServer:
       extraProperties:
         CHE_KEYCLOAK_SKIP__SERVER_CERTIFICATE__VALIDATION: "true"
+        CHE_KEYCLOAK_AUTH__INTERNAL__SERVER__URL: "http://keycloak-http.keycloak.svc.cluster.local/auth"
   devEnvironments:
     storage:
       pvcStrategy: per-workspace
