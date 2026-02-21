@@ -16,6 +16,7 @@ certaChartRevision: "1.0.5-171"
 ollamaChartRevision: "0.1.6-171"
 postgresqlChartRevision: "1.0.0-171"
 mailuChartRevision: "2.6.7-171"
+sonarqubeChartRevision: "2026.2.0-171"
 freeipaChartRevision: "1.0.8-171"
 # external charts (manual updates)
 redisBitnamiChartRevision: "25.3.0"

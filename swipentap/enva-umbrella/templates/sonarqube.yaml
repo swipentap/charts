@@ -1,0 +1,77 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sonarqube
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.chartsRepo | quote }}
+    chart: sonarqube
+    targetRevision: {{ .Values.sonarqubeChartRevision | quote }}
+    helm:
+      releaseName: sonarqube
+      valuesObject:
+        community:
+          enabled: true
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+          hosts:
+            - name: sonarqube.{{ .Values.global.domain }}
+          tls:
+            - secretName: {{ .Values.global.tlsSecret }}
+              hosts:
+                - sonarqube.{{ .Values.global.domain }}
+        persistence:
+          enabled: true
+          storageClass: local-path
+          size: 5Gi
+        jdbcOverwrite:
+          enabled: true
+          jdbcUrl: "jdbc:postgresql://postgresql-rw.postgresql.svc.cluster.local:5432/sonar"
+          jdbcUsername: sonar
+          jdbcPassword: sonar123
+        monitoringPasscode: "define_it"
+        extraInitContainers:
+          - name: db-init
+            image: postgres:15-alpine
+            command:
+              - /bin/sh
+              - -c
+              - |
+                set -e
+                echo "Waiting for PostgreSQL..."
+                until PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c '\q'; do
+                  echo "Not ready, retrying..."
+                  sleep 2
+                done
+                echo "Creating role sonar if not exists..."
+                if ! PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='sonar'" | grep -q 1; then
+                  PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c "CREATE ROLE sonar WITH LOGIN PASSWORD 'sonar123';"
+                  echo "Role sonar created."
+                else
+                  echo "Role sonar already exists."
+                fi
+                echo "Creating database sonar if not exists..."
+                if ! PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='sonar'" | grep -q 1; then
+                  PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c "CREATE DATABASE sonar OWNER sonar;"
+                  echo "Database sonar created."
+                else
+                  echo "Database sonar already exists."
+                fi
+                PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE sonar TO sonar;"
+                echo "DB init done."
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sonarqube
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
