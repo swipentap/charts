@@ -40,6 +40,7 @@ spec:
         keycloakSaml:
           enabled: true
           keycloakUrl: "http://keycloak-http.keycloak.svc.cluster.local/auth"
+          keycloakExternalUrl: "https://auth.{{ .Values.global.domain }}"
           realm: master
           adminUser: admin
           adminPassword: admin

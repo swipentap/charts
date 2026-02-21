@@ -322,6 +322,7 @@ spec:
               - -c
               - |
                 KC_URL="{{ .Values.keycloakSaml.keycloakUrl }}"
+                KC_EXT_URL="{{ .Values.keycloakSaml.keycloakExternalUrl }}"
                 KC_REALM="{{ .Values.keycloakSaml.realm }}"
                 KC_ADMIN="{{ .Values.keycloakSaml.adminUser }}"
                 KC_PASS="{{ .Values.keycloakSaml.adminPassword }}"
@@ -349,7 +350,7 @@ spec:
                     -H "Authorization: Bearer $TOKEN" \
                     -H "Content-Type: application/json" \
                     "$KC_URL/admin/realms/$KC_REALM/clients" \
-                    -d "{\"clientId\":\"sonarqube\",\"protocol\":\"saml\",\"enabled\":true,\"rootUrl\":\"$SQ_EXT\",\"adminUrl\":\"$SQ_EXT\",\"baseUrl\":\"$SQ_EXT\",\"masterSamlProcessingUrl\":\"$SQ_EXT/oauth2/callback/saml\",\"redirectUris\":[\"$SQ_EXT/*\"],\"attributes\":{\"saml.authnstatement\":\"true\",\"saml.client.signature\":\"false\",\"saml.force.post.binding\":\"true\",\"saml.server.signature\":\"true\",\"saml.server.signature.keyinfo.ext\":\"false\",\"saml.onetimeuse.condition\":\"false\",\"saml_name_id_format\":\"username\",\"saml.encrypt\":\"false\",\"saml.assertion.signature\":\"true\",\"saml.multivalued.roles\":\"false\"}}"
+                    -d "{\"clientId\":\"sonarqube\",\"protocol\":\"saml\",\"enabled\":true,\"rootUrl\":\"$SQ_EXT\",\"adminUrl\":\"$SQ_EXT\",\"baseUrl\":\"$SQ_EXT\",\"redirectUris\":[\"$SQ_EXT/*\"],\"attributes\":{\"saml.authnstatement\":\"true\",\"saml.client.signature\":\"false\",\"saml.force.post.binding\":\"true\",\"saml.server.signature\":\"true\",\"saml_name_id_format\":\"username\",\"saml.encrypt\":\"false\",\"saml.assertion.signature\":\"true\"}}"
                   CLIENT_UUID=$(curl -sf -H "Authorization: Bearer $TOKEN" \
                     "$KC_URL/admin/realms/$KC_REALM/clients?clientId=sonarqube" | \
                     grep -o '"id":"[^"]*"' | head -1 | sed 's/"id":"//;s/"//')
@@ -394,10 +395,10 @@ spec:
                   --data-urlencode "key=sonar.auth.saml.providerName" --data-urlencode "value=Keycloak"
                 curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
                   --data-urlencode "key=sonar.auth.saml.providerId" \
-                  --data-urlencode "value=$KC_URL/realms/$KC_REALM"
+                  --data-urlencode "value=$KC_EXT_URL/realms/$KC_REALM"
                 curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
                   --data-urlencode "key=sonar.auth.saml.loginUrl" \
-                  --data-urlencode "value=$KC_URL/realms/$KC_REALM/protocol/saml"
+                  --data-urlencode "value=$KC_EXT_URL/realms/$KC_REALM/protocol/saml"
                 curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
                   --data-urlencode "key=sonar.auth.saml.user.login" --data-urlencode "value=login"
                 curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \

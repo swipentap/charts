@@ -525,6 +525,7 @@ emptyDir:
 keycloakSaml:
   enabled: false
   keycloakUrl: "http://keycloak-http.keycloak.svc.cluster.local/auth"
+  keycloakExternalUrl: "https://auth.example.com"
   realm: master
   adminUser: admin
   adminPassword: admin
