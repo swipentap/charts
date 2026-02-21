@@ -520,6 +520,16 @@ emptyDir:
 #   sonar.security.realm: LDAP
 #   ldap.url: ldaps://organization.com
 
+# Keycloak SAML integration: auto-creates Keycloak SAML client and configures
+# SonarQube SAML cert via admin API on post-install/post-upgrade.
+keycloakSaml:
+  enabled: false
+  keycloakUrl: "http://keycloak-http.keycloak.svc.cluster.local/auth"
+  realm: master
+  adminUser: admin
+  adminPassword: admin
+  sonarqubeExternalUrl: "https://sonarqube.example.com"
+
 # Additional sonar properties to load from a secret with a key "secret.properties" (must be a string)
 # sonarSecretProperties:
 

@@ -1,0 +1,164 @@
+{{- if .Values.keycloakSaml.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "sonarqube.fullname" . }}-keycloak-saml-config
+  labels: {{- include "sonarqube.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      labels: {{- include "sonarqube.labels" . | nindent 8 }}
+      annotations:
+        "sidecar.istio.io/inject": "false"
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: {{ template "sonarqube.serviceAccountName" . }}
+      containers:
+      - name: keycloak-saml-config
+        image: python:3.12-alpine
+        command:
+          - python3
+          - -c
+          - |
+            import urllib.request, urllib.parse, json, sys, time, re
+
+            KEYCLOAK = {{ .Values.keycloakSaml.keycloakUrl | quote }}
+            REALM = {{ .Values.keycloakSaml.realm | quote }}
+            KC_ADMIN = {{ .Values.keycloakSaml.adminUser | quote }}
+            KC_PASS = {{ .Values.keycloakSaml.adminPassword | quote }}
+            SQ_INT = "http://{{ template "sonarqube.fullname" . }}:{{ default 9000 .Values.service.internalPort }}"
+            SQ_EXT = {{ .Values.keycloakSaml.sonarqubeExternalUrl | quote }}
+            SQ_ADMIN = "admin"
+            SQ_PASS = "admin"
+            CLIENT_ID = "sonarqube"
+
+            def wait_for_keycloak():
+                for i in range(30):
+                    try:
+                        urllib.request.urlopen(KEYCLOAK + "/realms/" + REALM, timeout=5)
+                        print("Keycloak ready.")
+                        return
+                    except Exception as e:
+                        print("Waiting for Keycloak... " + str(e))
+                        time.sleep(5)
+                print("ERROR: Keycloak not ready after 150s")
+                sys.exit(1)
+
+            def kc_token():
+                data = urllib.parse.urlencode({
+                    "username": KC_ADMIN, "password": KC_PASS,
+                    "grant_type": "password", "client_id": "admin-cli"
+                }).encode()
+                req = urllib.request.Request(
+                    KEYCLOAK + "/realms/" + REALM + "/protocol/openid-connect/token", data=data)
+                with urllib.request.urlopen(req, timeout=10) as r:
+                    return json.loads(r.read())["access_token"]
+
+            def ensure_keycloak_client(token):
+                hdrs = {"Authorization": "Bearer " + token}
+                req = urllib.request.Request(
+                    KEYCLOAK + "/admin/realms/" + REALM + "/clients?clientId=" + CLIENT_ID,
+                    headers=hdrs)
+                with urllib.request.urlopen(req, timeout=10) as r:
+                    clients = json.loads(r.read())
+                if clients:
+                    print("Keycloak client already exists.")
+                    return clients[0]["id"]
+                print("Creating Keycloak SAML client...")
+                payload = {
+                    "clientId": CLIENT_ID, "protocol": "saml", "enabled": True,
+                    "rootUrl": SQ_EXT, "adminUrl": SQ_EXT, "baseUrl": SQ_EXT,
+                    "masterSamlProcessingUrl": SQ_EXT + "/oauth2/callback/saml",
+                    "redirectUris": [SQ_EXT + "/*"],
+                    "attributes": {
+                        "saml.authnstatement": "true", "saml.client.signature": "false",
+                        "saml.force.post.binding": "true", "saml.server.signature": "true",
+                        "saml.server.signature.keyinfo.ext": "false",
+                        "saml.onetimeuse.condition": "false", "saml_name_id_format": "username",
+                        "saml.encrypt": "false", "saml.assertion.signature": "true",
+                        "saml.multivalued.roles": "false"
+                    }
+                }
+                jhdrs = dict(hdrs)
+                jhdrs["Content-Type"] = "application/json"
+                req = urllib.request.Request(
+                    KEYCLOAK + "/admin/realms/" + REALM + "/clients",
+                    data=json.dumps(payload).encode(), headers=jhdrs)
+                with urllib.request.urlopen(req, timeout=10) as r:
+                    r.read()
+                req = urllib.request.Request(
+                    KEYCLOAK + "/admin/realms/" + REALM + "/clients?clientId=" + CLIENT_ID,
+                    headers=hdrs)
+                with urllib.request.urlopen(req, timeout=10) as r:
+                    client_id = json.loads(r.read())[0]["id"]
+                mappers = [
+                    {"name": "login", "protocol": "saml", "protocolMapper": "saml-user-property-mapper",
+                     "config": {"attribute.name": "login", "attribute.nameformat": "Basic",
+                                "user.attribute": "username", "friendly.name": "login", "jsonType.label": ""}},
+                    {"name": "email", "protocol": "saml", "protocolMapper": "saml-user-property-mapper",
+                     "config": {"attribute.name": "email", "attribute.nameformat": "Basic",
+                                "user.attribute": "email", "friendly.name": "email", "jsonType.label": ""}},
+                    {"name": "name", "protocol": "saml", "protocolMapper": "saml-user-property-mapper",
+                     "config": {"attribute.name": "name", "attribute.nameformat": "Basic",
+                                "user.attribute": "firstName", "friendly.name": "name", "jsonType.label": ""}},
+                ]
+                for m in mappers:
+                    req = urllib.request.Request(
+                        KEYCLOAK + "/admin/realms/" + REALM + "/clients/" + client_id + "/protocol-mappers/models",
+                        data=json.dumps(m).encode(), headers=jhdrs)
+                    with urllib.request.urlopen(req, timeout=10) as r:
+                        r.read()
+                    print("Mapper " + m["name"] + " added.")
+                print("Keycloak client created.")
+                return client_id
+
+            def get_keycloak_cert():
+                url = KEYCLOAK + "/realms/" + REALM + "/protocol/saml/descriptor"
+                req = urllib.request.Request(url)
+                with urllib.request.urlopen(req, timeout=10) as r:
+                    xml = r.read().decode()
+                m = re.search(r'<ds:X509Certificate>(.*?)</ds:X509Certificate>', xml, re.DOTALL)
+                if not m:
+                    print("ERROR: cert not found in Keycloak metadata")
+                    sys.exit(1)
+                return m.group(1).strip()
+
+            def wait_for_sonarqube():
+                for i in range(60):
+                    try:
+                        req = urllib.request.Request(SQ_INT + "/api/system/status")
+                        with urllib.request.urlopen(req, timeout=5) as r:
+                            status = json.loads(r.read()).get("status")
+                            if status == "UP":
+                                print("SonarQube is UP.")
+                                return
+                            print("SonarQube status: " + str(status))
+                    except Exception as e:
+                        print("Waiting for SonarQube... " + str(e))
+                    time.sleep(10)
+                print("ERROR: SonarQube not ready after 600s")
+                sys.exit(1)
+
+            def sq_set(key, value):
+                mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+                mgr.add_password(None, SQ_INT, SQ_ADMIN, SQ_PASS)
+                handler = urllib.request.HTTPBasicAuthHandler(mgr)
+                opener = urllib.request.build_opener(handler)
+                data = urllib.parse.urlencode({"key": key, "value": value}).encode()
+                req = urllib.request.Request(SQ_INT + "/api/settings/set", data=data)
+                with opener.open(req, timeout=10) as r:
+                    r.read()
+                print("Set " + key)
+
+            wait_for_keycloak()
+            token = kc_token()
+            ensure_keycloak_client(token)
+            cert = get_keycloak_cert()
+            print("Got cert, len=" + str(len(cert)))
+            wait_for_sonarqube()
+            sq_set("sonar.auth.saml.certificate.secured", cert)
+            print("Done.")
+{{- end }}
