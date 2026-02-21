@@ -14,6 +14,8 @@ spec:
     helm:
       releaseName: redisinsight
       valuesObject:
+        persistence:
+          storageClass: local-path
         ingress:
           enabled: true
           className: traefik
