@@ -17,7 +17,7 @@ spec:
         settings:
           user: admin
           password: admin
-          erlangCookie: secreterlangcookie
+          erlangCookie: secreterlangcookiefortherabbitmqcluster
         storage:
           className: local-path
           requestedSize: 2Gi
