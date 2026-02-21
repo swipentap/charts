@@ -18,6 +18,8 @@ postgresqlChartRevision: "1.0.0-162"
 mailuChartRevision: "2.6.7-162"
 freeipaChartRevision: "1.0.8-162"
 # external charts (manual updates)
+redisBitnamiChartRevision: "25.3.0"
+redisInsightChartRevision: "1.3.1"
 rancherChartRevision: "2.13.1"
 certManagerChartRevision: "v1.13.3"
 devworkspaceOperatorRevision: "v0.39.0"

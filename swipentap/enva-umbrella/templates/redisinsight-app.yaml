@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redisinsight
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://mrnim94.github.io/redisinsight/
+    chart: redisinsight
+    targetRevision: {{ .Values.redisInsightChartRevision | quote }}
+    helm:
+      releaseName: redisinsight
+      valuesObject:
+        ingress:
+          enabled: true
+          className: traefik
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+          hosts:
+            - host: redis.{{ .Values.global.domain }}
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - redis.{{ .Values.global.domain }}
+              secretName: {{ .Values.global.tlsSecret }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: redis
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
