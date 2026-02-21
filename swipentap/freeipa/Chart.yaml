@@ -7,3 +7,4 @@ appVersion: "4.12.2"
 annotations:
   category: sub
 kubeVersion: ">= 1.19.0-0"
+# deployed via enva-umbrella as a subchart
