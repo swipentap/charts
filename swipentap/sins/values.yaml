@@ -113,6 +113,28 @@ webui:
       memory: "256Mi"
       cpu: "200m"
   
+  env:
+    ConnectionStrings__DefaultConnection: ""
+
+  dbInit:
+    enabled: false
+    dbHost: ""
+    dbPort: "5432"
+    adminUser: postgres
+    adminPassword: ""
+    appUser: sins
+    appPassword: ""
+    appDatabase: dns_server
+
+  dnsRecordsInit:
+    enabled: false
+    dbHost: ""
+    dbPort: "5432"
+    dbName: dns_server
+    dbUser: sins
+    dbPassword: ""
+    haproxyIp: ""
+
   waitForPostgresql:
     enabled: false
     host: ""

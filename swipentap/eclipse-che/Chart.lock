@@ -1,0 +1,6 @@
+dependencies:
+- name: eclipse-che
+  repository: https://eclipse-che.github.io/che-operator/charts
+  version: 7.114.0
+digest: sha256:3c9c05928d409c0c1c86085ce8af2a8fd54abb6243aa7d59e6853002de358e72
+generated: "2026-02-21T16:43:53.396504+02:00"

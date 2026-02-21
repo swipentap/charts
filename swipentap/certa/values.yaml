@@ -72,5 +72,15 @@ certa:
     hosts: []
     tls: []
 
+  dbInit:
+    enabled: false
+    dbHost: ""
+    dbPort: "5432"
+    adminUser: postgres
+    adminPassword: ""
+    appUser: certa
+    appPassword: ""
+    appDatabase: certa
+
 labels:
   app: certa

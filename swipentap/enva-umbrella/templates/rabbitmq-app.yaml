@@ -14,9 +14,11 @@ spec:
     helm:
       releaseName: rabbitmq
       valuesObject:
-        settings:
-          user: admin
-          password: admin
+        authentication:
+          user:
+            value: admin
+          password:
+            value: admin
           erlangCookie:
             value: secreterlangcookiefortherabbitmqcluster
         storage:
