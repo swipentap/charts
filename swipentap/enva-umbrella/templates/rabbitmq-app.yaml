@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rabbitmq
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: rabbitmq
+    targetRevision: {{ .Values.rabbitmqChartRevision | quote }}
+    helm:
+      releaseName: rabbitmq
+      valuesObject:
+        auth:
+          username: admin
+          password: admin
+        persistence:
+          storageClass: local-path
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+          hostname: rabbitmq.{{ .Values.global.domain }}
+          tls: true
+          extraTls:
+            - hosts:
+                - rabbitmq.{{ .Values.global.domain }}
+              secretName: {{ .Values.global.tlsSecret }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rabbitmq
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
