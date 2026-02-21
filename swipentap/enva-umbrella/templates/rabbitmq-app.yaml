@@ -8,25 +8,32 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://charts.bitnami.com/bitnami
+    repoURL: https://groundhog2k.github.io/helm-charts/
     chart: rabbitmq
     targetRevision: {{ .Values.rabbitmqChartRevision | quote }}
     helm:
       releaseName: rabbitmq
       valuesObject:
-        auth:
-          username: admin
+        settings:
+          user: admin
           password: admin
-        persistence:
-          storageClass: local-path
+          erlangCookie: secreterlangcookie
+        storage:
+          className: local-path
+          requestedSize: 2Gi
+        managementPlugin:
+          enabled: true
         ingress:
           enabled: true
-          ingressClassName: traefik
+          className: traefik
           annotations:
             traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-          hostname: rabbitmq.{{ .Values.global.domain }}
-          tls: true
-          extraTls:
+          hosts:
+            - host: rabbitmq.{{ .Values.global.domain }}
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
             - hosts:
                 - rabbitmq.{{ .Values.global.domain }}
               secretName: {{ .Values.global.tlsSecret }}
