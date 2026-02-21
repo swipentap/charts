@@ -11,6 +11,7 @@ namespaces:
   - pgadmin
   - postgresql
   - sins
+  - redis
 
 # Base64-encoded TLS cert and key. Override from umbrella for dev/test if different.
 # Prod defaults below; leave empty to skip rendering (e.g. when using valueFiles with secret data).
