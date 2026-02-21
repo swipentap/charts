@@ -37,15 +37,6 @@ spec:
           jdbcUsername: sonar
           jdbcPassword: sonar123
         monitoringPasscode: "define_it"
-        sonarProperties:
-          sonar.auth.saml.enabled: "true"
-          sonar.auth.saml.applicationId: sonarqube
-          sonar.auth.saml.providerName: Keycloak
-          sonar.auth.saml.providerId: "https://auth.{{ .Values.global.domain }}/auth/realms/master"
-          sonar.auth.saml.loginUrl: "https://auth.{{ .Values.global.domain }}/auth/realms/master/protocol/saml"
-          sonar.auth.saml.user.login: login
-          sonar.auth.saml.user.name: name
-          sonar.auth.saml.user.email: email
         keycloakSaml:
           enabled: true
           keycloakUrl: "http://keycloak-http.keycloak.svc.cluster.local/auth"

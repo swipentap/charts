@@ -313,6 +313,102 @@ spec:
       {{- with (include "sonarqube.containerSecurityContext" .) }}
       securityContext: {{- . | nindent 8 }}
       {{- end }}
+      {{- if .Values.keycloakSaml.enabled }}
+      lifecycle:
+        postStart:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - |
+                KC_URL="{{ .Values.keycloakSaml.keycloakUrl }}"
+                KC_REALM="{{ .Values.keycloakSaml.realm }}"
+                KC_ADMIN="{{ .Values.keycloakSaml.adminUser }}"
+                KC_PASS="{{ .Values.keycloakSaml.adminPassword }}"
+                SQ_EXT="{{ .Values.keycloakSaml.sonarqubeExternalUrl }}"
+                SQ_URL="http://localhost:{{ default 9000 .Values.service.internalPort }}"
+                SQ_ADMIN="admin"
+                SQ_PASS="admin"
+                i=0
+                while [ $i -lt 30 ]; do
+                  if curl -sf "$KC_URL/realms/$KC_REALM" > /tmp/kc_check; then
+                    echo "Keycloak ready"
+                    break
+                  fi
+                  i=$((i+1))
+                  echo "Waiting for Keycloak ($i/30)..."
+                  sleep 5
+                done
+                TOKEN=$(curl -sf -X POST "$KC_URL/realms/master/protocol/openid-connect/token" \
+                  -d "username=$KC_ADMIN&password=$KC_PASS&grant_type=password&client_id=admin-cli" | \
+                  grep -o '"access_token":"[^"]*"' | sed 's/"access_token":"//;s/"//')
+                CLIENTS=$(curl -sf -H "Authorization: Bearer $TOKEN" \
+                  "$KC_URL/admin/realms/$KC_REALM/clients?clientId=sonarqube")
+                if ! echo "$CLIENTS" | grep -q '"id"'; then
+                  curl -sf -X POST \
+                    -H "Authorization: Bearer $TOKEN" \
+                    -H "Content-Type: application/json" \
+                    "$KC_URL/admin/realms/$KC_REALM/clients" \
+                    -d "{\"clientId\":\"sonarqube\",\"protocol\":\"saml\",\"enabled\":true,\"rootUrl\":\"$SQ_EXT\",\"adminUrl\":\"$SQ_EXT\",\"baseUrl\":\"$SQ_EXT\",\"masterSamlProcessingUrl\":\"$SQ_EXT/oauth2/callback/saml\",\"redirectUris\":[\"$SQ_EXT/*\"],\"attributes\":{\"saml.authnstatement\":\"true\",\"saml.client.signature\":\"false\",\"saml.force.post.binding\":\"true\",\"saml.server.signature\":\"true\",\"saml.server.signature.keyinfo.ext\":\"false\",\"saml.onetimeuse.condition\":\"false\",\"saml_name_id_format\":\"username\",\"saml.encrypt\":\"false\",\"saml.assertion.signature\":\"true\",\"saml.multivalued.roles\":\"false\"}}"
+                  CLIENT_UUID=$(curl -sf -H "Authorization: Bearer $TOKEN" \
+                    "$KC_URL/admin/realms/$KC_REALM/clients?clientId=sonarqube" | \
+                    grep -o '"id":"[^"]*"' | head -1 | sed 's/"id":"//;s/"//')
+                  curl -sf -X POST \
+                    -H "Authorization: Bearer $TOKEN" \
+                    -H "Content-Type: application/json" \
+                    "$KC_URL/admin/realms/$KC_REALM/clients/$CLIENT_UUID/protocol-mappers/models" \
+                    -d '{"name":"login","protocol":"saml","protocolMapper":"saml-user-property-mapper","config":{"attribute.name":"login","attribute.nameformat":"Basic","user.attribute":"username","friendly.name":"login","jsonType.label":""}}'
+                  curl -sf -X POST \
+                    -H "Authorization: Bearer $TOKEN" \
+                    -H "Content-Type: application/json" \
+                    "$KC_URL/admin/realms/$KC_REALM/clients/$CLIENT_UUID/protocol-mappers/models" \
+                    -d '{"name":"email","protocol":"saml","protocolMapper":"saml-user-property-mapper","config":{"attribute.name":"email","attribute.nameformat":"Basic","user.attribute":"email","friendly.name":"email","jsonType.label":""}}'
+                  curl -sf -X POST \
+                    -H "Authorization: Bearer $TOKEN" \
+                    -H "Content-Type: application/json" \
+                    "$KC_URL/admin/realms/$KC_REALM/clients/$CLIENT_UUID/protocol-mappers/models" \
+                    -d '{"name":"name","protocol":"saml","protocolMapper":"saml-user-property-mapper","config":{"attribute.name":"name","attribute.nameformat":"Basic","user.attribute":"firstName","friendly.name":"name","jsonType.label":""}}'
+                  echo "Keycloak SAML client created with mappers"
+                else
+                  echo "Keycloak SAML client already exists"
+                fi
+                CERT=$(curl -sf "$KC_URL/realms/$KC_REALM/protocol/saml/descriptor" | \
+                  grep -o 'X509Certificate>[^<]*' | head -1 | sed 's/X509Certificate>//')
+                i=0
+                while [ $i -lt 60 ]; do
+                  STATUS=$(curl -sf "$SQ_URL/api/system/status" | \
+                    grep -o '"status":"[^"]*"' | sed 's/"status":"//;s/"//')
+                  if [ "$STATUS" = "UP" ]; then
+                    echo "SonarQube ready"
+                    break
+                  fi
+                  i=$((i+1))
+                  echo "Waiting for SonarQube ($i/60): $STATUS"
+                  sleep 10
+                done
+                curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
+                  --data-urlencode "key=sonar.auth.saml.enabled" --data-urlencode "value=true"
+                curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
+                  --data-urlencode "key=sonar.auth.saml.applicationId" --data-urlencode "value=sonarqube"
+                curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
+                  --data-urlencode "key=sonar.auth.saml.providerName" --data-urlencode "value=Keycloak"
+                curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
+                  --data-urlencode "key=sonar.auth.saml.providerId" \
+                  --data-urlencode "value=$KC_URL/realms/$KC_REALM"
+                curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
+                  --data-urlencode "key=sonar.auth.saml.loginUrl" \
+                  --data-urlencode "value=$KC_URL/realms/$KC_REALM/protocol/saml"
+                curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
+                  --data-urlencode "key=sonar.auth.saml.user.login" --data-urlencode "value=login"
+                curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
+                  --data-urlencode "key=sonar.auth.saml.user.name" --data-urlencode "value=name"
+                curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
+                  --data-urlencode "key=sonar.auth.saml.user.email" --data-urlencode "value=email"
+                curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
+                  --data-urlencode "key=sonar.auth.saml.certificate.secured" \
+                  --data-urlencode "value=$CERT"
+                echo "SAML configuration complete"
+      {{- end }}
       volumeMounts:
         - mountPath: {{ .Values.sonarqubeFolder }}/data
           name: sonarqube
