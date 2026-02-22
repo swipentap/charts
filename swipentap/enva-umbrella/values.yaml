@@ -7,17 +7,17 @@ global:
 # charts repo (same as root-apps) for Helm chart revisions
 chartsRepo: https://swipentap.github.io/charts
 # swipentap charts (auto-updated by release workflow)
-githubRunnerChartRevision: "1.0.2-184"
-tlsSecretChartRevision: "1.0.0-184"
-eclipseCheChartRevision: "1.0.0-184"
+githubRunnerChartRevision: "1.0.2-185"
+tlsSecretChartRevision: "1.0.0-185"
+eclipseCheChartRevision: "1.0.0-185"
 keycloakOperatorChartRevision: "1.0.0-176"
-sinsChartRevision: "1.0.93-184"
-certaChartRevision: "1.0.5-184"
-ollamaChartRevision: "0.1.6-184"
-postgresqlChartRevision: "1.0.0-184"
-mailuChartRevision: "2.6.7-184"
+sinsChartRevision: "1.0.93-185"
+certaChartRevision: "1.0.5-185"
+ollamaChartRevision: "0.1.6-185"
+postgresqlChartRevision: "1.0.0-185"
+mailuChartRevision: "2.6.7-185"
 sonarqubeChartRevision: "2026.2.0-174"
-freeipaChartRevision: "1.0.8-184"
+freeipaChartRevision: "1.0.8-185"
 # external charts (manual updates)
 redisBitnamiChartRevision: "25.3.0"
 redisInsightChartRevision: "1.3.1"
