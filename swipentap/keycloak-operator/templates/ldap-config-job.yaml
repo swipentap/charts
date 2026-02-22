@@ -135,7 +135,9 @@ spec:
                 echo "Updating bindCredential..."
                 CURRENT=$(curl -sf -H "Authorization: Bearer $TOKEN" \
                   "$KC_URL/admin/realms/$KC_REALM/components/$COMPONENT_ID")
-                UPDATED=$(echo "$CURRENT" | sed "s/\"bindCredential\":\[\"[^\"]*\"\]/\"bindCredential\":[\"$LDAP_SERVICE_PASS\"]/g")
+                UPDATED=$(echo "$CURRENT" | \
+                  sed "s/\"bindCredential\":\[\"[^\"]*\"\]/\"bindCredential\":[\"$LDAP_SERVICE_PASS\"]/g" | \
+                  sed "s|\"bindDn\":\[\"[^\"]*\"\]|\"bindDn\":[\"uid=$LDAP_SERVICE_USER,cn=users,cn=accounts,$LDAP_BASE_DN\"]|g")
                 curl -sf -X PUT \
                   -H "Authorization: Bearer $TOKEN" \
                   -H "Content-Type: application/json" \
