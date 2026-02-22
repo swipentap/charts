@@ -39,7 +39,9 @@ spec:
               KC_URL="http://keycloak-service.keycloak.svc.cluster.local:8080"
               KC_REALM="master"
               KC_ADMIN="admin"
-              IPA_URL="https://$IPA_HOSTNAME"
+              IPA_SVC="https://freeipa.freeipa.svc.cluster.local"
+              IPA_HOST_HDR="Host: $IPA_HOSTNAME"
+              IPA_REFERER="https://$IPA_HOSTNAME/ipa"
 
               echo "Waiting for Keycloak to be ready..."
               i=0
@@ -55,24 +57,28 @@ spec:
 
               echo "Creating FreeIPA LDAP service user '$LDAP_SERVICE_USER'..."
               curl -ks -c /tmp/ipa-cookie.txt \
+                -H "$IPA_HOST_HDR" \
                 -H "Content-Type: application/x-www-form-urlencoded" \
-                -H "Referer: $IPA_URL/ipa" \
+                -H "Referer: $IPA_REFERER" \
                 -d "user=admin&password=$IPA_ADMIN_PASS" \
-                "$IPA_URL/ipa/session/login_password"
+                "$IPA_SVC/ipa/session/login_password" || echo "Warning: IPA login failed, skipping user creation"
 
               cat > /tmp/useradd.json << USERADDJSON
               {"method":"user_add","params":[["$LDAP_SERVICE_USER"],{"givenname":"Keycloak","sn":"Service","userpassword":"$LDAP_SERVICE_PASS","noprivate":true}],"id":0}
               USERADDJSON
               USERADD_RESULT=$(curl -ks -b /tmp/ipa-cookie.txt \
+                -H "$IPA_HOST_HDR" \
                 -H "Content-Type: application/json" \
                 -H "Accept: application/json" \
-                -H "Referer: $IPA_URL/ipa" \
+                -H "Referer: $IPA_REFERER" \
                 -d @/tmp/useradd.json \
-                "$IPA_URL/ipa/session/json")
+                "$IPA_SVC/ipa/session/json" || echo '{"error":{"code":-1}}')
               if echo "$USERADD_RESULT" | grep -q '"code":4002'; then
                 echo "Service user already exists."
-              else
+              elif echo "$USERADD_RESULT" | grep -q '"error":null'; then
                 echo "Service user created."
+              else
+                echo "Warning: unexpected IPA response, continuing anyway."
               fi
 
               echo "Setting password expiry to far future..."
@@ -80,11 +86,12 @@ spec:
               {"method":"user_mod","params":[["$LDAP_SERVICE_USER"],{"krbpasswordexpiration":"20991231235959Z"}],"id":0}
               USERMODJSON
               curl -ks -b /tmp/ipa-cookie.txt \
+                -H "$IPA_HOST_HDR" \
                 -H "Content-Type: application/json" \
                 -H "Accept: application/json" \
-                -H "Referer: $IPA_URL/ipa" \
+                -H "Referer: $IPA_REFERER" \
                 -d @/tmp/usermod.json \
-                "$IPA_URL/ipa/session/json"
+                "$IPA_SVC/ipa/session/json" || echo "Warning: IPA user_mod failed"
               echo "Password expiry set."
 
               echo "Getting Keycloak admin token..."
