@@ -64,7 +64,7 @@ spec:
                 "$IPA_SVC/ipa/session/login_password" || echo "Warning: IPA login failed, skipping user creation"
 
               cat > /tmp/useradd.json << USERADDJSON
-              {"method":"user_add","params":[["$LDAP_SERVICE_USER"],{"givenname":"Keycloak","sn":"Service","userpassword":"$LDAP_SERVICE_PASS","noprivate":true}],"id":0}
+              {"method":"user_add","params":[["$LDAP_SERVICE_USER"],{"givenname":"Keycloak","sn":"Service","userpassword":"$LDAP_SERVICE_PASS"}],"id":0}
               USERADDJSON
               USERADD_RESULT=$(curl -ks -b /tmp/ipa-cookie.txt \
                 -H "$IPA_HOST_HDR" \
