@@ -21,6 +21,10 @@ spec:
                   key: password
             - name: LDAP_BIND_PASS
               value: {{ .Values.freeipaAdminPassword | quote }}
+            - name: LDAP_BASE_DN
+              value: {{ .Values.ldapBaseDn | quote }}
+            - name: SONARQUBE_URL
+              value: {{ .Values.sonarqubeUrl | quote }}
           command:
             - /bin/sh
             - -c
@@ -49,35 +53,74 @@ spec:
                 -H "Content-Type: application/x-www-form-urlencoded" | \
                 grep -o '"access_token":"[^"]*"' | sed 's/"access_token":"//;s/"//')
 
-              echo "Finding freeipa LDAP component..."
+              echo "Getting realm ID..."
+              REALM_ID=$(curl -sf -H "Authorization: Bearer $TOKEN" \
+                "$KC_URL/admin/realms/$KC_REALM" | \
+                grep -o '"id":"[^"]*"' | head -1 | sed 's/"id":"//;s/"//')
+              echo "Realm ID: $REALM_ID"
+
+              echo "Checking freeipa LDAP component..."
               COMPONENT_ID=$(curl -sf \
                 -H "Authorization: Bearer $TOKEN" \
                 "$KC_URL/admin/realms/$KC_REALM/components?type=org.keycloak.storage.UserStorageProvider" | \
-                grep -o '"id":"[^"]*","name":"freeipa"' | grep -o '"id":"[^"]*"' | sed 's/"id":"//;s/"//')
+                grep -o '"id":"[^"]*","name":"freeipa"' | \
+                grep -o '"id":"[^"]*"' | sed 's/"id":"//;s/"//')
 
               if [ -z "$COMPONENT_ID" ]; then
-                echo "ERROR: freeipa LDAP component not found"
-                exit 1
+                echo "Creating freeipa LDAP component..."
+                cat > /tmp/ldap.json << LDAPEOF
+              {"name":"freeipa","providerId":"ldap","providerType":"org.keycloak.storage.UserStorageProvider","parentId":"$REALM_ID","config":{"vendor":["rhds"],"connectionUrl":["ldap://freeipa.freeipa.svc.cluster.local:389"],"bindDn":["uid=admin,cn=users,cn=accounts,$LDAP_BASE_DN"],"bindCredential":["$LDAP_BIND_PASS"],"usersDn":["cn=users,cn=accounts,$LDAP_BASE_DN"],"usernameLDAPAttribute":["uid"],"rdnLDAPAttribute":["uid"],"uuidLDAPAttribute":["ipaUniqueID"],"userObjectClasses":["inetOrgPerson,organizationalPerson"],"editMode":["READ_ONLY"],"syncRegistrations":["false"],"importEnabled":["true"],"enabled":["true"],"priority":["0"],"fullSyncPeriod":["-1"],"changedSyncPeriod":["-1"],"cachePolicy":["DEFAULT"]}}
+              LDAPEOF
+                curl -sf -X POST \
+                  -H "Authorization: Bearer $TOKEN" \
+                  -H "Content-Type: application/json" \
+                  "$KC_URL/admin/realms/$KC_REALM/components" \
+                  -d @/tmp/ldap.json
+                COMPONENT_ID=$(curl -sf \
+                  -H "Authorization: Bearer $TOKEN" \
+                  "$KC_URL/admin/realms/$KC_REALM/components?type=org.keycloak.storage.UserStorageProvider" | \
+                  grep -o '"id":"[^"]*","name":"freeipa"' | \
+                  grep -o '"id":"[^"]*"' | sed 's/"id":"//;s/"//')
+                echo "Created freeipa LDAP component: $COMPONENT_ID"
+              else
+                echo "freeipa LDAP component exists: $COMPONENT_ID"
+                echo "Updating bindCredential..."
+                CURRENT=$(curl -sf -H "Authorization: Bearer $TOKEN" \
+                  "$KC_URL/admin/realms/$KC_REALM/components/$COMPONENT_ID")
+                UPDATED=$(echo "$CURRENT" | sed "s/\"bindCredential\":\[\"[^\"]*\"\]/\"bindCredential\":[\"$LDAP_BIND_PASS\"]/g")
+                curl -sf -X PUT \
+                  -H "Authorization: Bearer $TOKEN" \
+                  -H "Content-Type: application/json" \
+                  "$KC_URL/admin/realms/$KC_REALM/components/$COMPONENT_ID" \
+                  -d "$UPDATED"
+                echo "bindCredential updated."
               fi
 
-              echo "Updating bindCredential for component $COMPONENT_ID..."
-              CURRENT=$(curl -sf \
-                -H "Authorization: Bearer $TOKEN" \
-                "$KC_URL/admin/realms/$KC_REALM/components/$COMPONENT_ID")
-
-              UPDATED=$(echo "$CURRENT" | sed "s/\"bindCredential\":\[\"placeholder\"\]/\"bindCredential\":[\"$LDAP_BIND_PASS\"]/g")
-
-              curl -sf -X PUT \
-                -H "Authorization: Bearer $TOKEN" \
-                -H "Content-Type: application/json" \
-                "$KC_URL/admin/realms/$KC_REALM/components/$COMPONENT_ID" \
-                -d "$UPDATED"
-
-              echo "LDAP bindCredential updated successfully."
-
-              echo "Triggering LDAP sync..."
+              echo "Triggering LDAP full sync..."
               curl -sf -X POST \
                 -H "Authorization: Bearer $TOKEN" \
                 "$KC_URL/admin/realms/$KC_REALM/user-storage/$COMPONENT_ID/sync?action=triggerFullSync"
+              echo "LDAP sync triggered."
+
+              echo "Checking sonarqube SAML client..."
+              CLIENT_ID=$(curl -sf \
+                -H "Authorization: Bearer $TOKEN" \
+                "$KC_URL/admin/realms/$KC_REALM/clients?clientId=sonarqube" | \
+                grep -o '"id":"[^"]*"' | head -1 | sed 's/"id":"//;s/"//')
+
+              if [ -z "$CLIENT_ID" ]; then
+                echo "Creating sonarqube SAML client..."
+                cat > /tmp/sonar.json << SONAREOF
+              {"clientId":"sonarqube","protocol":"saml","enabled":true,"rootUrl":"$SONARQUBE_URL","adminUrl":"$SONARQUBE_URL","baseUrl":"$SONARQUBE_URL","redirectUris":["$SONARQUBE_URL/*"],"attributes":{"saml.authnstatement":"true","saml.client.signature":"false","saml.force.post.binding":"true","saml.server.signature":"true","saml_name_id_format":"username","saml.encrypt":"false","saml.assertion.signature":"true"},"protocolMappers":[{"name":"login","protocol":"saml","protocolMapper":"saml-user-property-mapper","consentRequired":false,"config":{"attribute.name":"login","attribute.nameformat":"Basic","user.attribute":"username","friendly.name":"login"}},{"name":"email","protocol":"saml","protocolMapper":"saml-user-property-mapper","consentRequired":false,"config":{"attribute.name":"email","attribute.nameformat":"Basic","user.attribute":"email","friendly.name":"email"}},{"name":"name","protocol":"saml","protocolMapper":"saml-user-property-mapper","consentRequired":false,"config":{"attribute.name":"name","attribute.nameformat":"Basic","user.attribute":"firstName","friendly.name":"name"}}]}
+              SONAREOF
+                curl -sf -X POST \
+                  -H "Authorization: Bearer $TOKEN" \
+                  -H "Content-Type: application/json" \
+                  "$KC_URL/admin/realms/$KC_REALM/clients" \
+                  -d @/tmp/sonar.json
+                echo "Sonarqube SAML client created."
+              else
+                echo "Sonarqube SAML client exists: $CLIENT_ID"
+              fi
 
               echo "Done."
