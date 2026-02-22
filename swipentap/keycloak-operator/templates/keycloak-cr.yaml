@@ -34,4 +34,8 @@ spec:
       value: xforwarded
     - name: hostname-strict
       value: "false"
-  bootstrapAdminSecret: keycloak-bootstrap-admin
+    - name: log-console-output
+      value: default
+  bootstrapAdmin:
+    user:
+      secret: keycloak-bootstrap-admin
