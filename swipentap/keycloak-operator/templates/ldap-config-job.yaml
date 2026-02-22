@@ -19,7 +19,7 @@ spec:
             - name: KC_ADMIN_PASS
               valueFrom:
                 secretKeyRef:
-                  name: keycloak-initial-admin
+                  name: keycloak-bootstrap-admin
                   key: password
             - name: LDAP_BIND_PASS
               value: {{ .Values.freeipaAdminPassword | quote }}

@@ -32,4 +32,4 @@ spec:
       value: xforwarded
     - name: hostname-strict
       value: "false"
-  bootstrapAdminSecret: keycloak-initial-admin
+  bootstrapAdminSecret: keycloak-bootstrap-admin
