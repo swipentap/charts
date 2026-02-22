@@ -61,6 +61,7 @@ freeipa:
   credentialsSecret: freeipa-credentials
   ingressTlsSecret: tls-dev-net-wildcard
   adminPassword: "changeme"
+  ldapServiceUserPassword: "changeme"
 
 # eclipse-che: Keycloak client secret per env (set in envaapps overlay)
 eclipseCheOAuthSecret: ""

@@ -19,10 +19,14 @@ spec:
                 secretKeyRef:
                   name: keycloak-bootstrap-admin
                   key: password
-            - name: LDAP_BIND_PASS
+            - name: IPA_ADMIN_PASS
               value: {{ .Values.freeipaAdminPassword | quote }}
             - name: LDAP_BASE_DN
               value: {{ .Values.ldapBaseDn | quote }}
+            - name: LDAP_SERVICE_USER
+              value: {{ .Values.ldapServiceUser | quote }}
+            - name: LDAP_SERVICE_PASS
+              value: {{ .Values.ldapServiceUserPassword | quote }}
             - name: SONARQUBE_URL
               value: {{ .Values.sonarqubeUrl | quote }}
           command:
@@ -33,6 +37,7 @@ spec:
               KC_URL="http://keycloak-service.keycloak.svc.cluster.local:8080"
               KC_REALM="master"
               KC_ADMIN="admin"
+              IPA_URL="https://freeipa.freeipa.svc.cluster.local"
 
               echo "Waiting for Keycloak to be ready..."
               i=0
@@ -46,7 +51,41 @@ spec:
                 sleep 10
               done
 
-              echo "Getting admin token..."
+              echo "Creating FreeIPA LDAP service user '$LDAP_SERVICE_USER'..."
+              curl -ks -c /tmp/ipa-cookie.txt \
+                -H "Content-Type: application/x-www-form-urlencoded" \
+                -H "Referer: $IPA_URL/ipa" \
+                -d "user=admin&password=$IPA_ADMIN_PASS" \
+                "$IPA_URL/ipa/session/login_password"
+
+              cat > /tmp/useradd.json << USERADDJSON
+              {"method":"user_add","params":[["$LDAP_SERVICE_USER"],{"givenname":"Keycloak","sn":"Service","userpassword":"$LDAP_SERVICE_PASS","noprivate":true}],"id":0}
+              USERADDJSON
+              USERADD_RESULT=$(curl -ks -b /tmp/ipa-cookie.txt \
+                -H "Content-Type: application/json" \
+                -H "Accept: application/json" \
+                -H "Referer: $IPA_URL/ipa" \
+                -d @/tmp/useradd.json \
+                "$IPA_URL/ipa/session/json")
+              if echo "$USERADD_RESULT" | grep -q '"code":4002'; then
+                echo "Service user already exists."
+              else
+                echo "Service user created."
+              fi
+
+              echo "Setting password expiry to far future..."
+              cat > /tmp/usermod.json << USERMODJSON
+              {"method":"user_mod","params":[["$LDAP_SERVICE_USER"],{"krbpasswordexpiration":"20991231235959Z"}],"id":0}
+              USERMODJSON
+              curl -ks -b /tmp/ipa-cookie.txt \
+                -H "Content-Type: application/json" \
+                -H "Accept: application/json" \
+                -H "Referer: $IPA_URL/ipa" \
+                -d @/tmp/usermod.json \
+                "$IPA_URL/ipa/session/json"
+              echo "Password expiry set."
+
+              echo "Getting Keycloak admin token..."
               TOKEN=$(curl -sf -X POST \
                 "$KC_URL/realms/master/protocol/openid-connect/token" \
                 -d "username=$KC_ADMIN&password=$KC_ADMIN_PASS&grant_type=password&client_id=admin-cli" \
@@ -69,7 +108,7 @@ spec:
               if [ -z "$COMPONENT_ID" ]; then
                 echo "Creating freeipa LDAP component..."
                 cat > /tmp/ldap.json << LDAPEOF
-              {"name":"freeipa","providerId":"ldap","providerType":"org.keycloak.storage.UserStorageProvider","parentId":"$REALM_ID","config":{"vendor":["rhds"],"connectionUrl":["ldap://freeipa.freeipa.svc.cluster.local:389"],"bindDn":["uid=admin,cn=users,cn=accounts,$LDAP_BASE_DN"],"bindCredential":["$LDAP_BIND_PASS"],"usersDn":["cn=users,cn=accounts,$LDAP_BASE_DN"],"usernameLDAPAttribute":["uid"],"rdnLDAPAttribute":["uid"],"uuidLDAPAttribute":["ipaUniqueID"],"userObjectClasses":["inetOrgPerson,organizationalPerson"],"editMode":["READ_ONLY"],"syncRegistrations":["false"],"importEnabled":["true"],"enabled":["true"],"priority":["0"],"fullSyncPeriod":["-1"],"changedSyncPeriod":["-1"],"cachePolicy":["DEFAULT"]}}
+              {"name":"freeipa","providerId":"ldap","providerType":"org.keycloak.storage.UserStorageProvider","parentId":"$REALM_ID","config":{"vendor":["rhds"],"connectionUrl":["ldap://freeipa.freeipa.svc.cluster.local:389"],"bindDn":["uid=$LDAP_SERVICE_USER,cn=users,cn=accounts,$LDAP_BASE_DN"],"bindCredential":["$LDAP_SERVICE_PASS"],"usersDn":["cn=users,cn=accounts,$LDAP_BASE_DN"],"usernameLDAPAttribute":["uid"],"rdnLDAPAttribute":["uid"],"uuidLDAPAttribute":["ipaUniqueID"],"userObjectClasses":["person"],"editMode":["READ_ONLY"],"syncRegistrations":["false"],"importEnabled":["true"],"enabled":["true"],"priority":["0"],"fullSyncPeriod":["-1"],"changedSyncPeriod":["-1"],"cachePolicy":["DEFAULT"]}}
               LDAPEOF
                 curl -sf -X POST \
                   -H "Authorization: Bearer $TOKEN" \
@@ -87,7 +126,7 @@ spec:
                 echo "Updating bindCredential..."
                 CURRENT=$(curl -sf -H "Authorization: Bearer $TOKEN" \
                   "$KC_URL/admin/realms/$KC_REALM/components/$COMPONENT_ID")
-                UPDATED=$(echo "$CURRENT" | sed "s/\"bindCredential\":\[\"[^\"]*\"\]/\"bindCredential\":[\"$LDAP_BIND_PASS\"]/g")
+                UPDATED=$(echo "$CURRENT" | sed "s/\"bindCredential\":\[\"[^\"]*\"\]/\"bindCredential\":[\"$LDAP_SERVICE_PASS\"]/g")
                 curl -sf -X PUT \
                   -H "Authorization: Bearer $TOKEN" \
                   -H "Content-Type: application/json" \
