@@ -73,12 +73,12 @@ spec:
                 -H "Referer: $IPA_REFERER" \
                 -d @/tmp/useradd.json \
                 "$IPA_SVC/ipa/session/json" || echo '{"error":{"code":-1}}')
-              if echo "$USERADD_RESULT" | grep -q '"code":4002'; then
+              if echo "$USERADD_RESULT" | grep -q '"code": 4002'; then
                 echo "Service user already exists."
-              elif echo "$USERADD_RESULT" | grep -q '"error":null'; then
+              elif echo "$USERADD_RESULT" | grep -q '"error": null'; then
                 echo "Service user created."
               else
-                echo "Warning: unexpected IPA response, continuing anyway."
+                echo "Warning: unexpected IPA response: $USERADD_RESULT"
               fi
 
               echo "Setting password expiry to far future..."
