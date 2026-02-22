@@ -22,11 +22,11 @@ spec:
           annotations:
             traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
           hosts:
-            - name: sonarqube.{{ .Values.global.domain }}
+            - name: sonar.{{ .Values.global.domain }}
           tls:
             - secretName: {{ .Values.global.tlsSecret }}
               hosts:
-                - sonarqube.{{ .Values.global.domain }}
+                - sonar.{{ .Values.global.domain }}
         persistence:
           enabled: true
           storageClass: local-path
@@ -44,7 +44,7 @@ spec:
           realm: master
           adminUser: admin
           adminPassword: admin
-          sonarqubeExternalUrl: "https://sonarqube.{{ .Values.global.domain }}"
+          sonarqubeExternalUrl: "https://sonar.{{ .Values.global.domain }}"
         extraInitContainers:
           - name: db-init
             image: postgres:15-alpine
