@@ -19,6 +19,8 @@ spec:
                 secretKeyRef:
                   name: keycloak-bootstrap-admin
                   key: password
+            - name: IPA_HOSTNAME
+              value: {{ .Values.freeipaHostname | quote }}
             - name: IPA_ADMIN_PASS
               value: {{ .Values.freeipaAdminPassword | quote }}
             - name: LDAP_BASE_DN
@@ -37,7 +39,7 @@ spec:
               KC_URL="http://keycloak-service.keycloak.svc.cluster.local:8080"
               KC_REALM="master"
               KC_ADMIN="admin"
-              IPA_URL="https://freeipa.freeipa.svc.cluster.local"
+              IPA_URL="https://$IPA_HOSTNAME"
 
               echo "Waiting for Keycloak to be ready..."
               i=0

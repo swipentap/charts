@@ -18,6 +18,7 @@ spec:
         tlsSecret: {{ .Values.global.tlsSecret }}
         ldapBaseDn: "dc={{ join ",dc=" (splitList "." .Values.freeipa.domain) }}"
         sonarqubeUrl: "https://sonarqube.{{ .Values.global.domain }}"
+        freeipaHostname: {{ .Values.freeipa.hostname | quote }}
         freeipaAdminPassword: {{ .Values.freeipa.adminPassword | default "changeme" | quote }}
         ldapServiceUserPassword: {{ .Values.freeipa.ldapServiceUserPassword | default "changeme" | quote }}
   destination:
