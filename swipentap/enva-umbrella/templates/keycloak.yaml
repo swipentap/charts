@@ -8,33 +8,17 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://swipentap.github.io/charts
-    chart: keycloak
-    targetRevision: {{ .Values.keycloakChartRevision | quote }}
+    repoURL: {{ .Values.chartsRepo | quote }}
+    chart: keycloak-operator
+    targetRevision: {{ .Values.keycloakOperatorChartRevision | quote }}
     helm:
       releaseName: keycloak
-      values: |
-        ingress:
-          enabled: true
-          ingressClassName: traefik
-          annotations:
-            traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-          rules:
-            - host: auth.{{ .Values.global.domain }}
-              paths:
-                - path: /
-                  pathType: Prefix
-          tls:
-            - hosts:
-                - auth.{{ .Values.global.domain }}
-              secretName: {{ .Values.global.tlsSecret }}
-        route:
-          enabled: false
-        extraEnv: |
-          - name: KEYCLOAK_USER
-            value: admin
-          - name: KEYCLOAK_PASSWORD
-            value: admin
+      valuesObject:
+        hostname: "auth.{{ .Values.global.domain }}"
+        tlsSecret: {{ .Values.global.tlsSecret }}
+        ldapBaseDn: "dc={{ join ",dc=" (splitList "." .Values.freeipa.domain) }}"
+        sonarqubeUrl: "https://sonarqube.{{ .Values.global.domain }}"
+        freeipaAdminPassword: {{ .Values.freeipa.adminPassword | default "changeme" | quote }}
   destination:
     server: https://kubernetes.default.svc
     namespace: keycloak
@@ -44,3 +28,4 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+    - Replace=true

@@ -1,0 +1,84 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: keycloak-ldap-config
+  namespace: keycloak
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 10
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: ldap-config
+          image: curlimages/curl:8.2.1
+          env:
+            - name: KC_ADMIN_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-initial-admin
+                  key: password
+            - name: LDAP_BIND_PASS
+              value: {{ .Values.freeipaAdminPassword | quote }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              KC_URL="http://keycloak-service.keycloak.svc.cluster.local"
+              KC_REALM="master"
+              KC_ADMIN="admin"
+
+              echo "Waiting for Keycloak to be ready..."
+              i=0
+              while [ $i -lt 60 ]; do
+                if curl -sf "$KC_URL/realms/$KC_REALM" > /dev/null; then
+                  echo "Keycloak ready"
+                  break
+                fi
+                i=$((i+1))
+                echo "Waiting ($i/60)..."
+                sleep 10
+              done
+
+              echo "Getting admin token..."
+              TOKEN=$(curl -sf -X POST \
+                "$KC_URL/realms/master/protocol/openid-connect/token" \
+                -d "username=$KC_ADMIN&password=$KC_ADMIN_PASS&grant_type=password&client_id=admin-cli" \
+                -H "Content-Type: application/x-www-form-urlencoded" | \
+                grep -o '"access_token":"[^"]*"' | sed 's/"access_token":"//;s/"//')
+
+              echo "Finding freeipa LDAP component..."
+              COMPONENT_ID=$(curl -sf \
+                -H "Authorization: Bearer $TOKEN" \
+                "$KC_URL/admin/realms/$KC_REALM/components?type=org.keycloak.storage.UserStorageProvider" | \
+                grep -o '"id":"[^"]*","name":"freeipa"' | grep -o '"id":"[^"]*"' | sed 's/"id":"//;s/"//')
+
+              if [ -z "$COMPONENT_ID" ]; then
+                echo "ERROR: freeipa LDAP component not found"
+                exit 1
+              fi
+
+              echo "Updating bindCredential for component $COMPONENT_ID..."
+              CURRENT=$(curl -sf \
+                -H "Authorization: Bearer $TOKEN" \
+                "$KC_URL/admin/realms/$KC_REALM/components/$COMPONENT_ID")
+
+              UPDATED=$(echo "$CURRENT" | sed "s/\"bindCredential\":\[\"placeholder\"\]/\"bindCredential\":[\"$LDAP_BIND_PASS\"]/g")
+
+              curl -sf -X PUT \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" \
+                "$KC_URL/admin/realms/$KC_REALM/components/$COMPONENT_ID" \
+                -d "$UPDATED"
+
+              echo "LDAP bindCredential updated successfully."
+
+              echo "Triggering LDAP sync..."
+              curl -sf -X POST \
+                -H "Authorization: Bearer $TOKEN" \
+                "$KC_URL/admin/realms/$KC_REALM/user-storage/$COMPONENT_ID/sync?action=triggerFullSync"
+
+              echo "Done."

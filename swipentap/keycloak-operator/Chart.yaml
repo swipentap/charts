@@ -1,0 +1,4 @@
+apiVersion: v2
+name: keycloak-operator
+version: 1.0.0
+description: Keycloak Operator (OLM) + FreeIPA LDAP federation + SonarQube SAML

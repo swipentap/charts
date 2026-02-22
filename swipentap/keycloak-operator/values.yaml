@@ -1,0 +1,7 @@
+hostname: "auth.example.com"
+tlsSecret: "tls-prod-net-wildcard"
+dbPassword: "keycloak123"
+ldapBaseDn: "dc=prod,dc=net"
+sonarqubeUrl: "https://sonarqube.example.com"
+freeipaAdminPassword: "changeme"
+adminPassword: "admin"

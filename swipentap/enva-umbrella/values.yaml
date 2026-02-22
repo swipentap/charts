@@ -10,7 +10,7 @@ chartsRepo: https://swipentap.github.io/charts
 githubRunnerChartRevision: "1.0.2-176"
 tlsSecretChartRevision: "1.0.0-176"
 eclipseCheChartRevision: "1.0.0-176"
-keycloakChartRevision: "18.10.0-176"
+keycloakOperatorChartRevision: "1.0.0-176"
 sinsChartRevision: "1.0.93-176"
 certaChartRevision: "1.0.5-176"
 ollamaChartRevision: "0.1.6-176"
@@ -60,6 +60,7 @@ freeipa:
   domain: dev.net
   credentialsSecret: freeipa-credentials
   ingressTlsSecret: tls-dev-net-wildcard
+  adminPassword: "changeme"
 
 # eclipse-che: Keycloak client secret per env (set in envaapps overlay)
 eclipseCheOAuthSecret: ""

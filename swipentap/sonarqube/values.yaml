@@ -524,7 +524,7 @@ emptyDir:
 # SonarQube SAML cert via admin API on post-install/post-upgrade.
 keycloakSaml:
   enabled: false
-  keycloakUrl: "http://keycloak-http.keycloak.svc.cluster.local/auth"
+  keycloakUrl: "http://keycloak-service.keycloak.svc.cluster.local"
   keycloakExternalUrl: "https://auth.example.com"
   realm: master
   adminUser: admin
