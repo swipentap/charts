@@ -28,7 +28,7 @@ spec:
             - -c
             - |
               set -e
-              KC_URL="http://keycloak-service.keycloak.svc.cluster.local"
+              KC_URL="http://keycloak-service.keycloak.svc.cluster.local:8080"
               KC_REALM="master"
               KC_ADMIN="admin"
 
