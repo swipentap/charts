@@ -37,6 +37,8 @@ spec:
           jdbcUsername: sonar
           jdbcPassword: sonar123
         monitoringPasscode: "define_it"
+        sonarProperties:
+          sonar.core.serverBaseURL: "https://sonar.{{ .Values.global.domain }}"
         keycloakSaml:
           enabled: true
           keycloakUrl: "http://keycloak-service.keycloak.svc.cluster.local:8080"
