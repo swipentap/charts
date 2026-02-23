@@ -402,7 +402,7 @@ spec:
                 curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
                   --data-urlencode "key=sonar.auth.saml.user.login" --data-urlencode "value=login"
                 curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
-                  --data-urlencode "key=sonar.auth.saml.user.name" --data-urlencode "value=name"
+                  --data-urlencode "key=sonar.auth.saml.user.name" --data-urlencode "value=login"
                 curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \
                   --data-urlencode "key=sonar.auth.saml.user.email" --data-urlencode "value=email"
                 curl -sf -u "$SQ_ADMIN:$SQ_PASS" -X POST "$SQ_URL/api/settings/set" \

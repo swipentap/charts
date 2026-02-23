@@ -27,7 +27,7 @@ ollama:
       memory: "6Gi"
       cpu: "2"
     limits:
-      memory: "8Gi"
+      memory: "16Gi"
       cpu: "16"
   
   models:
@@ -36,7 +36,7 @@ ollama:
   
   persistence:
     enabled: true
-    size: 20Gi
+    size: 100Gi
     storageClass: ""
     accessMode: ReadWriteOnce
     existingClaim: ""  # Set to "ollama-data" to use existing PVC
