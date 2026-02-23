@@ -146,6 +146,26 @@ spec:
                 echo "bindCredential updated."
               fi
 
+              echo "Fixing first name LDAP mapper to use givenName..."
+              FNAME_MAPPER_ID=$(curl -sf \
+                -H "Authorization: Bearer $TOKEN" \
+                "$KC_URL/admin/realms/$KC_REALM/components?parent=$COMPONENT_ID&type=org.keycloak.storage.ldap.mappers.LDAPStorageMapper" | \
+                grep -o '"id":"[^"]*","name":"first name"' | \
+                grep -o '"id":"[^"]*"' | sed 's/"id":"//;s/"//')
+              if [ -n "$FNAME_MAPPER_ID" ]; then
+                FNAME_MAPPER=$(curl -sf -H "Authorization: Bearer $TOKEN" \
+                  "$KC_URL/admin/realms/$KC_REALM/components/$FNAME_MAPPER_ID")
+                FNAME_UPDATED=$(echo "$FNAME_MAPPER" | sed 's/"ldap.attribute":\["cn"\]/"ldap.attribute":["givenName"]/g')
+                curl -sf -X PUT \
+                  -H "Authorization: Bearer $TOKEN" \
+                  -H "Content-Type: application/json" \
+                  "$KC_URL/admin/realms/$KC_REALM/components/$FNAME_MAPPER_ID" \
+                  -d "$FNAME_UPDATED"
+                echo "First name mapper updated to givenName."
+              else
+                echo "First name mapper not found, skipping."
+              fi
+
               echo "Triggering LDAP full sync..."
               curl -sf -X POST \
                 -H "Authorization: Bearer $TOKEN" \
