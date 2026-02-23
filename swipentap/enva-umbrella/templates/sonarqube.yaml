@@ -46,6 +46,18 @@ spec:
           adminPassword: admin
           sonarqubeExternalUrl: "https://sonar.{{ .Values.global.domain }}"
         extraInitContainers:
+          - name: es-lock-cleanup
+            image: alpine
+            command:
+              - find
+              - /opt/sonarqube/data/es8
+              - -name
+              - "*.lock"
+              - -delete
+            volumeMounts:
+              - name: sonarqube
+                mountPath: /opt/sonarqube/data
+                subPath: data
           - name: db-init
             image: postgres:15-alpine
             command:
