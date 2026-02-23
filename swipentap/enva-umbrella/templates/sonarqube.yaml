@@ -51,11 +51,9 @@ spec:
           - name: es-lock-cleanup
             image: alpine
             command:
-              - find
-              - /opt/sonarqube/data/es8
-              - -name
-              - "*.lock"
-              - -delete
+              - /bin/sh
+              - -c
+              - "[ -d /opt/sonarqube/data/es8 ] && find /opt/sonarqube/data/es8 -name '*.lock' -delete || true"
             volumeMounts:
               - name: sonarqube
                 mountPath: /opt/sonarqube/data
