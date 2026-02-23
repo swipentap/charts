@@ -39,7 +39,7 @@ spec:
         monitoringPasscode: "define_it"
         keycloakSaml:
           enabled: true
-          keycloakUrl: "http://keycloak-service.keycloak.svc.cluster.local"
+          keycloakUrl: "http://keycloak-service.keycloak.svc.cluster.local:8080"
           keycloakExternalUrl: "https://auth.{{ .Values.global.domain }}"
           realm: master
           adminUser: admin
