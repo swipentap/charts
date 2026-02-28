@@ -46,6 +46,7 @@ jobs:
           POSTGRESQL_VER=$(grep '^version:' swipentap/postgresql/Chart.yaml | sed 's/version: //' | tr -d ' ')
           MAILU_VER=$(grep '^version:' swipentap/mailu/Chart.yaml | sed 's/version: //' | tr -d ' ')
           FREEIPA_VER=$(grep '^version:' swipentap/freeipa/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          KC_OPERATOR_VER=$(grep '^version:' swipentap/keycloak-operator/Chart.yaml | sed 's/version: //' | tr -d ' ')
           sed -i "s/^githubRunnerChartRevision: .*/githubRunnerChartRevision: \"$GITHUB_RUNNER_VER\"/" swipentap/enva-umbrella/values.yaml
           sed -i "s/^tlsSecretChartRevision: .*/tlsSecretChartRevision: \"$TLS_SECRET_VER\"/" swipentap/enva-umbrella/values.yaml
           sed -i "s/^eclipseCheChartRevision: .*/eclipseCheChartRevision: \"$ECLIPSE_CHE_VER\"/" swipentap/enva-umbrella/values.yaml
@@ -56,7 +57,8 @@ jobs:
           sed -i "s/^postgresqlChartRevision: .*/postgresqlChartRevision: \"$POSTGRESQL_VER\"/" swipentap/enva-umbrella/values.yaml
           sed -i "s/^mailuChartRevision: .*/mailuChartRevision: \"$MAILU_VER\"/" swipentap/enva-umbrella/values.yaml
           sed -i "s/^freeipaChartRevision: .*/freeipaChartRevision: \"$FREEIPA_VER\"/" swipentap/enva-umbrella/values.yaml
-          echo "sins=$SINS_VER certa=$CERTA_VER ollama=$OLLAMA_VER postgresql=$POSTGRESQL_VER mailu=$MAILU_VER githubRunner=$GITHUB_RUNNER_VER tlsSecret=$TLS_SECRET_VER eclipseChe=$ECLIPSE_CHE_VER keycloak=$KEYCLOAK_VER freeipa=$FREEIPA_VER"
+          sed -i "s/^keycloakOperatorChartRevision: .*/keycloakOperatorChartRevision: \"$KC_OPERATOR_VER\"/" swipentap/enva-umbrella/values.yaml
+          echo "sins=$SINS_VER certa=$CERTA_VER ollama=$OLLAMA_VER postgresql=$POSTGRESQL_VER mailu=$MAILU_VER githubRunner=$GITHUB_RUNNER_VER tlsSecret=$TLS_SECRET_VER eclipseChe=$ECLIPSE_CHE_VER keycloak=$KEYCLOAK_VER freeipa=$FREEIPA_VER keycloakOperator=$KC_OPERATOR_VER"
 
       - name: Add dependency helm repos for cr package
         run: |
