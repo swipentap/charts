@@ -1,0 +1,88 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: langflow
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://langflow-ai.github.io/langflow-helm-charts
+    chart: langflow-ide
+    targetRevision: {{ .Values.langflowChartRevision | quote }}
+    helm:
+      releaseName: langflow
+      valuesObject:
+        postgresql:
+          enabled: false
+        langflow:
+          backend:
+            sqlite:
+              enabled: false
+            externalDatabase:
+              enabled: true
+              driver:
+                value: "postgresql"
+              host:
+                value: "postgresql-rw.postgresql.svc.cluster.local"
+              port:
+                value: "5432"
+              database:
+                value: "langflow"
+              user:
+                value: "langflow"
+              password:
+                value: "langflow123"
+            extraInitContainers:
+              - name: db-init
+                image: postgres:15-alpine
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    set -e
+                    echo "Waiting for PostgreSQL..."
+                    until PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c '\q'; do
+                      echo "Not ready, retrying..."
+                      sleep 2
+                    done
+                    echo "Creating role langflow if not exists..."
+                    if ! PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='langflow'" | grep -q 1; then
+                      PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c "CREATE ROLE langflow WITH LOGIN PASSWORD 'langflow123';"
+                      echo "Role langflow created."
+                    else
+                      echo "Role langflow already exists."
+                    fi
+                    echo "Creating database langflow if not exists..."
+                    if ! PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='langflow'" | grep -q 1; then
+                      PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c "CREATE DATABASE langflow OWNER langflow;"
+                      echo "Database langflow created."
+                    else
+                      echo "Database langflow already exists."
+                    fi
+                    PGPASSWORD="postgres123" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE langflow TO langflow;"
+                    echo "DB init done."
+        ingress:
+          enabled: true
+          ingressClassName: traefik
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+          hosts:
+            - host: langflow.{{ .Values.global.domain }}
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: {{ .Values.global.tlsSecret }}
+              hosts:
+                - langflow.{{ .Values.global.domain }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: langflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
