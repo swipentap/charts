@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://langflow-ai.github.io/langflow-helm-charts
-    chart: langflow-ide
+    repoURL: https://swipentap.github.io/charts
+    chart: langflow
     targetRevision: {{ .Values.langflowChartRevision | quote }}
     helm:
       releaseName: langflow
