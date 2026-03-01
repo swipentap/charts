@@ -34,6 +34,14 @@ spec:
                 value: "langflow"
               password:
                 value: "langflow123"
+            livenessProbe:
+              initialDelaySeconds: 120
+              periodSeconds: 15
+              failureThreshold: 5
+            readinessProbe:
+              initialDelaySeconds: 120
+              periodSeconds: 15
+              failureThreshold: 5
             extraInitContainers:
               - name: db-init
                 image: postgres:15-alpine
