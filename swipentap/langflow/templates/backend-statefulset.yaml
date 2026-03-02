@@ -13,7 +13,6 @@ spec:
   selector:
     matchLabels:
       app: {{ template "langflow.name" . }}
-      chart: {{ template "langflow.chart" . }}
       release: {{ .Release.Name }}
       langflow-scope: "backend"
   template:
