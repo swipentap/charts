@@ -1,0 +1,25 @@
+---
+# bootstrap-secret in cattle-system namespace (used by rancher CATTLE_BOOTSTRAP_PASSWORD)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: rancher-bootstrap-secret
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - cattle-system
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: bootstrap-secret
+    data:
+      - secretKey: bootstrapPassword
+        remoteRef:
+          key: {{ .Values.global.env }}/rancher
+          property: bootstrap_password

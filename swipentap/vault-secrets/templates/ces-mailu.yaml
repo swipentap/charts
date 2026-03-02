@@ -23,6 +23,14 @@ spec:
         remoteRef:
           key: {{ .Values.global.env }}/mailu
           property: db_password
+      - secretKey: database
+        remoteRef:
+          key: {{ .Values.global.env }}/mailu
+          property: db_name
+      - secretKey: username
+        remoteRef:
+          key: {{ .Values.global.env }}/mailu
+          property: db_username
 ---
 # mailu-roundcube-credentials in mailu namespace (used by global.database.roundcube.existingSecret)
 apiVersion: external-secrets.io/v1beta1
