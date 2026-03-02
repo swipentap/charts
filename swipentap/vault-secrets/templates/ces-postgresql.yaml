@@ -1,0 +1,56 @@
+---
+# postgresql-credentials in postgresql namespace (used by CNPG cluster as superuserSecret)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: postgresql-credentials
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - postgresql
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: postgresql-credentials
+      template:
+        type: kubernetes.io/basic-auth
+    data:
+      - secretKey: username
+        remoteRef:
+          key: {{ .Values.global.env }}/postgresql
+          property: username
+      - secretKey: password
+        remoteRef:
+          key: {{ .Values.global.env }}/postgresql
+          property: admin_password
+---
+# sonarqube-role-password in postgresql namespace (used by CNPG db-init-job)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: sonarqube-role-password
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - postgresql
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: sonarqube-role-password
+    data:
+      - secretKey: password
+        remoteRef:
+          key: {{ .Values.global.env }}/postgresql
+          property: sonarqube_role_password

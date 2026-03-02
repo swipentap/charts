@@ -1,10 +1,14 @@
 hostname: "auth.example.com"
 tlsSecret: "tls-prod-net-wildcard"
 dbPassword: "keycloak123"
+existingDbSecret: ""  # if set, skip creating keycloak-db-secret; use this secret with key "password"
 ldapBaseDn: "dc=prod,dc=net"
 sonarqubeUrl: "https://sonarqube.example.com"
 freeipaHostname: "ipa.example.com"
 freeipaAdminPassword: "changeme"
 ldapServiceUser: "service-keycloak"
 ldapServiceUserPassword: "changeme"
+existingFreeipaSecret: ""  # if set, use this secret for IPA_ADMIN_PASS (key: admin_password) and LDAP_SERVICE_PASS (key: ldap_service_user_password)
 adminPassword: "admin"
+existingAdminSecret: ""  # if set, skip creating keycloak-bootstrap-admin; use this secret with key "password"
+postgresqlAdminSecret: "postgresql-admin"  # secret in keycloak namespace with key admin_password (created by ESO)

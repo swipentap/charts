@@ -40,19 +40,35 @@ spec:
       {{- if and (hasKey .Values.sins "dbInit") (hasKey .Values.sins.dbInit "enabled") .Values.sins.dbInit.enabled }}
       - name: db-init
         image: postgres:15-alpine
+        env:
+        {{- if .Values.sins.credentials.existingSecret }}
+        - name: SINS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.sins.credentials.existingSecret }}
+              key: db_password
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-admin
+              key: admin_password
+        {{- else }}
+        - name: SINS_PASSWORD
+          value: {{ .Values.sins.dbInit.appPassword | default "sins123" | quote }}
+        - name: POSTGRES_PASSWORD
+          value: {{ .Values.sins.dbInit.adminPassword | quote }}
+        {{- end }}
         command:
         - /bin/sh
         - -c
         - |
           set -e
           echo "Initializing database and role for SiNS..."
-          
+
           SINS_USER="{{ .Values.sins.dbInit.appUser | default "sins" }}"
-          SINS_PASSWORD="{{ .Values.sins.dbInit.appPassword | default "sins123" }}"
           DB_NAME="{{ .Values.sins.dbInit.appDatabase | default "dns_server" }}"
           DB_HOST="{{ .Values.sins.dbInit.dbHost }}"
           DB_PORT="{{ .Values.sins.dbInit.dbPort }}"
-          POSTGRES_PASSWORD="{{ .Values.sins.dbInit.adminPassword }}"
           
           echo "Waiting for PostgreSQL to be ready..."
           MAX_WAIT=300
@@ -121,6 +137,13 @@ spec:
         - containerPort: 80
           name: http
         env:
+        {{- if .Values.sins.credentials.existingSecret }}
+        - name: SINS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.sins.credentials.existingSecret }}
+              key: db_password
+        {{- end }}
         {{- if .Values.sins.env.ConnectionStrings__DefaultConnection }}
         - name: ConnectionStrings__DefaultConnection
           value: {{ .Values.sins.env.ConnectionStrings__DefaultConnection | quote }}

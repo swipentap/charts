@@ -1,0 +1,7 @@
+global:
+  env: dev   # dev | test | prod — used to build Vault secret paths
+
+vault:
+  url: "http://vault.vault.svc.cluster.local:8200"
+  kubeAuthPath: "kubernetes"
+  role: "external-secrets"

@@ -72,6 +72,9 @@ certa:
     hosts: []
     tls: []
 
+  credentials:
+    existingSecret: ""
+
   dbInit:
     enabled: false
     dbHost: ""

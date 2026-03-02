@@ -21,14 +21,30 @@ spec:
                   key: password
             - name: IPA_HOSTNAME
               value: {{ .Values.freeipaHostname | quote }}
+            {{- if .Values.existingFreeipaSecret }}
+            - name: IPA_ADMIN_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingFreeipaSecret }}
+                  key: admin_password
+            {{- else }}
             - name: IPA_ADMIN_PASS
               value: {{ .Values.freeipaAdminPassword | quote }}
+            {{- end }}
             - name: LDAP_BASE_DN
               value: {{ .Values.ldapBaseDn | quote }}
             - name: LDAP_SERVICE_USER
               value: {{ .Values.ldapServiceUser | quote }}
+            {{- if .Values.existingFreeipaSecret }}
+            - name: LDAP_SERVICE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingFreeipaSecret }}
+                  key: ldap_service_user_password
+            {{- else }}
             - name: LDAP_SERVICE_PASS
               value: {{ .Values.ldapServiceUserPassword | quote }}
+            {{- end }}
             - name: SONARQUBE_URL
               value: {{ .Values.sonarqubeUrl | quote }}
           command:

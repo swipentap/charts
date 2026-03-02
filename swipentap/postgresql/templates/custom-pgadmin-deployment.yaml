@@ -19,6 +19,17 @@ spec:
       initContainers:
       - name: db-init
         image: postgres:15-alpine
+        env:
+        - name: PGADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ default "pgadmin-secret" .Values.customPgadmin.existingSecret }}
+              key: {{ if .Values.customPgadmin.existingSecret }}db_password{{ else }}PGADMIN_DB_PASSWORD{{ end }}
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ default "postgresql-credentials" .Values.customPostgresql.existingSecret }}
+              key: password
         command:
         - /bin/sh
         - -c
@@ -27,11 +38,9 @@ spec:
           echo "Initializing database and role for pgAdmin..."
 
           PGADMIN_USER="pgadmin"
-          PGADMIN_PASSWORD="{{ .Values.customPgadmin.dbPassword }}"
           DB_NAME="pgadmin"
           DB_HOST="postgresql-rw.postgresql.svc.cluster.local"
           DB_PORT="5432"
-          POSTGRES_PASSWORD="{{ .Values.customPostgresql.credentials.password }}"
 
           echo "Waiting for PostgreSQL to be ready..."
           MAX_WAIT=300
@@ -93,15 +102,17 @@ spec:
           name: http
         env:
         - name: PGADMIN_DEFAULT_EMAIL
-          valueFrom:
-            secretKeyRef:
-              name: pgadmin-secret
-              key: PGADMIN_DEFAULT_EMAIL
+          value: {{ .Values.customPgadmin.adminEmail | quote }}
         - name: PGADMIN_DEFAULT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: pgadmin-secret
-              key: PGADMIN_DEFAULT_PASSWORD
+              name: {{ default "pgadmin-secret" .Values.customPgadmin.existingSecret }}
+              key: {{ if .Values.customPgadmin.existingSecret }}admin_password{{ else }}PGADMIN_DEFAULT_PASSWORD{{ end }}
+        - name: PGADMIN_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ default "pgadmin-secret" .Values.customPgadmin.existingSecret }}
+              key: {{ if .Values.customPgadmin.existingSecret }}db_password{{ else }}PGADMIN_DB_PASSWORD{{ end }}
         - name: PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION
           value: "False"
         - name: PGADMIN_CONFIG_WTF_CSRF_CHECK_ENABLED
@@ -109,7 +120,7 @@ spec:
         - name: PGADMIN_CONFIG_SERVER_MODE
           value: "True"
         - name: SQLALCHEMY_DATABASE_URI
-          value: "postgresql://pgadmin:{{ .Values.customPgadmin.dbPassword }}@postgresql-rw.postgresql.svc.cluster.local:5432/pgadmin"
+          value: "postgresql://pgadmin:$(PGADMIN_DB_PASSWORD)@postgresql-rw.postgresql.svc.cluster.local:5432/pgadmin"
         volumeMounts:
         - name: pgadmin-data
           mountPath: /var/lib/pgadmin

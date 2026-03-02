@@ -1,0 +1,54 @@
+---
+# sonarqube-credentials in sonarqube namespace
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: sonarqube-credentials
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - sonarqube
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: sonarqube-credentials
+    data:
+      - secretKey: db_password
+        remoteRef:
+          key: {{ .Values.global.env }}/sonarqube
+          property: db_password
+      - secretKey: keycloak_admin_password
+        remoteRef:
+          key: {{ .Values.global.env }}/sonarqube
+          property: keycloak_admin_password
+---
+# postgresql-admin in sonarqube namespace (used by db-init-job)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: sonarqube-postgresql-admin
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - sonarqube
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: postgresql-admin
+    data:
+      - secretKey: admin_password
+        remoteRef:
+          key: {{ .Values.global.env }}/postgresql
+          property: admin_password

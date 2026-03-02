@@ -26,6 +26,14 @@ rabbitmqChartRevision: "2.2.5"
 rancherChartRevision: "2.13.1"
 certManagerChartRevision: "v1.13.3"
 devworkspaceOperatorRevision: "v0.39.0"
+externalSecretsChartRevision: "0.10.7"
+vaultSecretsChartRevision: "0.1.0"
+
+# vault: connection settings for ESO ClusterSecretStore
+vault:
+  url: "http://vault.vault.svc.cluster.local:8200"
+  kubeAuthPath: "kubernetes"
+  role: "external-secrets"
 
 # mailu: CoreDNS nodeHosts per env (dev subnet 10.11.4.x)
 mailu:

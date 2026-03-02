@@ -1,0 +1,50 @@
+---
+# certa-credentials in certa namespace
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: certa-credentials
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - certa
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: certa-credentials
+    data:
+      - secretKey: db_password
+        remoteRef:
+          key: {{ .Values.global.env }}/certa
+          property: db_password
+---
+# postgresql-admin in certa namespace (used by db-init-job)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: certa-postgresql-admin
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - certa
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: postgresql-admin
+    data:
+      - secretKey: admin_password
+        remoteRef:
+          key: {{ .Values.global.env }}/postgresql
+          property: admin_password

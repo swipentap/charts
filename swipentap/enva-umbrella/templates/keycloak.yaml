@@ -19,8 +19,7 @@ spec:
         ldapBaseDn: "dc={{ join ",dc=" (splitList "." .Values.freeipa.domain) }}"
         sonarqubeUrl: "https://sonar.{{ .Values.global.domain }}"
         freeipaHostname: {{ .Values.freeipa.hostname | quote }}
-        freeipaAdminPassword: {{ .Values.freeipa.adminPassword | default "changeme" | quote }}
-        ldapServiceUserPassword: {{ .Values.freeipa.ldapServiceUserPassword | default "changeme" | quote }}
+        existingFreeipaSecret: freeipa-credentials
   destination:
     server: https://kubernetes.default.svc
     namespace: keycloak

@@ -25,14 +25,17 @@ spec:
           port: "5432"
           database: mailu
           username: mailu
-          password: mailu123
-          adminPassword: postgres123
+          existingSecret: mailu-credentials
+          existingSecretPasswordKey: password
+          existingAdminSecret: postgresql-admin
+          adminSecretPasswordKey: admin_password
         global:
           database:
             roundcube:
               database: roundcube
               username: roundcube
-              password: roundcube123
+              existingSecret: mailu-roundcube-credentials
+              existingSecretPasswordKey: password
         domain: {{ .Values.global.domain | quote }}
         hostnames:
           - mail.{{ .Values.global.domain }}
@@ -40,7 +43,8 @@ spec:
           enabled: true
           username: admin
           domain: {{ .Values.global.domain | quote }}
-          password: "admin"
+          existingSecret: mailu-initial-account-credentials
+          existingSecretPasswordKey: password
           mode: update
         admin:
           extraEnvVars:

@@ -34,19 +34,35 @@ spec:
       {{- if .Values.certa.dbInit.enabled }}
       - name: db-init
         image: postgres:15-alpine
+        env:
+        {{- if .Values.certa.credentials.existingSecret }}
+        - name: CERTA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.certa.credentials.existingSecret }}
+              key: db_password
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-admin
+              key: admin_password
+        {{- else }}
+        - name: CERTA_PASSWORD
+          value: {{ .Values.certa.dbInit.appPassword | quote }}
+        - name: POSTGRES_PASSWORD
+          value: {{ .Values.certa.dbInit.adminPassword | quote }}
+        {{- end }}
         command:
         - /bin/sh
         - -c
         - |
           set -e
           echo "Initializing database and role for CertA..."
-          
+
           CERTA_USER="{{ .Values.certa.dbInit.appUser }}"
-          CERTA_PASSWORD="{{ .Values.certa.dbInit.appPassword }}"
           DB_NAME="{{ .Values.certa.dbInit.appDatabase }}"
           DB_HOST="{{ .Values.certa.dbInit.dbHost }}"
           DB_PORT="{{ .Values.certa.dbInit.dbPort }}"
-          POSTGRES_PASSWORD="{{ .Values.certa.dbInit.adminPassword }}"
           
           echo "Waiting for PostgreSQL to be ready..."
           MAX_WAIT=300
@@ -109,6 +125,13 @@ spec:
         - containerPort: {{ .Values.certa.service.port }}
           name: http
         env:
+        {{- if .Values.certa.credentials.existingSecret }}
+        - name: CERTA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.certa.credentials.existingSecret }}
+              key: db_password
+        {{- end }}
         - name: ConnectionStrings__DefaultConnection
           value: {{ include "certa.postgresql.connectionString" . | quote }}
         {{- range $key, $value := .Values.certa.env }}

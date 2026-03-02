@@ -33,16 +33,16 @@ spec:
               - hosts:
                   - certa.{{ .Values.global.domain }}
                 secretName: {{ .Values.global.tlsSecret }}
+          credentials:
+            existingSecret: certa-credentials
           env:
-            ConnectionStrings__DefaultConnection: "Host=postgresql-rw.postgresql.svc.cluster.local:5432;Database=certa;Username=certa;Password=certa123;"
+            ConnectionStrings__DefaultConnection: "Host=postgresql-rw.postgresql.svc.cluster.local:5432;Database=certa;Username=certa;Password=$(CERTA_PASSWORD);"
           dbInit:
             enabled: true
             dbHost: postgresql-rw.postgresql.svc.cluster.local
             dbPort: "5432"
             adminUser: postgres
-            adminPassword: postgres123
             appUser: certa
-            appPassword: certa123
             appDatabase: certa
         domain: {{ .Values.global.domain | quote }}
         subdomain: certa

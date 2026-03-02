@@ -41,19 +41,35 @@ spec:
       {{- if .Values.webui.dbInit.enabled }}
       - name: db-init
         image: postgres:15-alpine
+        env:
+        {{- if .Values.webui.credentials.existingSecret }}
+        - name: SINS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.webui.credentials.existingSecret }}
+              key: db_password
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-admin
+              key: admin_password
+        {{- else }}
+        - name: SINS_PASSWORD
+          value: {{ .Values.webui.dbInit.appPassword | default "sins123" | quote }}
+        - name: POSTGRES_PASSWORD
+          value: {{ .Values.webui.dbInit.adminPassword | quote }}
+        {{- end }}
         command:
         - /bin/sh
         - -c
         - |
           set -e
           echo "Initializing database and role for SiNS..."
-          
+
           SINS_USER="{{ .Values.webui.dbInit.appUser | default "sins" }}"
-          SINS_PASSWORD="{{ .Values.webui.dbInit.appPassword | default "sins123" }}"
           DB_NAME="{{ .Values.webui.dbInit.appDatabase | default "dns_server" }}"
           DB_HOST="{{ .Values.webui.dbInit.dbHost }}"
           DB_PORT="{{ .Values.webui.dbInit.dbPort }}"
-          POSTGRES_PASSWORD="{{ .Values.webui.dbInit.adminPassword }}"
           
           echo "Waiting for PostgreSQL to be ready..."
           MAX_WAIT=300
@@ -111,18 +127,28 @@ spec:
       {{- if .Values.webui.dnsRecordsInit.enabled }}
       - name: dns-records-init
         image: postgres:15-alpine
+        env:
+        {{- if .Values.webui.credentials.existingSecret }}
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.webui.credentials.existingSecret }}
+              key: db_password
+        {{- else }}
+        - name: DB_PASSWORD
+          value: {{ .Values.webui.dnsRecordsInit.dbPassword | quote }}
+        {{- end }}
         command:
         - /bin/bash
         - -c
         - |
           set -e
           echo "Adding DNS records to SINS database..."
-          
+
           DB_HOST="{{ .Values.webui.dnsRecordsInit.dbHost }}"
           DB_PORT="{{ .Values.webui.dnsRecordsInit.dbPort }}"
           DB_NAME="{{ .Values.webui.dnsRecordsInit.dbName }}"
           DB_USER="{{ .Values.webui.dnsRecordsInit.dbUser }}"
-          DB_PASSWORD="{{ .Values.webui.dnsRecordsInit.dbPassword }}"
           HAPROXY_IP="{{ .Values.webui.dnsRecordsInit.haproxyIp }}"
           
           echo "Waiting for PostgreSQL to be ready..."
@@ -198,6 +224,13 @@ spec:
         - containerPort: {{ .Values.webui.service.port }}
           name: http
         env:
+        {{- if .Values.webui.credentials.existingSecret }}
+        - name: SINS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.webui.credentials.existingSecret }}
+              key: db_password
+        {{- end }}
         {{- if .Values.webui.env.ConnectionStrings__DefaultConnection }}
         - name: ConnectionStrings__DefaultConnection
           value: {{ .Values.webui.env.ConnectionStrings__DefaultConnection | quote }}

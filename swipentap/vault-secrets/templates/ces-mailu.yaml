@@ -1,0 +1,100 @@
+---
+# mailu-credentials in mailu namespace (used by externalDatabase.existingSecret)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: mailu-db-credentials
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - mailu
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: mailu-credentials
+    data:
+      - secretKey: password
+        remoteRef:
+          key: {{ .Values.global.env }}/mailu
+          property: db_password
+---
+# mailu-roundcube-credentials in mailu namespace (used by global.database.roundcube.existingSecret)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: mailu-roundcube-credentials
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - mailu
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: mailu-roundcube-credentials
+    data:
+      - secretKey: password
+        remoteRef:
+          key: {{ .Values.global.env }}/mailu
+          property: roundcube_password
+---
+# mailu-initial-account-credentials in mailu namespace (used by initialAccount.existingSecret)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: mailu-initial-account-credentials
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - mailu
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: mailu-initial-account-credentials
+    data:
+      - secretKey: password
+        remoteRef:
+          key: {{ .Values.global.env }}/mailu
+          property: initial_account_password
+---
+# postgresql-admin in mailu namespace (used by externalDatabase.existingAdminSecret)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: mailu-postgresql-admin
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - mailu
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: postgresql-admin
+    data:
+      - secretKey: admin_password
+        remoteRef:
+          key: {{ .Values.global.env }}/postgresql
+          property: admin_password

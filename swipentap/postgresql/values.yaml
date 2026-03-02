@@ -32,6 +32,7 @@ customPostgresql:
       cpu: "1"
   nodePort: 30432
   sonarqubeRolePassword: postgres123
+  existingSecret: ""  # if set, skip creating postgresql-credentials and sonarqube-role-password secrets
 
 customPgadmin:
   enabled: true
@@ -39,6 +40,7 @@ customPgadmin:
   adminEmail: admin@dev.net
   adminPassword: admin
   dbPassword: pgadmin123
+  existingSecret: ""  # if set, skip creating pgadmin-secret; use this secret for admin_password and db_password keys
   ingress:
     host: pgadmin.prod.net
     tlsSecretName: tls-prod-net-wildcard

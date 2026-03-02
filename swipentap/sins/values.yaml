@@ -79,6 +79,9 @@ sins:
       - "8.8.8.8"
       - "1.1.1.1"
   
+  credentials:
+    existingSecret: ""
+
   waitForPostgresql:
     enabled: false
     host: ""
@@ -113,6 +116,9 @@ webui:
       memory: "256Mi"
       cpu: "200m"
   
+  credentials:
+    existingSecret: ""
+
   env:
     ConnectionStrings__DefaultConnection: ""
 

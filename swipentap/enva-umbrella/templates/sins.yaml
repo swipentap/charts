@@ -34,8 +34,10 @@ spec:
               - hosts:
                   - ns.{{ .Values.global.domain }}
                 secretName: {{ .Values.global.tlsSecret }}
+          credentials:
+            existingSecret: sins-credentials
           env:
-            ConnectionStrings__DefaultConnection: "Host=postgresql-rw.postgresql.svc.cluster.local:5432;Database=dns_server;Username=sins;Password=sins123;"
+            ConnectionStrings__DefaultConnection: "Host=postgresql-rw.postgresql.svc.cluster.local:5432;Database=dns_server;Username=sins;Password=$(SINS_PASSWORD);"
           waitForPostgresql:
             enabled: true
             host: postgresql-rw.postgresql.svc.cluster.local
@@ -45,7 +47,6 @@ spec:
             dbHost: postgresql-rw.postgresql.svc.cluster.local
             dbPort: "5432"
             adminUser: postgres
-            adminPassword: postgres123
             appDatabase: dns_server
           dnsRecordsInit:
             enabled: true
@@ -53,14 +54,15 @@ spec:
             dbPort: "5432"
             dbName: dns_server
             dbUser: sins
-            dbPassword: sins123
             haproxyIp: {{ .Values.sins.haproxyIp | quote }}
         sins:
           image:
             repository: judyandiealvarez/sins
             tag: "1.0.78"
+          credentials:
+            existingSecret: sins-credentials
           env:
-            ConnectionStrings__DefaultConnection: "Host=postgresql-rw.postgresql.svc.cluster.local:5432;Database=dns_server;Username=sins;Password=sins123;"
+            ConnectionStrings__DefaultConnection: "Host=postgresql-rw.postgresql.svc.cluster.local:5432;Database=dns_server;Username=sins;Password=$(SINS_PASSWORD);"
           waitForPostgresql:
             enabled: true
             host: postgresql-rw.postgresql.svc.cluster.local
