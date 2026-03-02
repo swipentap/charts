@@ -1,0 +1,30 @@
+---
+# Pre-install/pre-upgrade hook: waits for ESO webhook to be ready before CES resources are applied
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wait-for-eso-webhook
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  ttlSecondsAfterFinished: 60
+  template:
+    spec:
+      serviceAccountName: wait-for-eso-webhook
+      restartPolicy: OnFailure
+      containers:
+        - name: wait-for-eso-webhook
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for ESO webhook endpoints to be available..."
+              until kubectl get endpoints external-secrets-webhook -n external-secrets -o jsonpath='{.subsets[0].addresses[0].ip}' 2>/dev/null | grep -q '.'; do
+                echo "ESO webhook not ready yet, retrying in 5s..."
+                sleep 5
+              done
+              echo "ESO webhook is ready."
