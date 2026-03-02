@@ -27,3 +27,28 @@ spec:
         remoteRef:
           key: {{ .Values.global.env }}/pgadmin
           property: db_password
+---
+# postgresql-credentials in pgadmin namespace (used by db-init init container)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: pgadmin-postgresql-credentials
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - pgadmin
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: postgresql-credentials
+    data:
+      - secretKey: password
+        remoteRef:
+          key: {{ .Values.global.env }}/postgresql
+          property: admin_password
