@@ -1,0 +1,11 @@
+---
+# CertA Root CA ConfigMap — provides the internal CA cert for pods that need to trust it.
+# Currently used by the gitea deployment to trust TLS certs signed by CertA.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: certa-root-ca
+  namespace: gitea
+data:
+  certa-root-ca.crt: |
+{{ .Values.certaRootCa | indent 4 }}

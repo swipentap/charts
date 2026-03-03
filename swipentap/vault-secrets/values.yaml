@@ -5,3 +5,41 @@ vault:
   url: "http://vault.vault.svc.cluster.local:8200"
   kubeAuthPath: "kubernetes"
   role: "external-secrets"
+
+# certaRootCa: PEM content of the CertA Root CA cert for this environment.
+# Mounted into pods (e.g. gitea) that need to trust CertA-signed TLS certs.
+# Override per environment in envaapps overlays.
+certaRootCa: |
+  -----BEGIN CERTIFICATE-----
+  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
+  Y0pOksYW
+  -----END CERTIFICATE-----

@@ -73,8 +73,17 @@ spec:
             - name: Keycloak
               provider: openidConnect
               existingSecret: gitea-credentials
-              autoDiscoverUrl: "https://auth.{{ .Values.global.domain }}/realms/master/.well-known/openid-configuration"
+              autoDiscoverUrl: "http://keycloak-service.keycloak.svc.cluster.local:8080/realms/master/.well-known/openid-configuration"
               scopes: "openid profile email"
+        extraVolumes:
+          - name: certa-root-ca
+            configMap:
+              name: certa-root-ca
+        extraContainerVolumeMounts:
+          - name: certa-root-ca
+            mountPath: /etc/ssl/certs/certa-root-ca.crt
+            subPath: certa-root-ca.crt
+            readOnly: true
         preExtraInitContainers:
           - name: db-init
             image: postgres:15-alpine
