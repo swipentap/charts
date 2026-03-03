@@ -47,6 +47,15 @@ spec:
             {{- end }}
             - name: SONARQUBE_URL
               value: {{ .Values.sonarqubeUrl | quote }}
+            {{- if .Values.gitea.enabled }}
+            - name: GITEA_URL
+              value: {{ .Values.gitea.url | quote }}
+            - name: GITEA_OAUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.gitea.existingOauthSecret }}
+                  key: {{ .Values.gitea.oauthSecretKey }}
+            {{- end }}
           command:
             - /bin/sh
             - -c
@@ -209,4 +218,33 @@ spec:
                 echo "Sonarqube SAML client exists: $CLIENT_ID"
               fi
 
+              {{- if .Values.gitea.enabled }}
+              echo "Checking gitea OIDC client..."
+              GITEA_CLIENT_ID=$(curl -sf \
+                -H "Authorization: Bearer $TOKEN" \
+                "$KC_URL/admin/realms/$KC_REALM/clients?clientId=gitea" | \
+                grep -o '"id":"[^"]*"' | head -1 | sed 's/"id":"//;s/"//')
+
+              if [ -z "$GITEA_CLIENT_ID" ]; then
+                echo "Creating gitea OIDC client..."
+                cat > /tmp/gitea.json << GITEAEOF
+              {"clientId":"gitea","protocol":"openid-connect","enabled":true,"publicClient":false,"secret":"$GITEA_OAUTH_SECRET","rootUrl":"$GITEA_URL","adminUrl":"$GITEA_URL","baseUrl":"$GITEA_URL","redirectUris":["$GITEA_URL/user/oauth2/Keycloak/callback"],"webOrigins":["$GITEA_URL"],"standardFlowEnabled":true,"directAccessGrantsEnabled":false,"serviceAccountsEnabled":false}
+              GITEAEOF
+                curl -sf -X POST \
+                  -H "Authorization: Bearer $TOKEN" \
+                  -H "Content-Type: application/json" \
+                  "$KC_URL/admin/realms/$KC_REALM/clients" \
+                  -d @/tmp/gitea.json
+                echo "Gitea OIDC client created."
+              else
+                echo "Gitea OIDC client exists: $GITEA_CLIENT_ID"
+                echo "Ensuring client secret is up to date..."
+                curl -sf -X POST \
+                  -H "Authorization: Bearer $TOKEN" \
+                  -H "Content-Type: application/json" \
+                  "$KC_URL/admin/realms/$KC_REALM/clients/$GITEA_CLIENT_ID/client-secret" \
+                  -d "{\"type\":\"secret\",\"value\":\"$GITEA_OAUTH_SECRET\"}"
+                echo "Gitea client secret updated."
+              fi
+              {{- end }}
               echo "Done."

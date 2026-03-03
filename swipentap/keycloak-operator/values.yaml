@@ -12,3 +12,9 @@ existingFreeipaSecret: ""  # if set, use this secret for IPA_ADMIN_PASS (key: ad
 adminPassword: "admin"
 existingAdminSecret: ""  # if set, skip creating keycloak-bootstrap-admin; use this secret with key "password"
 postgresqlAdminSecret: "postgresql-admin"  # secret in keycloak namespace with key admin_password (created by ESO)
+
+gitea:
+  enabled: false
+  url: "https://gitea.example.com"
+  existingOauthSecret: "gitea-oauth-secret"  # secret in keycloak namespace with key oauth_client_secret (created by ESO)
+  oauthSecretKey: "oauth_client_secret"

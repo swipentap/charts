@@ -20,6 +20,11 @@ spec:
         sonarqubeUrl: "https://sonar.{{ .Values.global.domain }}"
         freeipaHostname: {{ .Values.freeipa.hostname | quote }}
         existingFreeipaSecret: freeipa-credentials
+        gitea:
+          enabled: true
+          url: "https://gitea.{{ .Values.global.domain }}"
+          existingOauthSecret: "gitea-oauth-secret"
+          oauthSecretKey: "oauth_client_secret"
   destination:
     server: https://kubernetes.default.svc
     namespace: keycloak

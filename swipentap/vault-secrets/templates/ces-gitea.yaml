@@ -1,0 +1,91 @@
+---
+# gitea-credentials in gitea namespace (admin user, oauth client, db password)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: gitea-credentials
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - gitea
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: gitea-credentials
+    data:
+      - secretKey: username
+        remoteRef:
+          key: {{ .Values.global.env }}/gitea
+          property: admin_username
+      - secretKey: password
+        remoteRef:
+          key: {{ .Values.global.env }}/gitea
+          property: admin_password
+      - secretKey: db_password
+        remoteRef:
+          key: {{ .Values.global.env }}/gitea
+          property: db_password
+      - secretKey: key
+        remoteRef:
+          key: {{ .Values.global.env }}/gitea
+          property: oauth_client_id
+      - secretKey: secret
+        remoteRef:
+          key: {{ .Values.global.env }}/gitea
+          property: oauth_client_secret
+---
+# gitea-postgresql-admin in gitea namespace (used by db-init init container)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: gitea-postgresql-admin
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - gitea
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: gitea-postgresql-admin
+    data:
+      - secretKey: admin_password
+        remoteRef:
+          key: {{ .Values.global.env }}/postgresql
+          property: admin_password
+---
+# gitea-oauth-secret in keycloak namespace (used by ldap-config-job to register Gitea OIDC client)
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: gitea-oauth-secret
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - keycloak
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: gitea-oauth-secret
+    data:
+      - secretKey: oauth_client_secret
+        remoteRef:
+          key: {{ .Values.global.env }}/gitea
+          property: oauth_client_secret
