@@ -30,6 +30,56 @@ spec:
         existingSecretAdminPassword: harbor-credentials
         existingSecretAdminPasswordKey: admin_password
         existingSecretSecretKey: harbor-credentials
+        database:
+          type: external
+          external:
+            host: "postgresql-rw.postgresql.svc.cluster.local"
+            port: "5432"
+            username: "harbor"
+            coreDatabase: "registry"
+            existingSecret: "harbor-credentials"
+            sslmode: "disable"
+        core:
+          initContainers:
+            - name: db-init
+              image: postgres:15-alpine
+              env:
+                - name: POSTGRES_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgresql-admin
+                      key: admin_password
+                - name: HARBOR_DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: harbor-credentials
+                      key: password
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  echo "Waiting for PostgreSQL..."
+                  until PGPASSWORD="$POSTGRES_ADMIN_PASSWORD" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c '\q'; do
+                    echo "Not ready, retrying..."
+                    sleep 2
+                  done
+                  echo "Creating role harbor if not exists..."
+                  if ! PGPASSWORD="$POSTGRES_ADMIN_PASSWORD" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='harbor'" | grep -q 1; then
+                    PGPASSWORD="$POSTGRES_ADMIN_PASSWORD" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c "CREATE ROLE harbor WITH LOGIN PASSWORD '$HARBOR_DB_PASSWORD';"
+                    echo "Role harbor created."
+                  else
+                    echo "Role harbor already exists."
+                  fi
+                  echo "Creating database registry if not exists..."
+                  if ! PGPASSWORD="$POSTGRES_ADMIN_PASSWORD" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='registry'" | grep -q 1; then
+                    PGPASSWORD="$POSTGRES_ADMIN_PASSWORD" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c "CREATE DATABASE registry OWNER harbor;"
+                    echo "Database registry created."
+                  else
+                    echo "Database registry already exists."
+                  fi
+                  PGPASSWORD="$POSTGRES_ADMIN_PASSWORD" psql -h postgresql-rw.postgresql.svc.cluster.local -p 5432 -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE registry TO harbor;"
+                  echo "DB init done."
         persistence:
           enabled: true
           persistentVolumeClaim:
@@ -41,8 +91,6 @@ spec:
             jobservice:
               jobLog:
                 storageClass: local-path
-            database:
-              storageClass: local-path
             redis:
               storageClass: local-path
             trivy:
