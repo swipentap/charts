@@ -1,0 +1,58 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: harbor
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://helm.goharbor.io
+    chart: harbor
+    targetRevision: {{ .Values.harborChartRevision | quote }}
+    helm:
+      releaseName: harbor
+      valuesObject:
+        expose:
+          type: ingress
+          ingress:
+            hosts:
+              core: harbor.{{ .Values.global.domain }}
+            className: traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+          tls:
+            certSource: secret
+            secret:
+              secretName: {{ .Values.global.tlsSecret }}
+        externalURL: https://harbor.{{ .Values.global.domain }}
+        existingSecretAdminPassword: harbor-credentials
+        existingSecretAdminPasswordKey: admin_password
+        existingSecretSecretKey: harbor-credentials
+        persistence:
+          enabled: true
+          persistentVolumeClaim:
+            registry:
+              storageClass: local-path
+              size: 20Gi
+            chartmuseum:
+              storageClass: local-path
+            jobservice:
+              jobLog:
+                storageClass: local-path
+            database:
+              storageClass: local-path
+            redis:
+              storageClass: local-path
+            trivy:
+              storageClass: local-path
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: harbor
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

@@ -1,0 +1,29 @@
+---
+# harbor-credentials in harbor namespace
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: harbor-credentials
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - harbor
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: harbor-credentials
+    data:
+      - secretKey: admin_password
+        remoteRef:
+          key: {{ .Values.global.env }}/harbor
+          property: admin_password
+      - secretKey: secretKey
+        remoteRef:
+          key: {{ .Values.global.env }}/harbor
+          property: secret_key
