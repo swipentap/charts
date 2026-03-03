@@ -7,6 +7,11 @@ namespaces:
   - argocd
   - certa
   - cattle-system
+  - eclipse-che
+  - gitea
+  - harbor
+  - keycloak
+  - langflow
   - ollama
   - pgadmin
   - postgresql
