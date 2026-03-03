@@ -32,6 +32,8 @@ spec:
           persistence:
             storageClass: local-path
             size: 2Gi
+        podAnnotations:
+          "gitea.io/configured-at": "2026-03-03T10:00:00Z"
         persistence:
           storageClass: local-path
           size: 10Gi
