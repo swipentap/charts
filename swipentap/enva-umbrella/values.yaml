@@ -76,3 +76,7 @@ freeipa:
 
 # eclipse-che: Keycloak client secret per env (set in envaapps overlay)
 eclipseCheOAuthSecret: ""
+
+# tls: cert/key override for dev/test (prod defaults live in tls-secret chart values.yaml)
+tlsCrt: ""
+tlsKey: ""
