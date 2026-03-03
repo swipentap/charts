@@ -25,15 +25,13 @@ spec:
     httpEnabled: true
     httpPort: 8080
   hostname:
-    hostname: {{ .Values.hostname | quote }}
+    hostname: {{ printf "https://%s" .Values.hostname | quote }}
     strict: false
   ingress:
     enabled: false
   additionalOptions:
     - name: proxy-headers
       value: xforwarded
-    - name: hostname-url
-      value: {{ printf "https://%s" .Values.hostname | quote }}
     - name: hostname-strict
       value: "false"
     - name: log-console-output
