@@ -31,9 +31,9 @@ vaultSecretsChartRevision: "0.1.0"
 harborChartRevision: "1.18.2"
 giteaChartRevision: "12.5.0"
 
-# vault: connection settings for ESO ClusterSecretStore
+# vault: connection settings for ESO ClusterSecretStore (central Vault at 10.11.1.8)
 vault:
-  url: "http://vault.vault.svc.cluster.local:8200"
+  url: "http://10.11.1.8:30200"
   kubeAuthPath: "kubernetes"
   role: "external-secrets"
 
