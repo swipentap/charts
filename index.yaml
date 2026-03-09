@@ -21,6 +21,24 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-03-09T22:15:07.356872371Z"
+    description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
+      Authority for local use
+    digest: e2c9f87a7d8afc3d04ff7c86b292f831344a1868eb5778b9480187db4900be3e
+    home: https://github.com/swipentap/CertA
+    keywords:
+    - certificate
+    - ca
+    - certificate-authority
+    - postgresql
+    - aspnetcore
+    name: certa
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/certa-1.0.5-235/certa-1.0.5-235.tgz
+    version: 1.0.5-235
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-03-09T21:57:04.131842053Z"
     description: A Helm chart for CertA (Simple Certificate Authority) - Certificate
       Authority for local use
@@ -2288,6 +2306,22 @@ entries:
     version: 1.0.11
   - apiVersion: v2
     appVersion: v23.2.0
+    created: "2026-03-09T22:15:07.511916883Z"
+    description: A Helm chart for CockroachDB - Distributed SQL database
+    digest: e2f099b1cd9aecd883693585c7ee4db6b5bbac2ed6c003e2c122221aa2da784d
+    home: https://www.cockroachlabs.com/
+    keywords:
+    - database
+    - sql
+    - distributed
+    - cockroachdb
+    name: cockroachdb
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/cockroachdb-1.0.11-235/cockroachdb-1.0.11-235.tgz
+    version: 1.0.11-235
+  - apiVersion: v2
+    appVersion: v23.2.0
     created: "2026-03-09T21:57:04.32231458Z"
     description: A Helm chart for CockroachDB - Distributed SQL database
     digest: 45727f099190bd1d621983660af1ed2965ab8f023ca7cfb8d3f5c84f7b2ab592
@@ -4490,6 +4524,24 @@ entries:
     version: 1.0.0-129
   eclipse-che:
   - apiVersion: v2
+    created: "2026-03-09T22:15:07.643846334Z"
+    dependencies:
+    - alias: operator
+      name: eclipse-che
+      repository: https://eclipse-che.github.io/che-operator/charts
+      version: 7.114.0
+    description: Eclipse Che operator and CheCluster CR for enva
+    digest: 65433c3016bcf2333c5d146de3f4757cae7f1309c0a0f584342dc647968db771
+    keywords:
+    - ide
+    - cloud
+    - eclipse-che
+    name: eclipse-che
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/eclipse-che-1.0.0-235/eclipse-che-1.0.0-235.tgz
+    version: 1.0.0-235
+  - apiVersion: v2
     created: "2026-03-09T21:57:04.482201706Z"
     dependencies:
     - alias: operator
@@ -6164,6 +6216,22 @@ entries:
     - https://github.com/swipentap/charts/releases/download/eclipse-che-1.0.0-142/eclipse-che-1.0.0-142.tgz
     version: 1.0.0-142
   enva-umbrella:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-03-09T22:15:07.823076602Z"
+    description: Umbrella chart for enva ArgoCD Applications (cert-manager, certa,
+      devworkspace-operator, eclipse-che, github-runner, keycloak, mailu, ollama,
+      postgresql, rancher, sins, tls-secret) plus traefik Service
+    digest: dc521dd20424930b3b05cfe8c79ff8191165dab5e5e96d16cbfd8875b81a19b5
+    keywords:
+    - argocd
+    - applications
+    - enva
+    name: enva-umbrella
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/enva-umbrella-1.0.0-235/enva-umbrella-1.0.0-235.tgz
+    version: 1.0.0-235
   - apiVersion: v2
     appVersion: 1.0.0
     created: "2026-03-09T21:57:04.625138519Z"
@@ -8024,6 +8092,19 @@ entries:
       category: sub
     apiVersion: v2
     appVersion: 4.12.2
+    created: "2026-03-09T22:15:07.97678803Z"
+    description: FreeIPA identity management server (subchart - deploy with enva-umbrella)
+    digest: 97d6b5f5cfc88f6fe4870aea88e0541239bd19bb1cec449876b8aacc297c17a9
+    kubeVersion: '>= 1.19.0-0'
+    name: freeipa
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/freeipa-1.0.8-235/freeipa-1.0.8-235.tgz
+    version: 1.0.8-235
+  - annotations:
+      category: sub
+    apiVersion: v2
+    appVersion: 4.12.2
     created: "2026-03-09T21:57:04.77153871Z"
     description: FreeIPA identity management server (subchart - deploy with enva-umbrella)
     digest: 400b8ec7e1e00e16b6a6e71b2d1adba6c6b066830c3aabb1630cda69160138b3
@@ -9100,6 +9181,19 @@ entries:
     - https://github.com/swipentap/charts/releases/download/freeipa-1.0.0-152/freeipa-1.0.0-152.tgz
     version: 1.0.0-152
   github-runner:
+  - annotations:
+      category: sub
+    apiVersion: v2
+    appVersion: 0.27.6
+    created: "2026-03-09T22:15:08.142718494Z"
+    description: GitHub Actions runner controller (subchart - deploy with enva-umbrella)
+    digest: 6712111e27bc8ac4d7c45d868c6a8614d5f80702ec87560306e743f7363aedfb
+    kubeVersion: '>= 1.19.0-0'
+    name: github-runner
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/github-runner-1.0.2-235/github-runner-1.0.2-235.tgz
+    version: 1.0.2-235
   - annotations:
       category: sub
     apiVersion: v2
@@ -12545,6 +12639,14 @@ entries:
     version: 18.10.0-111
   keycloak-operator:
   - apiVersion: v2
+    created: "2026-03-09T22:15:08.309437572Z"
+    description: Keycloak Operator (OLM) + FreeIPA LDAP federation + SonarQube SAML
+    digest: e2bd1653253a65d6d5bbd56f437c88afba41f2967d8e648c9f16fcc31405af7f
+    name: keycloak-operator
+    urls:
+    - https://github.com/swipentap/charts/releases/download/keycloak-operator-1.0.0-235/keycloak-operator-1.0.0-235.tgz
+    version: 1.0.0-235
+  - apiVersion: v2
     created: "2026-03-09T21:57:05.097103485Z"
     description: Keycloak Operator (OLM) + FreeIPA LDAP federation + SonarQube SAML
     digest: 8f320cefdf93a2e6f6e234066093d91490dffed536b58661a6fc024e714263fb
@@ -13011,6 +13113,19 @@ entries:
   langflow:
   - apiVersion: v2
     appVersion: latest
+    created: "2026-03-09T22:15:08.489089298Z"
+    description: Helm chart for Langflow IDE
+    digest: 6c85f68539d83d3ef0ff43c88b02ab353be9b137c08cad097f6a5c9acb521ea6
+    maintainers:
+    - email: contact@langflow.org
+      name: Langflow
+    name: langflow
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/langflow-0.1.0-235/langflow-0.1.0-235.tgz
+    version: 0.1.0-235
+  - apiVersion: v2
+    appVersion: latest
     created: "2026-03-09T21:57:05.245683062Z"
     description: Helm chart for Langflow IDE
     digest: 256a28570ca61e4843c3442da9fe35d52d57c813bcdaaed29c6f60cf71a8dc7b
@@ -13375,6 +13490,33 @@ entries:
     urls:
     - https://github.com/swipentap/charts/releases/download/mailu-2.6.7/mailu-2.6.7.tgz
     version: 2.6.7
+  - apiVersion: v2
+    appVersion: 2024.06.46
+    created: "2026-03-09T22:15:08.693178596Z"
+    description: This chart installs the Mailu mail system on Kubernetes
+    digest: 1f4ca83c4cdefdfd3140456c5ae95d97a6b42a51e9d4c54e54d6d5264539c74a
+    home: https://mailu.io
+    icon: https://mailu.io/master/_images/logo.png
+    keywords:
+    - mailu
+    - mail
+    - email
+    - smtp
+    - imap
+    - pop3
+    - webmail
+    - postfix
+    - dovecot
+    - roundcube
+    maintainers:
+    - name: Mailu
+      url: https://mailu.io
+    name: mailu
+    sources:
+    - https://github.com/Mailu/helm-charts/
+    urls:
+    - https://github.com/swipentap/charts/releases/download/mailu-2.6.7-235/mailu-2.6.7-235.tgz
+    version: 2.6.7-235
   - apiVersion: v2
     appVersion: 2024.06.46
     created: "2026-03-09T21:57:05.416740855Z"
@@ -16736,6 +16878,16 @@ entries:
     version: 0.1.6
   - apiVersion: v2
     appVersion: latest
+    created: "2026-03-09T22:15:08.861449429Z"
+    description: A Helm chart for Ollama LLM server
+    digest: 296d26e91be5b3eac7a67634c7792e9df2669139897a752070f464327167a46d
+    name: ollama
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/ollama-0.1.6-235/ollama-0.1.6-235.tgz
+    version: 0.1.6-235
+  - apiVersion: v2
+    appVersion: latest
     created: "2026-03-09T21:57:05.563221165Z"
     description: A Helm chart for Ollama LLM server
     digest: f9fbb54754ea7be9288ab86fdedb0bd0063ae2a71028253df1b549452130fcfb
@@ -17994,7 +18146,37 @@ entries:
     urls:
     - ollama-0.1.0.tgz
     version: 0.1.0
+  operatorhub-catalog:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-03-09T22:15:09.041732373Z"
+    description: OLM CatalogSource for OperatorHub.io community operators (prerequisite
+      for keycloak-operator, etc.)
+    digest: 5ae1497ccd8b4111857be635fdea266bce64a716faac5a63da40de0ce238862a
+    kubeVersion: '>= 1.19.0-0'
+    name: operatorhub-catalog
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/operatorhub-catalog-1.0.0-235/operatorhub-catalog-1.0.0-235.tgz
+    version: 1.0.0-235
   plane-ce:
+  - annotations:
+      artifacthub.io/license: AGPL-3.0
+    apiVersion: v2
+    appVersion: 1.2.0
+    created: "2026-03-09T22:15:09.188706682Z"
+    description: Meet Plane. An open-source software development tool to manage issues,
+      sprints, and product roadmaps with peace of mind.
+    digest: e852dbb4201da6c6fdce2834fba40a3380ebc2675c1d4bdbf4146af1755771e4
+    home: https://plane.so
+    icon: https://plane.so/favicon/favicon-32x32.png
+    name: plane-ce
+    sources:
+    - https://github.com/makeplane/plane
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/plane-ce-1.4.1-235/plane-ce-1.4.1-235.tgz
+    version: 1.4.1-235
   - annotations:
       artifacthub.io/license: AGPL-3.0
     apiVersion: v2
@@ -19996,6 +20178,15 @@ entries:
     version: 1.0.0
   - apiVersion: v2
     appVersion: 1.23.0
+    created: "2026-03-09T22:15:09.330880559Z"
+    description: PostgreSQL stack - CNPG operator, cluster, and pgAdmin
+    digest: 8d89b7ba2f30f7bcc57de109563e4cc7bd58302a829ec3a37ca00a5b3bb9e67b
+    name: postgresql
+    urls:
+    - https://github.com/swipentap/charts/releases/download/postgresql-1.0.0-235/postgresql-1.0.0-235.tgz
+    version: 1.0.0-235
+  - apiVersion: v2
+    appVersion: 1.23.0
     created: "2026-03-09T21:57:05.912088261Z"
     description: PostgreSQL stack - CNPG operator, cluster, and pgAdmin
     digest: cdde0d7d11fc301fb005d5ee5fdd32be22ce9a016726a67b2edf1ad1c24283cd
@@ -21092,6 +21283,23 @@ entries:
     urls:
     - https://github.com/swipentap/charts/releases/download/sins-1.0.93/sins-1.0.93.tgz
     version: 1.0.93
+  - apiVersion: v2
+    appVersion: 1.0.78
+    created: "2026-03-09T22:15:09.476979687Z"
+    description: A Helm chart for SiNS (Simple Name Server) - DNS server with web
+      management interface
+    digest: 14650237418391ce6992ea078dfd516671c166e2dbb26ba0c1f2d5f4c95caca0
+    home: https://github.com/swipentap/SiNS
+    keywords:
+    - dns
+    - nameserver
+    - postgresql
+    - vuejs
+    name: sins
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/sins-1.0.93-235/sins-1.0.93-235.tgz
+    version: 1.0.93-235
   - apiVersion: v2
     appVersion: 1.0.78
     created: "2026-03-09T21:57:06.049130679Z"
@@ -23541,6 +23749,65 @@ entries:
     - sins-1.0.31.tgz
     version: 1.0.31
   sonarqube:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: "Upgrade Chart's version to 2026.2.0"
+        - kind: security
+          description: "Update ingress-nginx subchart to v4.14.3"
+        - kind: added
+          description: "Upgrade SonarQube Community build to 26.2.0.119303"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/images: |
+        - name: sonarqube-community
+          image: sonarqube:26.2.0.119303-community
+        - name: sonarqube-developer
+          image: sonarqube:2026.1.0-developer
+        - name: sonarqube-enterprise
+          image: sonarqube:2026.1.0-enterprise
+      artifacthub.io/links: |
+        - name: support
+          url: https://community.sonarsource.com/
+        - name: Chart Source
+          url: https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube
+      charts.openshift.io/name: sonarqube
+    apiVersion: v2
+    appVersion: 2026.1.0
+    created: "2026-03-09T22:15:09.629326698Z"
+    dependencies:
+    - condition: nginx.enabled,ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.14.3
+    description: SonarQube is a self-managed, automatic code review tool that systematically
+      helps you deliver clean code. As a core element of our Sonar solution, SonarQube
+      integrates into your existing workflow and detects issues in your code to help
+      you perform continuous code inspections of your projects. The tool analyses
+      30+ different programming languages and integrates into your CI pipeline and
+      DevOps platform to ensure that your code meets high-quality standards.
+    digest: b1c857b621af7b75eff2b1c595392ce6127224abe700c2908a0e3c1b810f038b
+    home: https://www.sonarqube.org/
+    icon: https://raw.githubusercontent.com/SonarSource/sonarqube-static-resources/master/helm/SonarQubeServerLogo.png
+    keywords:
+    - coverage
+    - security
+    - code
+    - quality
+    kubeVersion: '>= 1.24.0-0'
+    maintainers:
+    - email: carmine.vassallo@sonarsource.com
+      name: carminevassallo
+    - email: hatem.amairi@sonarsource.com
+      name: hatem-amairi-sonarsource
+    name: sonarqube
+    sources:
+    - https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube
+    - https://github.com/SonarSource/docker-sonarqube
+    - https://github.com/SonarSource/sonarqube
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/sonarqube-2026.2.0-235/sonarqube-2026.2.0-235.tgz
+    version: 2026.2.0-235
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
@@ -30449,6 +30716,20 @@ entries:
       category: sub
     apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-03-09T22:15:09.7757476Z"
+    description: TLS wildcard secret replicated into multiple namespaces (subchart
+      - deploy with enva-umbrella)
+    digest: 0dd70954f64271a6fff22015ba74e5d5f5bd95483d7c30d382077a2e6ac02c47
+    kubeVersion: '>= 1.19.0-0'
+    name: tls-secret
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/tls-secret-1.0.0-235/tls-secret-1.0.0-235.tgz
+    version: 1.0.0-235
+  - annotations:
+      category: sub
+    apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-03-09T21:57:06.355865957Z"
     description: TLS wildcard secret replicated into multiple namespaces (subchart
       - deploy with enva-umbrella)
@@ -31990,6 +32271,19 @@ entries:
       category: sub
     apiVersion: v2
     appVersion: "1.0"
+    created: "2026-03-09T22:15:09.922388707Z"
+    description: Traefik Service for K3s (subchart - deploy with enva-umbrella)
+    digest: a44ff72337d35d635fdf1e0288917262e42e8ac98d68221dcc0d7787d4f61b6e
+    kubeVersion: '>= 1.19.0-0'
+    name: traefik
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/traefik-1.0.0-235/traefik-1.0.0-235.tgz
+    version: 1.0.0-235
+  - annotations:
+      category: sub
+    apiVersion: v2
+    appVersion: "1.0"
     created: "2026-03-09T21:57:06.546261186Z"
     description: Traefik Service for K3s (subchart - deploy with enva-umbrella)
     digest: dde32e4f219e31f42dfb2e7282b35b6052f0b2b5e567a39ee8c4c5a7928c16ff
@@ -33483,6 +33777,16 @@ entries:
     version: 1.0.0-119
   vault-secrets:
   - apiVersion: v2
+    created: "2026-03-09T22:15:10.077774458Z"
+    description: ClusterSecretStore and ClusterExternalSecrets for Vault-backed ESO
+      secrets
+    digest: 914a3d0cb156add32bc1db31787988c73ef0e41e4409c1b4386788e2776851bc
+    name: vault-secrets
+    type: application
+    urls:
+    - https://github.com/swipentap/charts/releases/download/vault-secrets-0.1.0-235/vault-secrets-0.1.0-235.tgz
+    version: 0.1.0-235
+  - apiVersion: v2
     created: "2026-03-09T21:57:06.68020123Z"
     description: ClusterSecretStore and ClusterExternalSecrets for Vault-backed ESO
       secrets
@@ -33712,4 +34016,4 @@ entries:
     urls:
     - https://github.com/swipentap/charts/releases/download/vault-secrets-0.1.0-212/vault-secrets-0.1.0-212.tgz
     version: 0.1.0-212
-generated: "2026-03-09T21:57:06.687188423Z"
+generated: "2026-03-09T22:15:10.085041566Z"
