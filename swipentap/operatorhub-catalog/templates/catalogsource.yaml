@@ -1,0 +1,14 @@
+# OperatorHub.io community catalog. Required by keycloak-operator Subscription (source: operatorhubio-catalog).
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: operatorhubio-catalog
+  namespace: olm
+spec:
+  sourceType: grpc
+  image: quay.io/operatorhubio/catalog:latest
+  displayName: OperatorHub.io Catalog
+  publisher: OperatorHub.io
+  updateStrategy:
+    registryPoll:
+      interval: 45m
