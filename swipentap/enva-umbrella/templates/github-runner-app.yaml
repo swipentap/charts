@@ -3,6 +3,9 @@ kind: Application
 metadata:
   name: github-runner
   namespace: argocd
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
