@@ -1,4 +1,4 @@
-# PreSync hook: wait for Keycloak CRD to be established before applying Keycloak CR.
+# Pre-install hook: wait for Keycloak CRD to be established before applying Keycloak CR.
 # The operator (installed via OLM Subscription) installs the CRD asynchronously.
 # Without this, sync would fail with "no matches for kind Keycloak" until CRD exists.
 apiVersion: batch/v1
@@ -7,9 +7,9 @@ metadata:
   name: keycloak-wait-crd
   namespace: keycloak
   annotations:
-    argocd.argoproj.io/hook: PreSync
-    argocd.argoproj.io/hook-delete-policy: HookSucceeded
-    argocd.argoproj.io/sync-wave: "0"
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   ttlSecondsAfterFinished: 60
   backoffLimit: 60
