@@ -13,6 +13,18 @@ adminPassword: "admin"
 existingAdminSecret: ""  # if set, skip creating keycloak-bootstrap-admin; use this secret with key "password"
 postgresqlAdminSecret: "postgresql-admin"  # secret in keycloak namespace with key admin_password (created by ESO)
 
+extraInitContainers:
+  - name: wait-for-postgresql
+    image: busybox:1.36
+    command:
+      - sh
+      - -c
+      - |
+        until nslookup postgresql-rw.postgresql.svc.cluster.local; do
+          echo "waiting for postgresql..."
+          sleep 2
+        done
+
 gitea:
   enabled: false
   url: "https://gitea.example.com"
