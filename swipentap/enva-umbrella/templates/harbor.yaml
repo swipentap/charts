@@ -43,7 +43,7 @@ spec:
           automountServiceAccountToken: true
           initContainers:
             - name: wait-for-credentials
-              image: busybox:1.36
+              image: curlimages/curl:8.5.0
               command:
                 - sh
                 - -c
@@ -53,7 +53,10 @@ spec:
                     echo "waiting for service account token..."
                     sleep 2
                   done
-                  until wget -q -O /dev/null --header "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" --no-check-certificate "https://kubernetes.default.svc/api/v1/namespaces/harbor/secrets/harbor-credentials"; do
+                  CURL_CA_BUNDLE=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                  export CURL_CA_BUNDLE
+                  until curl -sSf -o /dev/null -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+                    "https://kubernetes.default.svc/api/v1/namespaces/harbor/secrets/harbor-credentials"; do
                     echo "waiting for secret harbor-credentials..."
                     sleep 2
                   done
