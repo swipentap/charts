@@ -10,6 +10,7 @@ chartsRepo: https://swipentap.github.io/charts
 githubRunnerChartRevision: "1.0.2-241"
 tlsSecretChartRevision: "1.0.0-241"
 eclipseCheChartRevision: "1.0.0-241"
+eclipseCheOperatorChartRevision: "1.0.0-241"
 keycloakOperatorChartRevision: "1.0.0-241"
 operatorhubCatalogChartRevision: "1.0.0-241"
 sinsChartRevision: "1.0.93-241"

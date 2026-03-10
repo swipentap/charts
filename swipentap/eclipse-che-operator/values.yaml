@@ -1,0 +1,3 @@
+# Eclipse Che operator only. CheCluster is deployed by the separate eclipse-che Application.
+# Values here are passed to the upstream eclipse-che subchart if needed.
+# Leave empty to use upstream defaults; override to skip default CheCluster if upstream creates one.

@@ -1,0 +1,13 @@
+apiVersion: v2
+name: eclipse-che-operator
+version: 1.0.0
+description: Eclipse Che operator only (no CheCluster) - deploy operator first, then eclipse-che for CheCluster
+type: application
+keywords:
+  - ide
+  - cloud
+  - eclipse-che
+dependencies:
+  - name: eclipse-che
+    version: "7.114.0"
+    repository: https://eclipse-che.github.io/che-operator/charts
