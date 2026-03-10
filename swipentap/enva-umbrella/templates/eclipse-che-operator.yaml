@@ -13,7 +13,7 @@ spec:
     targetRevision: {{ .Values.eclipseCheOperatorChartRevision | quote }}
     helm:
       releaseName: eclipse-che-operator
-      values: {}
+      values: ""
   destination:
     server: https://kubernetes.default.svc
     namespace: eclipse-che
