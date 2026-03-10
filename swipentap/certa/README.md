@@ -54,7 +54,7 @@ Key configuration options in `values.yaml`:
 ### CertA Application
 
 - `certa.image.repository` - Docker image repository (default: `judyandiealvarez/certa`)
-- `certa.image.tag` - Docker image tag (default: `1.0.0`)
+- `certa.image.tag` - Docker image tag (default: `1.0.5`)
 - `certa.service.type` - Service type (default: `NodePort`)
 - `certa.service.port` - Application port (default: `8080`)
 - `certa.service.nodePort` - NodePort number (default: `30080`)
