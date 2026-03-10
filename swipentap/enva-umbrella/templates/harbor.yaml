@@ -40,7 +40,24 @@ spec:
             existingSecret: "harbor-credentials"
             sslmode: "disable"
         core:
+          automountServiceAccountToken: true
           initContainers:
+            - name: wait-for-credentials
+              image: busybox:1.36
+              command:
+                - sh
+                - -c
+                - |
+                  echo "Waiting for secret harbor-credentials..."
+                  until [ -f /var/run/secrets/kubernetes.io/serviceaccount/token ]; do
+                    echo "waiting for service account token..."
+                    sleep 2
+                  done
+                  until wget -q -O /dev/null --header "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" --no-check-certificate "https://kubernetes.default.svc/api/v1/namespaces/harbor/secrets/harbor-credentials"; do
+                    echo "waiting for secret harbor-credentials..."
+                    sleep 2
+                  done
+                  echo "Secret harbor-credentials found."
             - name: wait-for-postgresql
               image: busybox:1.36
               command:
