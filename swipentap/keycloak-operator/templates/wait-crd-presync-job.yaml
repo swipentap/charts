@@ -1,10 +1,9 @@
-# Pre-install hook: wait for Keycloak CRD to be established before applying Keycloak CR.
-# The operator (installed via OLM Subscription) installs the CRD asynchronously.
-# Without this, sync would fail with "no matches for kind Keycloak" until CRD exists.
+# Pre-install hook: wait for FreeIPA to be reachable before main sync (ldap-config-job needs FreeIPA).
+# Uses cluster-internal URL; FreeIPA may require Host header from freeipaHostname.
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: keycloak-wait-crd
+  name: keycloak-wait-freeipa
   namespace: keycloak
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
@@ -16,18 +15,19 @@ spec:
   template:
     spec:
       restartPolicy: OnFailure
-      serviceAccountName: default
       containers:
-        - name: wait-crd
-          image: bitnami/kubectl:latest
+        - name: wait-freeipa
+          image: curlimages/curl:8.2.1
+          env:
+            - name: IPA_HOSTNAME
+              value: {{ .Values.freeipaHostname | quote }}
           command:
             - sh
             - -c
             - |
-              echo "Waiting for Keycloak CRD keycloaks.k8s.keycloak.org..."
-              until kubectl get crd keycloaks.k8s.keycloak.org 2>/dev/null; do
-                echo "CRD not ready, retrying in 5s..."
+              echo "Waiting for FreeIPA at freeipa.freeipa.svc.cluster.local..."
+              until curl -k -s -o /dev/null -w "%{http_code}" --connect-timeout 5 -H "Host: $IPA_HOSTNAME" https://freeipa.freeipa.svc.cluster.local/ipa 2>/dev/null | grep -qE '^([23]0[0-9]|401)$'; do
+                echo "FreeIPA not ready, retrying in 5s..."
                 sleep 5
               done
-              echo "CRD established."
-              kubectl wait --for=condition=established crd keycloaks.k8s.keycloak.org --timeout=60s
+              echo "FreeIPA ready."

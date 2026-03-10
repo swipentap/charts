@@ -1,0 +1,25 @@
+# controller-manager secret in actions-runner-system (used by github-runner controller)
+# Source: Vault secret/{env}/github-runner with property github_token
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterExternalSecret
+metadata:
+  name: github-runner-controller-manager
+spec:
+  namespaceSelectors:
+    - matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - actions-runner-system
+  refreshTime: "1h"
+  externalSecretSpec:
+    secretStoreRef:
+      name: vault-backend
+      kind: ClusterSecretStore
+    target:
+      name: controller-manager
+    data:
+      - secretKey: github_token
+        remoteRef:
+          key: {{ .Values.global.env }}/github-runner
+          property: github_token
