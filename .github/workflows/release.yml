@@ -98,7 +98,7 @@ jobs:
 
       - name: Trigger Umbrella release workflow
         run: |
-          gh workflow run "Release Charts" --repo swipentap/Umbrella
+          gh workflow run ".github/workflows/release.yml" --repo swipentap/Umbrella
         env:
           GH_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
 
