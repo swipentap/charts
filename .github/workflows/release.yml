@@ -27,13 +27,125 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+      - name: Helm lint
+        run: |
+          for d in swipentap/*/; do
+            if [ -f "${d}Chart.yaml" ]; then
+              echo "Linting $d"
+              helm lint "$d" || exit 1
+            fi
+          done
+
       - name: Bump chart versions for this run
         run: |
           for f in swipentap/*/Chart.yaml; do
-            [ "$f" = "swipentap/enva-umbrella/Chart.yaml" ] && continue
             sed -i "s/^\(version: \)\(.*\)/\1\2-${{ github.run_number }}/" "$f"
             echo "Set version in $f"
           done
+
+      - name: Clone Umbrella
+        uses: actions/checkout@v4
+        with:
+          repository: swipentap/Umbrella
+          path: umbrella
+          token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+
+      - name: Update umbrella chart revisions
+        run: |
+          GITHUB_RUNNER_VER=$(grep '^version:' swipentap/github-runner/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          TLS_SECRET_VER=$(grep '^version:' swipentap/tls-secret/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          ECLIPSE_CHE_VER=$(grep '^version:' swipentap/eclipse-che/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          KEYCLOAK_VER=$(grep '^version:' swipentap/keycloak/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          SINS_VER=$(grep '^version:' swipentap/sins/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          CERTA_VER=$(grep '^version:' swipentap/certa/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          OLLAMA_VER=$(grep '^version:' swipentap/ollama/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          POSTGRESQL_VER=$(grep '^version:' swipentap/postgresql/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          MAILU_VER=$(grep '^version:' swipentap/mailu/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          FREEIPA_VER=$(grep '^version:' swipentap/freeipa/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          KC_OPERATOR_VER=$(grep '^version:' swipentap/keycloak-operator/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          OPERATORHUB_CATALOG_VER=$(grep '^version:' swipentap/operatorhub-catalog/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          HARBOR_RBAC_VER=$(grep '^version:' swipentap/harbor-rbac/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          sed -i "s/^githubRunnerChartRevision: .*/githubRunnerChartRevision: \"$GITHUB_RUNNER_VER\"/" umbrella/values.yaml
+          sed -i "s/^tlsSecretChartRevision: .*/tlsSecretChartRevision: \"$TLS_SECRET_VER\"/" umbrella/values.yaml
+          sed -i "s/^eclipseCheChartRevision: .*/eclipseCheChartRevision: \"$ECLIPSE_CHE_VER\"/" umbrella/values.yaml
+          sed -i "s/^keycloakChartRevision: .*/keycloakChartRevision: \"$KEYCLOAK_VER\"/" umbrella/values.yaml
+          sed -i "s/^sinsChartRevision: .*/sinsChartRevision: \"$SINS_VER\"/" umbrella/values.yaml
+          sed -i "s/^certaChartRevision: .*/certaChartRevision: \"$CERTA_VER\"/" umbrella/values.yaml
+          sed -i "s/^ollamaChartRevision: .*/ollamaChartRevision: \"$OLLAMA_VER\"/" umbrella/values.yaml
+          sed -i "s/^postgresqlChartRevision: .*/postgresqlChartRevision: \"$POSTGRESQL_VER\"/" umbrella/values.yaml
+          sed -i "s/^mailuChartRevision: .*/mailuChartRevision: \"$MAILU_VER\"/" umbrella/values.yaml
+          sed -i "s/^freeipaChartRevision: .*/freeipaChartRevision: \"$FREEIPA_VER\"/" umbrella/values.yaml
+          sed -i "s/^keycloakOperatorChartRevision: .*/keycloakOperatorChartRevision: \"$KC_OPERATOR_VER\"/" umbrella/values.yaml
+          sed -i "s/^operatorhubCatalogChartRevision: .*/operatorhubCatalogChartRevision: \"$OPERATORHUB_CATALOG_VER\"/" umbrella/values.yaml
+          sed -i "s/^harborRbacChartRevision: .*/harborRbacChartRevision: \"$HARBOR_RBAC_VER\"/" umbrella/values.yaml
+
+      - name: Bump umbrella chart version
+        run: |
+          sed -i "s/^version: .*/version: 1.0.0-${{ github.run_number }}/" umbrella/Chart.yaml
+
+      - name: Add umbrella changes to git
+        run: |
+          cd umbrella && git add values.yaml Chart.yaml
+
+      - name: Commit umbrella changes
+        run: |
+          cd umbrella
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git diff --staged --quiet || git commit -m "chore: chart revisions and version from charts release ${{ github.run_number }}"
+
+      - name: Push umbrella to main
+        run: |
+          cd umbrella && git push origin main
+
+      - name: Wait for umbrella index
+        run: |
+          VERSION="1.0.0-${{ github.run_number }}"
+          for i in $(seq 1 40); do
+            if curl -sL https://swipentap.github.io/Umbrella/index.yaml | grep -q "version: $VERSION"; then
+              echo "Found $VERSION in index"
+              exit 0
+            fi
+            echo "Waiting for $VERSION in index... attempt $i/40"
+            sleep 15
+          done
+          echo "Timeout: $VERSION not in index after 10 min"
+          exit 1
+
+      - name: Clone envaapps
+        uses: actions/checkout@v4
+        with:
+          repository: swipentap/envaapps
+          path: envaapps
+          ref: dev
+          token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+
+      - name: Update umbrella app repoURL
+        run: |
+          sed -i 's|repoURL: .*|repoURL: https://swipentap.github.io/Umbrella|' envaapps/base/applications/umbrella.yaml
+
+      - name: Update umbrella app chart
+        run: |
+          sed -i 's/^    chart: .*/    chart: enva-umbrella/' envaapps/base/applications/umbrella.yaml
+
+      - name: Update umbrella app targetRevision
+        run: |
+          sed -i "s/^    targetRevision: .*/    targetRevision: \"1.0.0-${{ github.run_number }}\"/" envaapps/base/applications/umbrella.yaml
+
+      - name: Add envaapps umbrella changes to git
+        run: |
+          cd envaapps && git add base/applications/umbrella.yaml
+
+      - name: Commit envaapps umbrella update
+        run: |
+          cd envaapps
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git diff --staged --quiet || git commit -m "chore: umbrella targetRevision 1.0.0-${{ github.run_number }} from charts release"
+
+      - name: Push envaapps to dev
+        run: |
+          cd envaapps && git push origin dev
 
       - name: Add dependency helm repos for cr package
         run: |
@@ -50,21 +162,6 @@ jobs:
               helm dependency update "$d"
             fi
           done
-          while IFS= read -r dir; do
-            [ -z "$dir" ] && continue
-            echo "Running helm dependency update in $dir (subchart)"
-            helm dependency update "$dir"
-          done < <(find swipentap -name Chart.yaml -exec dirname {} \; | while read d; do grep -q "dependencies:" "$d/Chart.yaml" && echo "$d"; done | awk -F/ '{print NF,$0}' | sort -rn | cut -d' ' -f2-)
-
-      - name: Helm lint
-        run: |
-          for d in swipentap/*/; do
-            [ "$d" = "swipentap/mailu/" ] && echo "Skipping lint for $d (nested OCI deps)" && continue
-            if [ -f "${d}Chart.yaml" ]; then
-              echo "Linting $d"
-              helm lint "$d" || exit 1
-            fi
-          done
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
@@ -76,85 +173,3 @@ jobs:
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout Umbrella
-        uses: actions/checkout@v4
-        with:
-          repository: swipentap/Umbrella
-          path: umbrella-repo
-          token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
-
-      - name: Update umbrella values and version from charts
-        run: |
-          GITHUB_RUNNER_VER=$(grep '^version:' swipentap/github-runner/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          TLS_SECRET_VER=$(grep '^version:' swipentap/tls-secret/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          ECLIPSE_CHE_VER=$(grep '^version:' swipentap/eclipse-che/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          SINS_VER=$(grep '^version:' swipentap/sins/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          CERTA_VER=$(grep '^version:' swipentap/certa/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          OLLAMA_VER=$(grep '^version:' swipentap/ollama/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          POSTGRESQL_VER=$(grep '^version:' swipentap/postgresql/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          MAILU_VER=$(grep '^version:' swipentap/mailu/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          FREEIPA_VER=$(grep '^version:' swipentap/freeipa/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          KC_OPERATOR_VER=$(grep '^version:' swipentap/keycloak-operator/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          OPERATORHUB_CATALOG_VER=$(grep '^version:' swipentap/operatorhub-catalog/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          HARBOR_RBAC_VER=$(grep '^version:' swipentap/harbor-rbac/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          VF=umbrella-repo/enva-umbrella/values.yaml
-          sed -i "s/^githubRunnerChartRevision: .*/githubRunnerChartRevision: \"$GITHUB_RUNNER_VER\"/" "$VF"
-          sed -i "s/^tlsSecretChartRevision: .*/tlsSecretChartRevision: \"$TLS_SECRET_VER\"/" "$VF"
-          sed -i "s/^eclipseCheChartRevision: .*/eclipseCheChartRevision: \"$ECLIPSE_CHE_VER\"/" "$VF"
-          sed -i "s/^sinsChartRevision: .*/sinsChartRevision: \"$SINS_VER\"/" "$VF"
-          sed -i "s/^certaChartRevision: .*/certaChartRevision: \"$CERTA_VER\"/" "$VF"
-          sed -i "s/^ollamaChartRevision: .*/ollamaChartRevision: \"$OLLAMA_VER\"/" "$VF"
-          sed -i "s/^postgresqlChartRevision: .*/postgresqlChartRevision: \"$POSTGRESQL_VER\"/" "$VF"
-          sed -i "s/^mailuChartRevision: .*/mailuChartRevision: \"$MAILU_VER\"/" "$VF"
-          sed -i "s/^freeipaChartRevision: .*/freeipaChartRevision: \"$FREEIPA_VER\"/" "$VF"
-          sed -i "s/^keycloakOperatorChartRevision: .*/keycloakOperatorChartRevision: \"$KC_OPERATOR_VER\"/" "$VF"
-          sed -i "s/^operatorhubCatalogChartRevision: .*/operatorhubCatalogChartRevision: \"$OPERATORHUB_CATALOG_VER\"/" "$VF"
-          sed -i "s/^harborRbacChartRevision: .*/harborRbacChartRevision: \"$HARBOR_RBAC_VER\"/" "$VF"
-          sed -i "s/^\(version: \).*/\11.0.0-${{ github.run_number }}/" umbrella-repo/enva-umbrella/Chart.yaml
-          echo "Umbrella version set to 1.0.0-${{ github.run_number }}"
-
-      - name: Push Umbrella
-        run: |
-          cd umbrella-repo
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          git add enva-umbrella/values.yaml enva-umbrella/Chart.yaml
-          git diff --staged --quiet || (git commit -m "chore: chart revisions from charts release ${{ github.run_number }}" && git push origin main)
-
-      - name: Wait for umbrella index
-        run: |
-          INDEX_URL="https://swipentap.github.io/Umbrella/index.yaml"
-          VERSION="1.0.0-${{ github.run_number }}"
-          for i in $(seq 1 40); do
-            if curl -sSf "$INDEX_URL" | grep -q "version: $VERSION"; then
-              echo "Found $VERSION in index"
-              exit 0
-            fi
-            echo "Waiting for $VERSION in index ($i/40)..."
-            sleep 15
-          done
-          echo "Timeout waiting for $VERSION in index"
-          exit 1
-
-      - name: Checkout envaapps
-        uses: actions/checkout@v4
-        with:
-          repository: swipentap/envaapps
-          path: envaapps-repo
-          ref: dev
-          token: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
-
-      - name: Update envaapps umbrella targetRevision
-        run: |
-          UF=envaapps-repo/base/applications/umbrella.yaml
-          sed -i 's|repoURL: .*|repoURL: https://swipentap.github.io/Umbrella|' "$UF"
-          sed -i 's|chart: .*|chart: enva-umbrella|' "$UF"
-          sed -i "s|targetRevision: .*|targetRevision: \"1.0.0-${{ github.run_number }}\"|" "$UF"
-
-      - name: Push envaapps dev
-        run: |
-          cd envaapps-repo
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          git add base/applications/umbrella.yaml
-          git diff --staged --quiet || (git commit -m "chore: umbrella targetRevision 1.0.0-${{ github.run_number }}" && git push origin dev)
