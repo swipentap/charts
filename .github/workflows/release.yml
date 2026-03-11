@@ -55,7 +55,6 @@ jobs:
           GITHUB_RUNNER_VER=$(grep '^version:' swipentap/github-runner/Chart.yaml | sed 's/version: //' | tr -d ' ')
           TLS_SECRET_VER=$(grep '^version:' swipentap/tls-secret/Chart.yaml | sed 's/version: //' | tr -d ' ')
           ECLIPSE_CHE_VER=$(grep '^version:' swipentap/eclipse-che/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          KEYCLOAK_VER=$(grep '^version:' swipentap/keycloak/Chart.yaml | sed 's/version: //' | tr -d ' ')
           SINS_VER=$(grep '^version:' swipentap/sins/Chart.yaml | sed 's/version: //' | tr -d ' ')
           CERTA_VER=$(grep '^version:' swipentap/certa/Chart.yaml | sed 's/version: //' | tr -d ' ')
           OLLAMA_VER=$(grep '^version:' swipentap/ollama/Chart.yaml | sed 's/version: //' | tr -d ' ')
@@ -68,7 +67,6 @@ jobs:
           sed -i "s/^githubRunnerChartRevision: .*/githubRunnerChartRevision: \"$GITHUB_RUNNER_VER\"/" umbrella/values.yaml
           sed -i "s/^tlsSecretChartRevision: .*/tlsSecretChartRevision: \"$TLS_SECRET_VER\"/" umbrella/values.yaml
           sed -i "s/^eclipseCheChartRevision: .*/eclipseCheChartRevision: \"$ECLIPSE_CHE_VER\"/" umbrella/values.yaml
-          sed -i "s/^keycloakChartRevision: .*/keycloakChartRevision: \"$KEYCLOAK_VER\"/" umbrella/values.yaml
           sed -i "s/^sinsChartRevision: .*/sinsChartRevision: \"$SINS_VER\"/" umbrella/values.yaml
           sed -i "s/^certaChartRevision: .*/certaChartRevision: \"$CERTA_VER\"/" umbrella/values.yaml
           sed -i "s/^ollamaChartRevision: .*/ollamaChartRevision: \"$OLLAMA_VER\"/" umbrella/values.yaml
