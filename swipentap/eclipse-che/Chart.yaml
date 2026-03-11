@@ -1,9 +1,0 @@
-apiVersion: v2
-name: eclipse-che
-version: 1.0.0
-description: CheCluster CR only - deploy after eclipse-che-operator is Healthy
-type: application
-keywords:
-  - ide
-  - cloud
-  - eclipse-che

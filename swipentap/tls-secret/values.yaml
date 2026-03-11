@@ -7,7 +7,6 @@ namespaces:
   - argocd
   - certa
   - cattle-system
-  - eclipse-che
   - freeipa
   - gitea
   - harbor

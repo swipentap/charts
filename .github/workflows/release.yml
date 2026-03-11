@@ -54,7 +54,6 @@ jobs:
         run: |
           GITHUB_RUNNER_VER=$(grep '^version:' swipentap/github-runner/Chart.yaml | sed 's/version: //' | tr -d ' ')
           TLS_SECRET_VER=$(grep '^version:' swipentap/tls-secret/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          ECLIPSE_CHE_VER=$(grep '^version:' swipentap/eclipse-che/Chart.yaml | sed 's/version: //' | tr -d ' ')
           SINS_VER=$(grep '^version:' swipentap/sins/Chart.yaml | sed 's/version: //' | tr -d ' ')
           CERTA_VER=$(grep '^version:' swipentap/certa/Chart.yaml | sed 's/version: //' | tr -d ' ')
           OLLAMA_VER=$(grep '^version:' swipentap/ollama/Chart.yaml | sed 's/version: //' | tr -d ' ')
@@ -66,7 +65,6 @@ jobs:
           HARBOR_RBAC_VER=$(grep '^version:' swipentap/harbor-rbac/Chart.yaml | sed 's/version: //' | tr -d ' ')
           sed -i "s/^githubRunnerChartRevision: .*/githubRunnerChartRevision: \"$GITHUB_RUNNER_VER\"/" umbrella/enva-umbrella/values.yaml
           sed -i "s/^tlsSecretChartRevision: .*/tlsSecretChartRevision: \"$TLS_SECRET_VER\"/" umbrella/enva-umbrella/values.yaml
-          sed -i "s/^eclipseCheChartRevision: .*/eclipseCheChartRevision: \"$ECLIPSE_CHE_VER\"/" umbrella/enva-umbrella/values.yaml
           sed -i "s/^sinsChartRevision: .*/sinsChartRevision: \"$SINS_VER\"/" umbrella/enva-umbrella/values.yaml
           sed -i "s/^certaChartRevision: .*/certaChartRevision: \"$CERTA_VER\"/" umbrella/enva-umbrella/values.yaml
           sed -i "s/^ollamaChartRevision: .*/ollamaChartRevision: \"$OLLAMA_VER\"/" umbrella/enva-umbrella/values.yaml
@@ -191,7 +189,6 @@ jobs:
         run: |
           helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo add eclipse-che https://eclipse-che.github.io/che-operator/charts
           helm repo update
 
       - name: Helm dependency update for charts with dependencies
