@@ -64,26 +64,26 @@ jobs:
           KC_OPERATOR_VER=$(grep '^version:' swipentap/keycloak-operator/Chart.yaml | sed 's/version: //' | tr -d ' ')
           OPERATORHUB_CATALOG_VER=$(grep '^version:' swipentap/operatorhub-catalog/Chart.yaml | sed 's/version: //' | tr -d ' ')
           HARBOR_RBAC_VER=$(grep '^version:' swipentap/harbor-rbac/Chart.yaml | sed 's/version: //' | tr -d ' ')
-          sed -i "s/^githubRunnerChartRevision: .*/githubRunnerChartRevision: \"$GITHUB_RUNNER_VER\"/" umbrella/values.yaml
-          sed -i "s/^tlsSecretChartRevision: .*/tlsSecretChartRevision: \"$TLS_SECRET_VER\"/" umbrella/values.yaml
-          sed -i "s/^eclipseCheChartRevision: .*/eclipseCheChartRevision: \"$ECLIPSE_CHE_VER\"/" umbrella/values.yaml
-          sed -i "s/^sinsChartRevision: .*/sinsChartRevision: \"$SINS_VER\"/" umbrella/values.yaml
-          sed -i "s/^certaChartRevision: .*/certaChartRevision: \"$CERTA_VER\"/" umbrella/values.yaml
-          sed -i "s/^ollamaChartRevision: .*/ollamaChartRevision: \"$OLLAMA_VER\"/" umbrella/values.yaml
-          sed -i "s/^postgresqlChartRevision: .*/postgresqlChartRevision: \"$POSTGRESQL_VER\"/" umbrella/values.yaml
-          sed -i "s/^mailuChartRevision: .*/mailuChartRevision: \"$MAILU_VER\"/" umbrella/values.yaml
-          sed -i "s/^freeipaChartRevision: .*/freeipaChartRevision: \"$FREEIPA_VER\"/" umbrella/values.yaml
-          sed -i "s/^keycloakOperatorChartRevision: .*/keycloakOperatorChartRevision: \"$KC_OPERATOR_VER\"/" umbrella/values.yaml
-          sed -i "s/^operatorhubCatalogChartRevision: .*/operatorhubCatalogChartRevision: \"$OPERATORHUB_CATALOG_VER\"/" umbrella/values.yaml
-          sed -i "s/^harborRbacChartRevision: .*/harborRbacChartRevision: \"$HARBOR_RBAC_VER\"/" umbrella/values.yaml
+          sed -i "s/^githubRunnerChartRevision: .*/githubRunnerChartRevision: \"$GITHUB_RUNNER_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^tlsSecretChartRevision: .*/tlsSecretChartRevision: \"$TLS_SECRET_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^eclipseCheChartRevision: .*/eclipseCheChartRevision: \"$ECLIPSE_CHE_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^sinsChartRevision: .*/sinsChartRevision: \"$SINS_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^certaChartRevision: .*/certaChartRevision: \"$CERTA_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^ollamaChartRevision: .*/ollamaChartRevision: \"$OLLAMA_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^postgresqlChartRevision: .*/postgresqlChartRevision: \"$POSTGRESQL_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^mailuChartRevision: .*/mailuChartRevision: \"$MAILU_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^freeipaChartRevision: .*/freeipaChartRevision: \"$FREEIPA_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^keycloakOperatorChartRevision: .*/keycloakOperatorChartRevision: \"$KC_OPERATOR_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^operatorhubCatalogChartRevision: .*/operatorhubCatalogChartRevision: \"$OPERATORHUB_CATALOG_VER\"/" umbrella/enva-umbrella/values.yaml
+          sed -i "s/^harborRbacChartRevision: .*/harborRbacChartRevision: \"$HARBOR_RBAC_VER\"/" umbrella/enva-umbrella/values.yaml
 
       - name: Bump umbrella chart version
         run: |
-          sed -i "s/^version: .*/version: 1.0.0-${{ github.run_number }}/" umbrella/Chart.yaml
+          sed -i "s/^version: .*/version: 1.0.0-${{ github.run_number }}/" umbrella/enva-umbrella/Chart.yaml
 
       - name: Add umbrella changes to git
         run: |
-          cd umbrella && git add values.yaml Chart.yaml
+          cd umbrella && git add enva-umbrella/values.yaml enva-umbrella/Chart.yaml
 
       - name: Commit umbrella changes
         run: |
