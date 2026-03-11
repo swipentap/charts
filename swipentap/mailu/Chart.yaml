@@ -1,6 +1,10 @@
 apiVersion: v2
 appVersion: 2024.06.46
 description: This chart installs the Mailu mail system on Kubernetes
+dependencies:
+- name: redis
+  version: "22.0.7"
+  repository: "file://./charts/redis"
 home: https://mailu.io
 icon: https://mailu.io/master/_images/logo.png
 keywords:
