@@ -96,12 +96,6 @@ jobs:
         run: |
           cd umbrella && git push origin main
 
-      - name: Trigger Umbrella release workflow
-        run: |
-          gh workflow run "Release Charts" --repo swipentap/Umbrella
-        env:
-          GH_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
-
       - name: Wait for Umbrella release run to complete
         env:
           GH_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
