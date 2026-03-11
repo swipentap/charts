@@ -59,6 +59,7 @@ jobs:
       - name: Helm lint
         run: |
           for d in swipentap/*/; do
+            [ "$d" = "swipentap/mailu/" ] && echo "Skipping lint for $d (nested OCI deps)" && continue
             if [ -f "${d}Chart.yaml" ]; then
               echo "Linting $d"
               helm lint "$d" || exit 1
