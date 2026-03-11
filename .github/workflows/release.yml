@@ -50,6 +50,11 @@ jobs:
               helm dependency update "$d"
             fi
           done
+          while IFS= read -r dir; do
+            [ -z "$dir" ] && continue
+            echo "Running helm dependency update in $dir (subchart)"
+            helm dependency update "$dir"
+          done < <(find swipentap -name Chart.yaml -exec dirname {} \; | while read d; do grep -q "dependencies:" "$d/Chart.yaml" && echo "$d"; done | awk -F/ '{print NF,$0}' | sort -rn | cut -d' ' -f2-)
 
       - name: Helm lint
         run: |
