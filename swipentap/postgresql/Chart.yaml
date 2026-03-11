@@ -3,3 +3,7 @@ name: postgresql
 description: PostgreSQL stack - CNPG operator, cluster, and pgAdmin
 version: 1.0.0
 appVersion: "1.23.0"
+dependencies:
+- name: cloudnative-pg
+  version: "0.21.1"
+  repository: "file://./charts/cloudnative-pg"
