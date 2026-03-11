@@ -102,6 +102,40 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
 
+      - name: Wait for Umbrella release run to complete
+        env:
+          GH_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+        run: |
+          echo "Waiting 20s for Umbrella release run to appear..."
+          sleep 20
+          RUN_ID=$(gh run list --repo swipentap/Umbrella --workflow "release.yml" --limit 1 --json databaseId --jq '.[0].databaseId')
+          if [ -z "$RUN_ID" ]; then
+            echo "No Umbrella release run found"
+            exit 1
+          fi
+          echo "Waiting for Umbrella release run $RUN_ID (poll up to 15 min)..."
+          for i in $(seq 1 60); do
+            STATUS=$(gh run view "$RUN_ID" --repo swipentap/Umbrella --json status --jq '.status')
+            if [ "$STATUS" = "completed" ]; then
+              break
+            fi
+            echo "Attempt $i/60 status=$STATUS"
+            sleep 15
+          done
+          CONCLUSION=$(gh run view "$RUN_ID" --repo swipentap/Umbrella --json conclusion --jq '.conclusion')
+          if [ "$CONCLUSION" != "success" ]; then
+            echo "Umbrella release run $RUN_ID concluded with: $CONCLUSION"
+            gh run view "$RUN_ID" --repo swipentap/Umbrella --log-failed
+            exit 1
+          fi
+          echo "Umbrella release run $RUN_ID succeeded"
+
+      - name: Trigger Umbrella deploy-pages workflow
+        run: |
+          gh workflow run ".github/workflows/deploy-pages.yml" --repo swipentap/Umbrella
+        env:
+          GH_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+
       - name: Wait for umbrella index
         run: |
           VERSION="1.0.0-${{ github.run_number }}"
