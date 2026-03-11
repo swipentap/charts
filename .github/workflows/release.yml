@@ -102,20 +102,49 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
 
+      - name: Wait for Umbrella release run to complete
+        env:
+          GH_TOKEN: ${{ secrets.ACTIONS_GITHUB_TOKEN }}
+        run: |
+          echo "Waiting 20s for Umbrella run to appear..."
+          sleep 20
+          RUN_ID=$(gh run list --repo swipentap/Umbrella --workflow "Release Charts" --limit 1 --json databaseId --jq '.[0].databaseId')
+          if [ -z "$RUN_ID" ]; then
+            echo "No Umbrella Release Charts run found"
+            exit 1
+          fi
+          echo "Waiting for Umbrella run $RUN_ID to complete (poll up to 15 min)..."
+          for i in $(seq 1 60); do
+            STATUS=$(gh run view "$RUN_ID" --repo swipentap/Umbrella --json status,conclusion --jq '.status')
+            CONCLUSION=$(gh run view "$RUN_ID" --repo swipentap/Umbrella --json conclusion --jq '.conclusion')
+            if [ "$STATUS" = "completed" ]; then
+              break
+            fi
+            echo "Run $RUN_ID status=$STATUS conclusion=$CONCLUSION ... attempt $i/60"
+            sleep 15
+          done
+          CONCLUSION=$(gh run view "$RUN_ID" --repo swipentap/Umbrella --json conclusion --jq '.conclusion')
+          if [ "$CONCLUSION" != "success" ]; then
+            echo "Umbrella run $RUN_ID concluded with: $CONCLUSION"
+            gh run view "$RUN_ID" --repo swipentap/Umbrella --log-failed
+            exit 1
+          fi
+          echo "Umbrella run $RUN_ID succeeded"
+
       - name: Wait for umbrella index
         run: |
           VERSION="1.0.0-${{ github.run_number }}"
-          echo "Waiting 120s for Umbrella release and Pages deploy..."
-          sleep 120
-          for i in $(seq 1 60); do
+          echo "Waiting 60s for Pages deploy..."
+          sleep 60
+          for i in $(seq 1 40); do
             if curl -sL https://swipentap.github.io/Umbrella/index.yaml | grep -q "version: $VERSION"; then
               echo "Found $VERSION in index"
               exit 0
             fi
-            echo "Waiting for $VERSION in index... attempt $i/60"
+            echo "Waiting for $VERSION in index... attempt $i/40"
             sleep 15
           done
-          echo "Timeout: $VERSION not in index after 17 min"
+          echo "Timeout: $VERSION not in index after 11 min"
           exit 1
 
       - name: Clone envaapps
