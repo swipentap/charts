@@ -128,18 +128,18 @@ jobs:
       - name: Wait for umbrella index
         run: |
           VERSION="1.0.0-${{ github.run_number }}"
-          INDEX_URL="https://swipentap.github.io/Umbrella/index.yaml"
-          echo "Waiting 90s for Pages deploy then polling..."
-          sleep 90
-          for i in $(seq 1 50); do
+          INDEX_URL="https://raw.githubusercontent.com/swipentap/Umbrella/gh-pages/index.yaml"
+          echo "Polling gh-pages index (canonical Pages URL updates via Deploy workflow)..."
+          sleep 45
+          for i in $(seq 1 40); do
             if curl -sL "$INDEX_URL" | grep -q "version: $VERSION"; then
               echo "Found $VERSION in index"
               exit 0
             fi
-            echo "Waiting for $VERSION in index... attempt $i/50"
+            echo "Waiting for $VERSION in index... attempt $i/40"
             sleep 15
           done
-          echo "Timeout: $VERSION not in index after 14 min"
+          echo "Timeout: $VERSION not in index after 10 min"
           exit 1
 
       - name: Clone envaapps
