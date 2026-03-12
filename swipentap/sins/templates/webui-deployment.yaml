@@ -20,7 +20,9 @@ spec:
         app.kubernetes.io/component: webui
     spec:
       initContainers:
-      {{- if or .Values.webui.waitForPostgresql.enabled (and (not .Values.webui.env.ConnectionStrings__DefaultConnection) .Values.postgresql.enabled) }}
+      {{- $waitExternal := not .Values.postgresql.enabled }}
+      {{- $waitInChart := and .Values.postgresql.enabled (or .Values.webui.waitForPostgresql.enabled (not .Values.webui.env.ConnectionStrings__DefaultConnection)) }}
+      {{- if or .Values.webui.waitForPostgresql.enabled $waitInChart $waitExternal }}
       - name: wait-for-postgresql
         image: busybox:1.36
         command:
@@ -30,8 +32,10 @@ spec:
           echo "Waiting for PostgreSQL to be ready..."
           {{- if .Values.webui.waitForPostgresql.enabled }}
           until nc -z {{ .Values.webui.waitForPostgresql.host }} {{ .Values.webui.waitForPostgresql.port }}; do
-          {{- else }}
+          {{- else if .Values.postgresql.enabled }}
           until nc -z {{ include "sins.fullname" . }}-postgresql {{ .Values.postgresql.service.port }}; do
+          {{- else }}
+          until nc -z {{ .Values.postgresql.externalHost }} {{ .Values.postgresql.externalPort }}; do
           {{- end }}
             echo "PostgreSQL is not ready yet. Waiting..."
             sleep 2
@@ -68,8 +72,8 @@ spec:
 
           SINS_USER="{{ .Values.webui.dbInit.appUser | default "sins" }}"
           DB_NAME="{{ .Values.webui.dbInit.appDatabase | default "dns_server" }}"
-          DB_HOST="{{ .Values.webui.dbInit.dbHost }}"
-          DB_PORT="{{ .Values.webui.dbInit.dbPort }}"
+          DB_HOST="{{ .Values.webui.dbInit.dbHost | default (ternary (printf "%s-postgresql" (include "sins.fullname" .)) .Values.postgresql.externalHost .Values.postgresql.enabled) }}"
+          DB_PORT="{{ .Values.webui.dbInit.dbPort | default (ternary .Values.postgresql.service.port .Values.postgresql.externalPort .Values.postgresql.enabled) }}"
           
           echo "Waiting for PostgreSQL to be ready..."
           MAX_WAIT=300
@@ -145,8 +149,8 @@ spec:
           set -e
           echo "Adding DNS records to SINS database..."
 
-          DB_HOST="{{ .Values.webui.dnsRecordsInit.dbHost }}"
-          DB_PORT="{{ .Values.webui.dnsRecordsInit.dbPort }}"
+          DB_HOST="{{ .Values.webui.dnsRecordsInit.dbHost | default (ternary (printf "%s-postgresql" (include "sins.fullname" .)) .Values.postgresql.externalHost .Values.postgresql.enabled) }}"
+          DB_PORT="{{ .Values.webui.dnsRecordsInit.dbPort | default (ternary .Values.postgresql.service.port .Values.postgresql.externalPort .Values.postgresql.enabled) }}"
           DB_NAME="{{ .Values.webui.dnsRecordsInit.dbName }}"
           DB_USER="{{ .Values.webui.dnsRecordsInit.dbUser }}"
           HAPROXY_IP="{{ .Values.webui.dnsRecordsInit.haproxyIp }}"
@@ -231,13 +235,8 @@ spec:
               name: {{ .Values.webui.credentials.existingSecret }}
               key: db_password
         {{- end }}
-        {{- if .Values.webui.env.ConnectionStrings__DefaultConnection }}
         - name: ConnectionStrings__DefaultConnection
-          value: {{ .Values.webui.env.ConnectionStrings__DefaultConnection | quote }}
-        {{- else }}
-        - name: ConnectionStrings__DefaultConnection
-          value: "Host={{ include "sins.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }};Database={{ .Values.postgresql.env.POSTGRES_DB }};Username={{ .Values.postgresql.env.POSTGRES_USER }};Password={{ .Values.postgresql.env.POSTGRES_PASSWORD }}"
-        {{- end }}
+          value: {{ default (include "sins.postgresql.connectionString" .) .Values.webui.env.ConnectionStrings__DefaultConnection | quote }}
         - name: ASPNETCORE_URLS
           value: {{ .Values.sins.env.ASPNETCORE_URLS | quote }}
         resources:

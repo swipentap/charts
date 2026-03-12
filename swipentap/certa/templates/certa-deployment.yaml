@@ -26,7 +26,11 @@ spec:
         - -c
         - |
           echo "Waiting for PostgreSQL to be ready..."
+          {{- if .Values.postgresql.enabled }}
           until nc -z {{ include "certa.fullname" . }}-postgresql {{ .Values.postgresql.service.port }}; do
+          {{- else }}
+          until nc -z {{ .Values.postgresql.externalHost }} {{ .Values.postgresql.externalPort }}; do
+          {{- end }}
             echo "PostgreSQL is not ready yet. Waiting..."
             sleep 2
           done
@@ -61,8 +65,8 @@ spec:
 
           CERTA_USER="{{ .Values.certa.dbInit.appUser }}"
           DB_NAME="{{ .Values.certa.dbInit.appDatabase }}"
-          DB_HOST="{{ .Values.certa.dbInit.dbHost }}"
-          DB_PORT="{{ .Values.certa.dbInit.dbPort }}"
+          DB_HOST="{{ .Values.certa.dbInit.dbHost | default (ternary (printf "%s-postgresql" (include "certa.fullname" .)) .Values.postgresql.externalHost .Values.postgresql.enabled) }}"
+          DB_PORT="{{ .Values.certa.dbInit.dbPort | default (ternary .Values.postgresql.service.port .Values.postgresql.externalPort .Values.postgresql.enabled) }}"
           
           echo "Waiting for PostgreSQL to be ready..."
           MAX_WAIT=300

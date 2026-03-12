@@ -59,8 +59,12 @@ Namespace
 {{- end }}
 
 {{/*
-PostgreSQL connection string
+PostgreSQL connection string. When postgresql.enabled use in-chart; else use external (cluster).
 */}}
 {{- define "certa.postgresql.connectionString" -}}
+{{- if .Values.postgresql.enabled }}
 Host={{ include "certa.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }};Database={{ .Values.postgresql.env.POSTGRES_DB }};Username={{ .Values.postgresql.env.POSTGRES_USER }};Password={{ .Values.postgresql.env.POSTGRES_PASSWORD }};Port={{ .Values.postgresql.service.port }}
+{{- else }}
+Host={{ .Values.postgresql.externalHost }}:{{ .Values.postgresql.externalPort }};Database={{ .Values.postgresql.externalDatabase }};Username={{ .Values.postgresql.externalUser }};Password={{ .Values.postgresql.externalPassword }};Port={{ .Values.postgresql.externalPort }}
+{{- end }}
 {{- end }}

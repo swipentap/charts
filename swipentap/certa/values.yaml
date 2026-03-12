@@ -6,7 +6,17 @@ namespace:
 domain: "dev.net"  # Default domain, can be overridden (e.g., "prod.net", "test.net")
 subdomain: "certa"  # Subdomain for this service (e.g., "certa" -> "certa.dev.net")
 
+# When false (default), use cluster PostgreSQL (postgresql-rw.postgresql.svc.cluster.local).
+# When true, deploy and use in-chart PostgreSQL.
 postgresql:
+  enabled: false
+  # External (cluster) PostgreSQL - used when enabled: false
+  externalHost: "postgresql-rw.postgresql.svc.cluster.local"
+  externalPort: 5432
+  externalDatabase: "certa"
+  externalUser: "certa"
+  externalPassword: ""
+  # In-chart PostgreSQL - used when enabled: true
   image:
     repository: postgres
     tag: "15"
