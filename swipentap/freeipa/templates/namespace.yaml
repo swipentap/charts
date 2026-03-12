@@ -1,6 +1,8 @@
+{{- if .Values.namespace }}
 {{- if .Values.namespace.create }}
 apiVersion: v1
 kind: Namespace
 metadata:
   name: {{ .Values.namespace.name | default "freeipa" }}
+{{- end }}
 {{- end }}
