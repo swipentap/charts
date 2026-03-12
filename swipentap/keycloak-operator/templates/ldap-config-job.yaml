@@ -15,6 +15,22 @@ spec:
         batch.kubernetes.io/job-name: keycloak-ldap-config-{{ .Chart.Version | replace "." "-" }}
     spec:
       restartPolicy: OnFailure
+      initContainers:
+        - name: wait-freeipa
+          image: curlimages/curl:8.2.1
+          env:
+            - name: IPA_HOSTNAME
+              value: {{ .Values.freeipaHostname | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for FreeIPA at freeipa.freeipa.svc.cluster.local..."
+              until curl -k -s -o /dev/null -w "%{http_code}" --connect-timeout 5 -H "Host: $IPA_HOSTNAME" https://freeipa.freeipa.svc.cluster.local/ipa 2>/dev/null | grep -qE '^([23]0[0-9]|401)$'; do
+                echo "FreeIPA not ready, retrying in 5s..."
+                sleep 5
+              done
+              echo "FreeIPA ready."
       containers:
         - name: ldap-config
           image: curlimages/curl:8.2.1
