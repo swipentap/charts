@@ -47,7 +47,6 @@ jobs:
         run: |
           helm repo add bitnami https://raw.githubusercontent.com/bitnami/charts/archive-full-index/bitnami
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo add eclipse-che https://eclipse-che.github.io/che-operator/charts
           helm repo update
 
       - name: Helm dependency update for charts with dependencies
@@ -102,6 +101,8 @@ jobs:
           sed -i "s/^harborRbacChartRevision: .*/harborRbacChartRevision: \"$HARBOR_RBAC_VER\"/" umbrella/enva-umbrella/values.yaml
           SONARQUBE_VER=$(grep '^version:' swipentap/sonarqube/Chart.yaml | sed 's/version: //' | tr -d ' ')
           VAULT_SECRETS_VER=$(grep '^version:' swipentap/vault-secrets/Chart.yaml | sed 's/version: //' | tr -d ' ')
+          LANGFLOW_VER=$(grep '^version:' swipentap/langflow/Chart.yaml 2>/dev/null | sed 's/version: //' | tr -d ' ')
+          TRAEFIK_VER=$(grep '^version:' swipentap/traefik/Chart.yaml 2>/dev/null | sed 's/version: //' | tr -d ' ')
           sed -i "/- name: tls-secret/,/version:/ s/^    version: .*/    version: \"$TLS_SECRET_VER\"/" umbrella/enva-umbrella/Chart.yaml
           sed -i "/- name: certa/,/version:/ s/^    version: .*/    version: \"$CERTA_VER\"/" umbrella/enva-umbrella/Chart.yaml
           sed -i "/- name: postgresql/,/version:/ s/^    version: .*/    version: \"$POSTGRESQL_VER\"/" umbrella/enva-umbrella/Chart.yaml
@@ -115,10 +116,8 @@ jobs:
           sed -i "/- name: operatorhub-catalog/,/version:/ s/^    version: .*/    version: \"$OPERATORHUB_CATALOG_VER\"/" umbrella/enva-umbrella/Chart.yaml
           sed -i "/- name: harbor-rbac/,/version:/ s/^    version: .*/    version: \"$HARBOR_RBAC_VER\"/" umbrella/enva-umbrella/Chart.yaml
           sed -i "/- name: vault-secrets/,/version:/ s/^    version: .*/    version: \"$VAULT_SECRETS_VER\"/" umbrella/enva-umbrella/Chart.yaml
-          sed -i "/- name: langflow/,/version:/ s/^    version: .*/    version: \"$(grep '^version:' swipentap/langflow/Chart.yaml | sed 's/version: //' | tr -d ' ')\"/" umbrella/enva-umbrella/Chart.yaml
-          sed -i "/- name: eclipse-che$/,/version:/ s/^    version: .*/    version: \"$(grep '^version:' swipentap/eclipse-che/Chart.yaml | sed 's/version: //' | tr -d ' ')\"/" umbrella/enva-umbrella/Chart.yaml
-          sed -i "/- name: eclipse-che-operator/,/version:/ s/^    version: .*/    version: \"$(grep '^version:' swipentap/eclipse-che-operator/Chart.yaml | sed 's/version: //' | tr -d ' ')\"/" umbrella/enva-umbrella/Chart.yaml
-          sed -i "/- name: traefik/,/version:/ s/^    version: .*/    version: \"$(grep '^version:' swipentap/traefik/Chart.yaml | sed 's/version: //' | tr -d ' ')\"/" umbrella/enva-umbrella/Chart.yaml
+          [ -n "$LANGFLOW_VER" ] && sed -i "/- name: langflow/,/version:/ s/^    version: .*/    version: \"$LANGFLOW_VER\"/" umbrella/enva-umbrella/Chart.yaml
+          [ -n "$TRAEFIK_VER" ] && sed -i "/- name: traefik/,/version:/ s/^    version: .*/    version: \"$TRAEFIK_VER\"/" umbrella/enva-umbrella/Chart.yaml
 
       - name: Bump umbrella chart version
         run: |
