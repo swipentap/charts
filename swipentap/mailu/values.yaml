@@ -25,6 +25,11 @@ global:
 
 ## @section Common parameters
 
+## @param namespace Create the chart's release namespace (used when deploying via umbrella with namespaceOverride).
+namespace:
+  create: true
+  name: mailu
+
 ## @param kubeVersion Force target Kubernetes version (using Helm capabilities if not set)
 kubeVersion: ""
 ## @param nameOverride String to partially override `mailu.fullname` include (will maintain the release name)

@@ -2,6 +2,11 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Create the chart's release namespace (used when deploying via umbrella with namespaceOverride).
+namespace:
+  create: true
+  name: sonarqube
+
 # (DEPRECATED) If the deployment Type is set to Deployment SonarQube is deployed as a replica set.
 # StatefulSet will be removed in a future release in favor of Deployment. Default to StatefulSet for backwards compatibility.
 deploymentType: "StatefulSet"

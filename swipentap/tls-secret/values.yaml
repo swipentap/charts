@@ -1,6 +1,11 @@
 # Secret name (e.g. tls-prod-net-wildcard, tls-dev-net-wildcard). Override from umbrella global.tlsSecret.
 secretName: tls-prod-net-wildcard
 
+# Create the chart's release namespace (used when deploying via umbrella with namespaceOverride).
+namespace:
+  create: true
+  name: tls-secret
+
 # Namespaces to create the TLS secret in.
 namespaces:
   - default

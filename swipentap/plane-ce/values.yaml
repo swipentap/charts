@@ -1,5 +1,10 @@
 planeVersion: v1.2.0
 
+# Create the chart's release namespace (used when deploying via umbrella with namespaceOverride).
+namespace:
+  create: true
+  name: plane-ce
+
 dockerRegistry:
   enabled: false
   host: "index.docker.io/v1/"

@@ -1,3 +1,8 @@
+# Create the chart's release namespace (used when deploying via umbrella with namespaceOverride).
+namespace:
+  create: true
+  name: vault-secrets
+
 global:
   env: dev   # dev | test | prod — used to build Vault secret paths
 

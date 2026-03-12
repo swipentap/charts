@@ -1,5 +1,10 @@
 imagePullSecrets: []
 
+# Create the chart's release namespace (used when deploying via umbrella with namespaceOverride).
+namespace:
+  create: true
+  name: langflow
+
 nameOverride: "langflow-service"
 # Override for the name of the helm deployment
 # Note: using `langflow` as service name causes
