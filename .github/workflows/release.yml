@@ -68,6 +68,21 @@ jobs:
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Wait for charts index to have new versions
+        run: |
+          VERSION="1.0.0-${{ github.run_number }}"
+          echo "Waiting for charts index to list tls-secret $VERSION (poll up to 5 min)..."
+          for i in $(seq 1 30); do
+            if curl -sL https://swipentap.github.io/charts/index.yaml | grep -q "version: $VERSION" && curl -sL https://swipentap.github.io/charts/index.yaml | grep -q "name: tls-secret"; then
+              echo "Charts index has $VERSION"
+              exit 0
+            fi
+            echo "Attempt $i/30: index not ready"
+            sleep 10
+          done
+          echo "Timeout: charts index did not have $VERSION after 5 min"
+          exit 1
+
       - name: Clone Umbrella
         uses: actions/checkout@v4
         with:
