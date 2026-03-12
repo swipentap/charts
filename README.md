@@ -2,7 +2,7 @@
 
 Popular applications ready to launch on Kubernetes using Helm.
 
-## TL;DR
+## TL;DR ##
 
 ```bash
 helm repo add swipentap https://swipentap.github.io/charts
