@@ -3,6 +3,26 @@ namespace:
   create: true
   name: vault-secrets
 
+# Create namespaces that ClusterExternalSecrets target so they exist before ESO syncs (idempotent: existing namespaces are unchanged).
+createTargetNamespaces: true
+targetNamespaces:
+  - certa
+  - postgresql
+  - pgadmin
+  - actions-runner-system
+  - freeipa
+  - gitea
+  - keycloak
+  - harbor
+  - cattle-system
+  - mailu
+  - sonarqube
+  - sins
+  - langflow
+  - rabbitmq
+  - redis
+  - external-secrets
+
 global:
   env: dev   # dev | test | prod — used to build Vault secret paths
 
