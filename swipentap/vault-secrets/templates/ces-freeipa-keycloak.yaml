@@ -1,5 +1,5 @@
-# freeipa-credentials in keycloak namespace (used by keycloak ldap-config Job)
-# Same Vault path as ces-freeipa; keys match what ldap-config-job expects (admin_password, ldap_service_user_password)
+# freeipa-credentials in keycloak namespace (used by keycloak ldap-config Job and keycloak-operator)
+# Same Vault path as ces-freeipa; keys match what ldap-config-job and keycloak-operator expect
 apiVersion: external-secrets.io/v1beta1
 kind: ClusterExternalSecret
 metadata:
@@ -26,4 +26,4 @@ spec:
       - secretKey: ldap_service_user_password
         remoteRef:
           key: {{ .Values.global.env }}/freeipa
-          property: admin_password
+          property: ldap_service_user_password
